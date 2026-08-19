@@ -43,13 +43,17 @@ type Sealed struct {
 
 // Project represents a rememory project configuration.
 type Project struct {
-	Name      string   `yaml:"name"`
-	Created   string   `yaml:"created"`
-	Threshold int      `yaml:"threshold"`
-	Anonymous bool     `yaml:"anonymous,omitempty"`
-	Language  string   `yaml:"language,omitempty"` // Default bundle language (e.g. "en", "es", "de", "fr", "sl", "pt", "zh-TW")
-	Friends   []Friend `yaml:"friends"`
-	Sealed    *Sealed  `yaml:"sealed,omitempty"`
+	Name      string `yaml:"name"`
+	Created   string `yaml:"created"`
+	Threshold int    `yaml:"threshold"`
+	Anonymous bool   `yaml:"anonymous,omitempty"`
+	// HideQuorum omits Total and Threshold from share headers and
+	// bundle documents. Recovery then works by try-decrypt: combine
+	// and attempt decryption as shares arrive. Disclose is the default.
+	HideQuorum bool     `yaml:"hide_quorum,omitempty"`
+	Language   string   `yaml:"language,omitempty"` // Default bundle language (e.g. "en", "es", "de", "fr", "sl", "pt", "zh-TW")
+	Friends    []Friend `yaml:"friends"`
+	Sealed     *Sealed  `yaml:"sealed,omitempty"`
 
 	// Path is the directory containing this project (not serialized)
 	Path string `yaml:"-"`

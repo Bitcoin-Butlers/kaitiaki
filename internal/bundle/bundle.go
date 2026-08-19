@@ -56,6 +56,12 @@ func GenerateAll(p *project.Project, cfg Config) error {
 	// Derive GitHub release URL from version for README/PDF
 	githubReleaseURL := fmt.Sprintf("%s/releases/tag/%s", core.GitHubRepo, cfg.Version)
 
+	// Disclosed quorum values: zero means "do not disclose".
+	disclosedThreshold, disclosedTotal := p.Threshold, len(p.Friends)
+	if p.HideQuorum {
+		disclosedThreshold, disclosedTotal = 0, 0
+	}
+
 	// Generate bundle for each friend
 	for i, friend := range p.Friends {
 		share := shares[i]
@@ -92,8 +98,8 @@ func GenerateAll(p *project.Project, cfg Config) error {
 			Holder:       friend.Name,
 			HolderShare:  share.Encode(),
 			OtherFriends: otherFriendsInfo,
-			Threshold:    p.Threshold,
-			Total:        len(p.Friends),
+			Threshold:    disclosedThreshold,
+			Total:        disclosedTotal,
 			Language:     lang,
 			TlockEnabled: cfg.TlockEnabled,
 		}
@@ -115,8 +121,8 @@ func GenerateAll(p *project.Project, cfg Config) error {
 			Friend:           friend,
 			Share:            share,
 			OtherFriends:     otherFriends,
-			Threshold:        p.Threshold,
-			Total:            len(p.Friends),
+			Threshold:        disclosedThreshold,
+			Total:            disclosedTotal,
 			ManifestData:     manifestData,
 			ManifestChecksum: manifestChecksum,
 			ManifestEmbedded: manifestEmbedded,
@@ -226,6 +232,12 @@ func GenerateBundle(params BundleParams) error {
 	if !params.ManifestEmbedded {
 		files = append(files, ZipFile{Name: "MANIFEST.age", Content: params.ManifestData, ModTime: params.SealedAt})
 	}
+
+	metadata, err := GenerateMetadata(params, files)
+	if err != nil {
+		return err
+	}
+	files = append(files, ZipFile{Name: MetadataFilename, Content: metadata, ModTime: params.SealedAt})
 
 	return CreateZip(params.OutputPath, files)
 }

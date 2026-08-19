@@ -65,8 +65,14 @@ func (s *Share) Encode() string {
 	sb.WriteString(ShareBegin + "\n")
 	sb.WriteString(fmt.Sprintf("Version: %d\n", s.Version))
 	sb.WriteString(fmt.Sprintf("Index: %d\n", s.Index))
-	sb.WriteString(fmt.Sprintf("Total: %d\n", s.Total))
-	sb.WriteString(fmt.Sprintf("Threshold: %d\n", s.Threshold))
+	// Total and Threshold are omitted when the quorum is hidden
+	// (hide-quorum mode encodes them as 0).
+	if s.Total > 0 {
+		sb.WriteString(fmt.Sprintf("Total: %d\n", s.Total))
+	}
+	if s.Threshold > 0 {
+		sb.WriteString(fmt.Sprintf("Threshold: %d\n", s.Threshold))
+	}
 	if s.Holder != "" {
 		sb.WriteString(fmt.Sprintf("Holder: %s\n", s.Holder))
 	}
@@ -185,12 +191,8 @@ func ParseShare(content []byte) (*Share, error) {
 	if share.Index == 0 {
 		return nil, fmt.Errorf("missing index")
 	}
-	if share.Total == 0 {
-		return nil, fmt.Errorf("missing total")
-	}
-	if share.Threshold == 0 {
-		return nil, fmt.Errorf("missing threshold")
-	}
+	// Total and Threshold may be absent: hide-quorum shares do not
+	// disclose the quorum. Zero means "unknown".
 	if len(share.Data) == 0 {
 		return nil, fmt.Errorf("missing share data")
 	}
@@ -243,13 +245,14 @@ func ParseCompact(s string) (*Share, error) {
 		return nil, fmt.Errorf("invalid compact share: bad index %q", parts[1])
 	}
 
+	// Zero means "unknown" (hide-quorum shares).
 	total, err := strconv.Atoi(parts[2])
-	if err != nil || total < 1 {
+	if err != nil || total < 0 {
 		return nil, fmt.Errorf("invalid compact share: bad total %q", parts[2])
 	}
 
 	threshold, err := strconv.Atoi(parts[3])
-	if err != nil || threshold < 1 {
+	if err != nil || threshold < 0 {
 		return nil, fmt.Errorf("invalid compact share: bad threshold %q", parts[3])
 	}
 

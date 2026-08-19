@@ -1,3 +1,21 @@
+# Kaitiaki
+
+Kaitiaki is a Bitcoin Butlers fork of
+[Rememory](https://github.com/eljojo/rememory) by
+[eljojo](https://github.com/eljojo). Rememory does the heavy lifting;
+this fork adds a small set of changes for our recovery service. See
+the `NOTICE` file for the list of changes and full attribution
+(Apache-2.0).
+
+Fork additions:
+- [docs/independent-recovery.md](docs/independent-recovery.md) — recover with stock `age` and `contrib/combine.py`, no project code.
+- `METADATA.yaml` in every bundle ZIP.
+- `--hide-quorum` on `init` (see [docs/hide-quorum-design.md](docs/hide-quorum-design.md)).
+
+The original Rememory README follows.
+
+---
+
 # 🧠 ReMemory
 
 **A digital safe with multiple keys, held by people you trust.**

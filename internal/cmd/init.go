@@ -30,13 +30,14 @@ Example:
 }
 
 var (
-	initFrom      string
-	initName      string
-	initThreshold int
-	initFriends   []string
-	initAnonymous bool
-	initShares    int
-	initLanguage  string
+	initFrom       string
+	initName       string
+	initThreshold  int
+	initFriends    []string
+	initAnonymous  bool
+	initHideQuorum bool
+	initShares     int
+	initLanguage   string
 )
 
 const (
@@ -53,6 +54,7 @@ func init() {
 	initCmd.Flags().IntVar(&initThreshold, "threshold", 0, "Number of shares needed to recover")
 	initCmd.Flags().StringArrayVar(&initFriends, "friend", nil, "Friend in format 'Name' or 'Name,contact info' (repeatable)")
 	initCmd.Flags().BoolVar(&initAnonymous, "anonymous", false, "Anonymous mode (no contact info for shareholders)")
+	initCmd.Flags().BoolVar(&initHideQuorum, "hide-quorum", false, "Omit total/threshold from shares and bundle documents")
 	initCmd.Flags().IntVar(&initShares, "shares", 0, "Number of shares (for anonymous mode)")
 	initCmd.Flags().StringVar(&initLanguage, "language", "", "Default bundle language (en, es, de, fr, sl)")
 }
@@ -263,6 +265,14 @@ func runInit(cmd *cobra.Command, args []string) error {
 		p.Language = initLanguage
 		if err := p.Save(); err != nil {
 			return fmt.Errorf("saving project with language: %w", err)
+		}
+	}
+
+	// Hide the quorum in shares and bundle documents if requested
+	if initHideQuorum {
+		p.HideQuorum = true
+		if err := p.Save(); err != nil {
+			return fmt.Errorf("saving project with hide-quorum: %w", err)
 		}
 	}
 
