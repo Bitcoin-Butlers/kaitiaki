@@ -37,7 +37,8 @@ func GenerateIndexHTML(selfhosted bool) string {
       <a href="{{GITHUB_URL}}" target="_blank" data-i18n="footer_download">Download</a> &#xB7;
       <a href="docs.html" data-i18n="footer_docs">Documentation</a>
     </p>
-    <p class="version"><a href="{{GITHUB_REPO}}/blob/main/CHANGELOG.md" target="_blank" style="color: var(--text-muted); text-decoration: none;">{{VERSION}}</a> &#xB7; <a href="https://eljojo.net" target="_blank" style="color: var(--text-muted);" data-i18n-html="footer_author">made by <span style="text-decoration: underline;">jojo</span></a></p>`,
+    <p class="version"><a href="{{GITHUB_REPO}}/blob/main/CHANGELOG.md" target="_blank" style="color: var(--text-muted); text-decoration: none;">{{VERSION}}</a></p>
+    <p class="version">Built on <a href="https://github.com/eljojo/rememory" target="_blank" style="color: var(--text-muted);">Rememory</a> by eljojo (Apache-2.0)</p>`,
 		Scripts: `<script>document.querySelector('#nav-links-main a[href="about.html"]')?.remove();</script>
 
   <script>` + dataflowJS + `</script>` + i18nScript(I18nScriptOptions{
