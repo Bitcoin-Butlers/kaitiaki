@@ -89,8 +89,6 @@ declare const __SELFHOSTED__: boolean;
   interface Elements {
     wasmLoadingIndicator: HTMLElement | null;
     modeTabs: HTMLElement | null;
-    customLanguageToggle: HTMLElement | null;
-    customLanguageMode: HTMLInputElement | null;
     friendsHint: HTMLElement | null;
     sharesInput: HTMLElement | null;
     numShares: HTMLInputElement | null;
@@ -124,8 +122,6 @@ declare const __SELFHOSTED__: boolean;
   const elements: Elements = {
     wasmLoadingIndicator: document.getElementById('wasm-loading-indicator'),
     modeTabs: document.getElementById('mode-tabs'),
-    customLanguageToggle: document.getElementById('custom-language-toggle'),
-    customLanguageMode: document.getElementById('custom-language-mode') as HTMLInputElement | null,
     friendsHint: document.getElementById('friends-hint'),
     sharesInput: document.getElementById('shares-input'),
     numShares: document.getElementById('num-shares') as HTMLInputElement | null,
@@ -202,7 +198,6 @@ declare const __SELFHOSTED__: boolean;
   async function init(): Promise<void> {
     checkBuildAge();
     setupAnonymousMode();
-    setupCustomLanguage();
     setupImport();
     setupFriends();
     setupFiles();
@@ -256,12 +251,6 @@ declare const __SELFHOSTED__: boolean;
       if (elements.friendsHint) {
         elements.friendsHint.textContent = t('anonymous_hint');
       }
-      // Hide custom language toggle (not relevant for anonymous)
-      elements.customLanguageToggle?.classList.add('hidden');
-      if (elements.customLanguageMode?.checked) {
-        elements.customLanguageMode.checked = false;
-        elements.customLanguageMode.dispatchEvent(new Event('change'));
-      }
     } else {
       // Show friends list and hide shares input
       elements.friendsSection?.classList.remove('hidden');
@@ -270,23 +259,7 @@ declare const __SELFHOSTED__: boolean;
       if (elements.friendsHint) {
         elements.friendsHint.textContent = t('friends_hint');
       }
-      // Show custom language toggle
-      elements.customLanguageToggle?.classList.remove('hidden');
     }
-  }
-
-  function setupCustomLanguage(): void {
-    elements.customLanguageMode?.addEventListener('change', () => {
-      const container = document.querySelector('.container');
-      if (elements.customLanguageMode?.checked) {
-        container?.classList.add('custom-language-active');
-      } else {
-        container?.classList.remove('custom-language-active');
-        // Reset all friend languages to project default
-        state.friends.forEach(f => { f.language = ''; });
-        renderFriendsList();
-      }
-    });
   }
 
   async function waitForWasm(): Promise<void> {
@@ -384,9 +357,7 @@ declare const __SELFHOSTED__: boolean;
 
   function addFriend(name = '', contact = '', language = ''): void {
     const index = state.friends.length;
-    // When custom language is active, show a concrete language; otherwise empty (uses project default)
-    const effectiveLang = language || (elements.customLanguageMode?.checked ? (currentLang || 'en') : '');
-    state.friends.push({ name, contact, language: effectiveLang });
+    state.friends.push({ name, contact, language });
 
     const entry = document.createElement('div');
     entry.className = 'friend-entry';
@@ -394,14 +365,6 @@ declare const __SELFHOSTED__: boolean;
 
     const sampleName = getNextSampleName();
     const sampleContact = sampleName.toLowerCase() + '@example.com';
-
-    const langOptions = [
-      { code: 'en', label: 'English' },
-      { code: 'mi', label: 'Te Reo Māori' },
-    ];
-    const langOptionsHtml = langOptions.map(o =>
-      `<option value="${o.code}"${o.code === effectiveLang ? ' selected' : ''}>${escapeHtml(o.label)}</option>`
-    ).join('');
 
     entry.innerHTML = `
       <div class="friend-number">#${index + 1}</div>
@@ -412,10 +375,6 @@ declare const __SELFHOSTED__: boolean;
       <div class="field">
         <label>${t('contact_label')}</label>
         <input type="text" class="friend-contact" value="${escapeHtml(contact)}" placeholder="${sampleContact}">
-      </div>
-      <div class="field field-language">
-        <label>${t('language_label')}</label>
-        <select class="friend-language">${langOptionsHtml}</select>
       </div>
       <button type="button" class="remove-btn" title="${t('remove')}">&times;</button>
     `;
@@ -434,12 +393,6 @@ declare const __SELFHOSTED__: boolean;
     contactInput?.addEventListener('input', (e) => {
       const target = e.target as HTMLInputElement;
       state.friends[index].contact = target.value.trim();
-    });
-
-    const langSelect = entry.querySelector('.friend-language') as HTMLSelectElement;
-    langSelect?.addEventListener('change', (e) => {
-      const target = e.target as HTMLSelectElement;
-      state.friends[index].language = target.value;
     });
 
     const removeBtn = entry.querySelector('.remove-btn');

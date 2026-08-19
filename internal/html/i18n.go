@@ -25,7 +25,6 @@ func i18nScript(opts I18nScriptOptions) string {
 
 	script := i18nJSTemplate
 	script = strings.Replace(script, "{{TRANSLATIONS_JSON}}", translations.GetTranslationsJS(opts.Component), 1)
-	script = strings.Replace(script, "{{LANG_DETECT_ARRAY}}", translations.LangDetectJS(), 1)
 	script = strings.Replace(script, "{{EXTRA_DECLARATIONS}}", opts.ExtraDeclarations, 1)
 	script = strings.Replace(script, "{{SET_LANGUAGE_EXTRA}}", opts.SetLanguageExtra, 1)
 	script = strings.Replace(script, "{{DOM_CONTENT_LOADED_PRE}}", opts.DOMContentLoadedPre, 1)

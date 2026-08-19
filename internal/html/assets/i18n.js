@@ -13,11 +13,6 @@ function t(key, ...args) {
 
 function setLanguage(lang) {
   currentLang = lang;
-  localStorage.setItem('rememory-lang', lang);
-
-  // Update select
-  const sel = document.getElementById('lang-select');
-  if (sel) sel.value = lang;
 
   // Update all translatable elements
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -44,35 +39,11 @@ function setLanguage(lang) {
 
   {{SET_LANGUAGE_EXTRA}}
 
-  // Update docs links to point to the correct language variant.
-  // This runs after SET_LANGUAGE_EXTRA so that links injected via
-  // data-i18n-html (innerHTML) are also rewritten.
-  if (typeof docsLangs !== 'undefined') {
-    const docsFile = (lang !== 'en' && docsLangs.indexOf(lang) !== -1)
-      ? 'docs.' + lang + '.html' : 'docs.html';
-    document.querySelectorAll('a[href^="docs."]').forEach(a => {
-      const h = a.getAttribute('href');
-      a.setAttribute('href', h.replace(/docs(?:\.[a-z]{2})?\.html/, docsFile));
-    });
-  }
 }
 
-// Set initial language immediately
-(function() {
-  const saved = localStorage.getItem('rememory-lang');
-  const langs = {{LANG_DETECT_ARRAY}};
-  const detected = navigator.languages.find((l) => langs.includes(l))
-    || navigator.languages.map((l) => l.split('-')[0]).find((l) => langs.includes(l));
-  currentLang = saved || detected || 'en';
-})();
-
-// Initialize language select after DOM is ready
+// Apply strings after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   {{DOM_CONTENT_LOADED_PRE}}
 
   setLanguage(currentLang);
-
-  document.getElementById('lang-select')?.addEventListener('change', (e) => {
-    setLanguage(e.target.value);
-  });
 });

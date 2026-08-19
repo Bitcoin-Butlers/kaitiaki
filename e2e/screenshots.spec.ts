@@ -32,7 +32,7 @@ import {
 // Config
 // ---------------------------------------------------------------------------
 
-const LANGUAGES = ['en', 'mi'] as const;
+const LANGUAGES = ['en'] as const;
 type Lang = typeof LANGUAGES[number];
 
 const SCREENSHOTS_ROOT = path.resolve(__dirname, '..', 'docs', 'screenshots');
@@ -232,7 +232,6 @@ for (const lang of LANGUAGES) {
     test(`[${lang}] friends`, async ({ page }) => {
       const creation = new CreationPage(page, makerHtmlPath);
       await creation.open();
-      await creation.setLanguage(lang);
 
       // Set up 5 friends
       await creation.setFriend(0, 'Alice', 'alice@example.com');
@@ -255,7 +254,6 @@ for (const lang of LANGUAGES) {
     test(`[${lang}] files`, async ({ page }) => {
       const creation = new CreationPage(page, makerHtmlPath);
       await creation.open();
-      await creation.setLanguage(lang);
 
       // Minimal friend setup (required for file preview)
       await creation.setFriend(0, 'Alice', 'alice@example.com');
@@ -275,7 +273,6 @@ for (const lang of LANGUAGES) {
     test(`[${lang}] bundles`, async ({ page }) => {
       const creation = new CreationPage(page, makerHtmlPath);
       await creation.open();
-      await creation.setLanguage(lang);
 
       // Set up friends
       await creation.setFriend(0, 'Alice', 'alice@example.com');
@@ -302,36 +299,9 @@ for (const lang of LANGUAGES) {
       await snap(page, lang, 'bundles');
     });
 
-    test(`[${lang}] multilingual-language-dropdown`, async ({ page }) => {
-      const creation = new CreationPage(page, makerHtmlPath);
-      await creation.open();
-      await creation.setLanguage(lang);
-
-      // Set up friends
-      await creation.setFriend(0, 'Alice', 'alice@example.com');
-      await creation.setFriend(1, 'Bob', 'bob@example.com');
-      await creation.addFriend();
-      await creation.setFriend(2, 'Camila', 'camila@example.com');
-
-      // Enable custom language mode
-      await page.locator('#custom-language-mode').check();
-
-      // Set different languages for each friend
-      const friendLangs = ['en', 'mi'];
-      for (let i = 0; i < friendLangs.length; i++) {
-        await page.locator('.friend-entry').nth(i).locator('.friend-language').selectOption(friendLangs[i]);
-      }
-
-      // Frame: only Step 1 (friends with language dropdowns)
-      await frameCreationStep(page, [0]);
-
-      await snap(page, lang, 'multilingual-language-dropdown');
-    });
-
     test(`[${lang}] tlock-setup`, async ({ page }) => {
       const creation = new CreationPage(page, makerHtmlPath);
       await creation.open();
-      await creation.setLanguage(lang);
 
       // Switch to Advanced mode and enable time lock
       await page.locator('.mode-tab[data-mode="advanced"]').click();
@@ -356,7 +326,6 @@ for (const lang of LANGUAGES) {
       const recovery = new RecoveryPage(page, aliceDir);
 
       await recovery.open();
-      await page.locator('#lang-select').selectOption(lang);
 
       await recovery.expectShareCount(1);
       await recovery.expectManifestLoaded();
@@ -378,7 +347,6 @@ for (const lang of LANGUAGES) {
       const recovery = new RecoveryPage(page, aliceDir);
 
       await recovery.open();
-      await page.locator('#lang-select').selectOption(lang);
 
       await recovery.expectShareCount(1);
       await recovery.expectManifestLoaded();
@@ -400,7 +368,6 @@ for (const lang of LANGUAGES) {
     test(`[${lang}] tlock-waiting`, async ({ page }) => {
       const recovery = new RecoveryPage(page, path.dirname(standaloneRecoverHtml));
       await recovery.openFile(standaloneRecoverHtml);
-      await page.locator('#lang-select').selectOption(lang);
 
       // Simulate the tlock waiting state with tomorrow's date
       await page.evaluate((lang) => {
@@ -431,7 +398,6 @@ for (const lang of LANGUAGES) {
     test(`[${lang}] recovery-words-typing`, async ({ page }) => {
       const recovery = new RecoveryPage(page, path.dirname(standaloneRecoverHtml));
       await recovery.openFile(standaloneRecoverHtml);
-      await page.locator('#lang-select').selectOption(lang);
 
       // Open paste area
       await recovery.clickPasteButton();
@@ -455,7 +421,6 @@ for (const lang of LANGUAGES) {
       const aliceDir = extractBundle(langBundlesDirs[lang]!, 'Alice');
       const recovery = new RecoveryPage(page, path.dirname(standaloneRecoverHtml));
       await recovery.openFile(standaloneRecoverHtml);
-      await page.locator('#lang-select').selectOption(lang);
 
       // Submit full translated words
       const words = extractWordsFromReadme(findReadmeFile(aliceDir));

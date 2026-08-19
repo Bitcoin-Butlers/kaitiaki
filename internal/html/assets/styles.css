@@ -655,21 +655,6 @@ footer a:hover {
 }
 
 /* Language select - shared across pages */
-.lang-select {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.25rem 0.4rem;
-  border: 1px solid var(--border);
-  background: var(--paper-light);
-  border-radius: 4px;
-  font-size: 0.875rem;
-  color: var(--text);
-  cursor: pointer;
-}
-.lang-select:hover {
-  background: var(--sand);
-}
 
 /* Form styling - shared across pages */
 .form-group {
@@ -1193,10 +1178,6 @@ input, textarea, select {
   color: var(--sage);
   text-decoration: none;
 }
-.site-nav .lang-select {
-  position: static;
-  margin-left: auto;
-}
 
 /* Page intro section - shared across pages */
 .page-intro {
@@ -1279,8 +1260,5 @@ input, textarea, select {
   .site-nav {
     flex-direction: column;
     text-align: center;
-  }
-  .site-nav .lang-select {
-    margin-left: 0;
   }
 }

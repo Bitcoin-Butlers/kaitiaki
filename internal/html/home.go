@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/eljojo/rememory/internal/translations"
 )
 
 // GenerateHomeHTML creates the selfhosted home page with bundle data.
@@ -12,16 +11,12 @@ func GenerateHomeHTML(bundlesJSON string) string {
 	content := homeHTMLTemplate
 	content = strings.Replace(content, "{{BUNDLES_JSON}}", bundlesJSON, 1)
 
-	// Language selector for nav
-	navExtras := `<select class="lang-select" id="lang-select">
-        ` + translations.LangSelectOptions() + `
-      </select>`
+	navExtras := ""
 
 	// Build scripts: i18n first, then home logic
 	var scripts strings.Builder
 	scripts.WriteString(i18nScript(I18nScriptOptions{
 		Component:         "home",
-		ExtraDeclarations: `const docsLangs = ` + DocsLanguagesJS() + `;`,
 	}))
 	scripts.WriteString("\n  <script>" + strings.Replace(homeJS, "{{BUNDLES_JSON}}", bundlesJSON, 1) + "</script>")
 

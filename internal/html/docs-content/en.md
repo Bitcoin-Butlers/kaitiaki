@@ -524,33 +524,6 @@ Recovery works the same way, but without the contact list. Holders see generic l
 <strong>Important:</strong> Without a built-in contact list, make sure holders know how to reach each other when recovery is needed.
 </div>
 
-## Advanced: Multilingual Bundles {#multilingual}
-
-Each person can receive their bundle in their preferred language. Seven languages are supported: English, Spanish, German, French, Slovenian, Portuguese and Chinese (Taiwan).
-
-### How It Works
-
-- Each guardian entry has a **Bundle language** dropdown
-- "Default" uses the current UI language
-- Override per person to mix languages
-- recover.html opens in the selected language
-- Anyone can switch languages at any time
-
-<figure class="screenshot">
-<img src="screenshots/en/multilingual-language-dropdown.png" alt="Guardian entry showing the bundle language dropdown in the web UI">
-<figcaption>Each guardian has a language dropdown to set their bundle language</figcaption>
-</figure>
-
-<figure class="screenshot">
-<img src="screenshots/demo-pdf-es/page-1.png" alt="recover.pdf opened in Spanish">
-<figcaption>The recovery tool opens in the guardian's selected language</figcaption>
-</figure>
-
-<figure class="screenshot">
-<img src="screenshots/demo-pdf-es/page-2.png" alt="recover.pdf opened in Spanish">
-<figcaption>Word lists are translated too (both languages work)</figcaption>
-</figure>
-
 ## Advanced: Time-Delayed Recovery {#timelock}
 
 You can set a waiting period when creating bundles. Even if your guardians combine their pieces early, the files stay locked until the date you chose: 30 days, 6 months, or a specific date.

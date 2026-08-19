@@ -65,9 +65,6 @@ async function globalSetup() {
   const docsHtml = path.join(tmpDir, 'docs.html');
   execFileSync(bin, ['html', 'docs', '-o', docsHtml], { stdio: 'inherit' });
 
-  const docsMiHtml = path.join(tmpDir, 'docs.mi.html');
-  execFileSync(bin, ['html', 'docs', '--lang', 'mi', '-o', docsMiHtml], { stdio: 'inherit' });
-
   const indexHtml = path.join(tmpDir, 'index.html');
   execFileSync(bin, ['html', 'index', '-o', indexHtml], { stdio: 'inherit' });
 
@@ -100,7 +97,6 @@ async function globalSetup() {
     makerHtml,
     recoverHtml,
     docsHtml,
-    docsMiHtml,
     indexHtml,
     cryptoTestHtml,
   };

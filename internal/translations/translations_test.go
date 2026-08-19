@@ -191,7 +191,6 @@ func TestTWithParameterSubstitution(t *testing.T) {
 	}{
 		{"recover", "en", "need_more", []any{3}, "3 more pieces needed"},
 		{"recover", "en", "shares_of", []any{2, 5}, "2 of 5 pieces"},
-		{"recover", "mi", "need_more", []any{3}, "Kia 3 atu anō ngā wāhanga e hiahiatia ana"},
 		{"recover", "en", "loading", nil, "Loading..."},
 		{"maker", "en", "loading", nil, "Loading..."},
 	}
@@ -385,10 +384,10 @@ func TestReadmeTranslation(t *testing.T) {
 		t.Errorf("readme/en/title = %q, want %q", got, "REMEMORY RECOVERY BUNDLE")
 	}
 
-	// Test te reo Māori
+	// Unknown languages fall back to English
 	got = T("readme", "mi", "title")
-	if got != "PAIHERE WHAKAORA REMEMORY" {
-		t.Errorf("readme/mi/title = %q, want %q", got, "PAIHERE WHAKAORA REMEMORY")
+	if got != "REMEMORY RECOVERY BUNDLE" {
+		t.Errorf("readme/mi/title = %q, want %q", got, "REMEMORY RECOVERY BUNDLE")
 	}
 
 	// Test parameter substitution

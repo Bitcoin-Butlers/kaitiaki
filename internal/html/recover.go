@@ -118,10 +118,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
 	headMeta := `<meta name="generator" content="Kaitiaki {{VERSION}}">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-{{CSP_NONCE}}' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src blob: data:; connect-src ` + cspConnectSrc + `; form-action 'none';">`
 
-	// Language selector for nav
-	navExtras := `<select class="lang-select" id="lang-select" aria-label="Language">
-        ` + translations.LangSelectOptions() + `
-      </select>`
+	navExtras := ""
 
 	// Embed selfhosted config (or null)
 	var selfhostedConfigJSON string
@@ -158,7 +155,6 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
 	scripts.WriteString(i18nScript(I18nScriptOptions{
 		Component:           "recover",
 		UseNonce:            true,
-		ExtraDeclarations:   `const docsLangs = ` + DocsLanguagesJS() + `;`,
 		DOMContentLoadedPre: i18nRecoverInitJS,
 	}))
 

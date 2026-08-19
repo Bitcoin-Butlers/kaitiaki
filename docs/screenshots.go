@@ -6,5 +6,5 @@ import "embed"
 // Only English and language-neutral screenshots are included to keep the
 // binary small. The server rewrites other language paths to English.
 //
-//go:embed screenshots/en screenshots/demo-pdf screenshots/demo-pdf-es screenshots/*.png
+//go:embed screenshots/en screenshots/demo-pdf screenshots/*.png
 var ScreenshotsFS embed.FS
