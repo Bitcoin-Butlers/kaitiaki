@@ -109,6 +109,7 @@ func TestStaticHTMLNoUnexpectedURLs(t *testing.T) {
 
 		// project URLs
 		"https://github.com/eljojo/rememory",
+		"https://github.com/Bitcoin-Butlers/kaitiaki", // maker security intro repo link
 		"https://eljojo.github.io/rememory",
 		"https://eljojo.net", // author homepage
 

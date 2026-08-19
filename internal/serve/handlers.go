@@ -41,7 +41,7 @@ func (s *Server) handleCreate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	createWASM := html.GetCreateWASMBytes()
 	if len(createWASM) == 0 {
-		http.Error(w, "create.wasm not embedded — rebuild with 'make build'", http.StatusInternalServerError)
+		http.Error(w, "create.wasm not embedded. Rebuild with 'make build'", http.StatusInternalServerError)
 		return
 	}
 

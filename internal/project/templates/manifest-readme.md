@@ -1,13 +1,13 @@
-# Recovery Manifest — {{.ProjectName}}
+# Recovery Manifest: {{.ProjectName}}
 
-This folder contains your recovery information. Fill in the sections below with your critical credentials and information that your trusted friends will need to help you or your family regain access to your digital life.
+This folder contains your recovery information. Fill in the sections below with your critical credentials and information that your guardians will need to help you or your family regain access to your digital life.
 
-**Friends who will hold shares:** {{range $i, $f := .Friends}}{{if $i}}, {{end}}{{$f.Name}}{{end}}
+**Guardians who will hold shares:** {{range $i, $f := .Friends}}{{if $i}}, {{end}}{{$f.Name}}{{end}}
 **Shares needed to recover:** {{.Threshold}} of {{len .Friends}}
 
 ---
 
-## Tier 1 — The Skeleton Key (unlocks everything else)
+## Tier 1: The Skeleton Key (unlocks everything else)
 
 ### Password Manager
 - **Provider:** (1Password / Bitwarden / etc.)
@@ -29,7 +29,7 @@ This folder contains your recovery information. Fill in the sections below with 
 
 ---
 
-## Tier 2 — Financial & Critical Accounts
+## Tier 2: Financial & Critical Accounts
 
 ### Bank Accounts
 | Institution | Login | 2FA Method | Notes |
@@ -58,7 +58,7 @@ This folder contains your recovery information. Fill in the sections below with 
 
 ---
 
-## Tier 3 — The Map (where stuff lives)
+## Tier 3: The Map (where stuff lives)
 
 ### What is backed up where
 - **Photos:**
@@ -85,7 +85,7 @@ Describe step-by-step how to regain access to critical systems:
 
 ---
 
-## Tier 4 — Personal Wishes (optional)
+## Tier 4: Personal Wishes (optional)
 
 ### Social media accounts
 What should happen to your accounts?
@@ -103,10 +103,10 @@ Any messages you want to leave.
 - Client/patient confidential data
 - Anything that should go through a lawyer instead
 
-**Remember:** This manifest will be encrypted and split among your trusted friends. Only add information you would trust them with in an emergency.
+**Remember:** This manifest will be encrypted and split among your guardians. Only add information you would trust them with in an emergency.
 
 ---
 
 ## Need help figuring out what to include?
 
-Check out [potatoqualitee/eol-dr](https://github.com/potatoqualitee/eol-dr) — a comprehensive end-of-life [checklist](https://github.com/potatoqualitee/eol-dr/blob/main/checklist.md) covering accounts, finances, subscriptions, and devices. It's a great starting point for thinking through what your loved ones might need.
+Check out [potatoqualitee/eol-dr](https://github.com/potatoqualitee/eol-dr), a comprehensive end-of-life [checklist](https://github.com/potatoqualitee/eol-dr/blob/main/checklist.md) covering accounts, finances, subscriptions, and devices. It's a great starting point for thinking through what your loved ones might need.

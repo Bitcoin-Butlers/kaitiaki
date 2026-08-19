@@ -15,7 +15,7 @@
   "how_title": "运作原理",
   "how_subtitle": "你选择<strong>信任谁</strong>以及<strong>多少人必须同意</strong>。你的文件会被加密，密钥被分成多个片段，每个人保管一份。当足够的人将片段集合起来，文件就会解锁。",
   "how_caption": "五位中的任意三位就能恢复文件",
-  "how_fallback": "<strong>你的文件</strong> → <strong>加密</strong> → <strong>密钥分成 5 个片段</strong> → <strong>分给朋友</strong><br>↓<br><strong>任意 3 位朋友</strong> → <strong>合并片段</strong> → <strong>解锁</strong> → <strong>文件已恢复</strong>",
+  "how_fallback": "<strong>你的文件</strong> → <strong>加密</strong> → <strong>密钥分成 5 个片段</strong> → <strong>分给守护人</strong><br>↓<br><strong>任意 3 位守护人</strong> → <strong>合并片段</strong> → <strong>解锁</strong> → <strong>文件已恢复</strong>",
   "bundles_title": "每个人会收到什么",
   "bundles_desc": "每个人会收到一个<strong>独立的恢复包</strong>——一个 ZIP 文件，里面有一个恢复工具，可以在<strong>任何浏览器离线运行，不需要安装任何东西</strong>。即使这个项目消失了，恢复依然可以进行。",
   "bundles_contacts": "每个恢复包都包含其他相关人员的<strong>联系方式</strong>，让他们能够<strong>在没有你的情况下互相协调</strong>。",

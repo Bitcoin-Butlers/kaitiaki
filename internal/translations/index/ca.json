@@ -15,7 +15,7 @@
   "how_title": "Com funciona",
   "how_subtitle": "Tu tries <strong>en qui confiar</strong> i <strong>quants han d'estar d'acord</strong>. Els teus arxius s'encripten, la clau es divideix en parts, i cada persona en guarda una. Quan n'hi ha prou, els arxius es desbloquegen.",
   "how_caption": "Qualsevol tres de cinc poden recuperar els arxius",
-  "how_fallback": "<strong>El teu arxiu</strong> → <strong>Encriptar</strong> → <strong>Dividir clau en 5 parts</strong> → <strong>Distribuir als amics</strong><br>↓<br><strong>Qualsevol 3 amics</strong> → <strong>Combinar parts</strong> → <strong>Desbloquejar</strong> → <strong>Arxiu recuperat</strong>",
+  "how_fallback": "<strong>El teu arxiu</strong> → <strong>Encriptar</strong> → <strong>Dividir clau en 5 parts</strong> → <strong>Distribuir als guardians</strong><br>↓<br><strong>Qualsevol 3 guardians</strong> → <strong>Combinar parts</strong> → <strong>Desbloquejar</strong> → <strong>Arxiu recuperat</strong>",
   "bundles_title": "Què rep cada persona",
   "bundles_desc": "Cada persona rep un <strong>kit autònom</strong> — un arxiu ZIP amb una eina de recuperació que funciona en <strong>qualsevol navegador, sense connexió i sense instal·lació</strong>. Si aquest projecte desapareix, la recuperació continua funcionant.",
   "bundles_contacts": "Cada kit inclou les <strong>dades de contacte</strong> de les altres persones involucrades, perquè puguin <strong>coordinar-se sense tu</strong>.",

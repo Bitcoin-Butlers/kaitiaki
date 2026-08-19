@@ -66,7 +66,7 @@ func runServe(cmd *cobra.Command, args []string) error {
 
 	createWASM := html.GetCreateWASMBytes()
 	if len(createWASM) == 0 {
-		return fmt.Errorf("create.wasm not embedded — rebuild with 'make build'")
+		return fmt.Errorf("create.wasm not embedded. Rebuild with 'make build'")
 	}
 
 	srv, err := serve.New(serve.Config{

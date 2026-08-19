@@ -14,8 +14,8 @@ var buildDate = ""
 
 var rootCmd = &cobra.Command{
 	Use:   "kaitiaki",
-	Short: "🧠 A digital safe with multiple keys, held by people you trust",
-	Long: `🧠 Kaitiaki is a digital safe with multiple keys. It encrypts your files with age,
+	Short: "A digital safe with multiple keys, held by people you trust",
+	Long: `Kaitiaki is a digital safe with multiple keys. It encrypts your files with age,
 splits the key using Shamir's Secret Sharing, and creates recovery bundles for each person.
 
 Create a project:    kaitiaki init my-recovery

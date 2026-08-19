@@ -2,7 +2,7 @@
   "title": "REMEMORY 恢复包",
   "for": "持有人：{0}",
   "warning_title": "你持有的恢复密钥片段",
-  "warning_message_friends": "这份密钥片段已托付给你。请妥善保管——当需要恢复时，你将把它与下列朋友持有的片段合并使用。",
+  "warning_message_friends": "这份密钥片段已托付给你。请妥善保管——当需要恢复时，你将把它与下列守护人持有的片段合并使用。",
   "warning_message_shares": "这份密钥片段已托付给你。请妥善保管——当需要恢复时，你将把它与其他片段合并使用。",
   "what_is_this": "这是什么？",
   "what_bundle_for": "这个恢复包让你能协助解锁「{0}」的文件。",

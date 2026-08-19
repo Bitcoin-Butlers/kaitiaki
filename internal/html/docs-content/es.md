@@ -28,7 +28,7 @@ Recuperar es abrir un archivo en el navegador.\* Sin servidores, sin necesidad d
 
 ## Por qué Kaitiaki {#why-rememory}
 
-Probablemente tienes secretos digitales que importan: códigos de recuperación de tu gestor de contraseñas, semillas de criptomonedas, documentos importantes, instrucciones para tus seres queridos. ¿Qué pasa si un día no estás disponible?
+Probablemente tienes secretos digitales que importan: códigos de recuperación de tu gestor de contraseñas, documentos importantes, instrucciones para tus seres queridos. ¿Qué pasa si un día no estás disponible?
 
 Piénsalo como una caja fuerte que necesita dos llaves para abrirse — ninguna persona tiene suficiente para entrar sola.
 
@@ -42,7 +42,7 @@ Los enfoques tradicionales tienen debilidades:
 Kaitiaki toma un camino diferente:
 
 - **Sin un único punto de fallo** — requiere la cooperación de varias personas
-- **Sin confiar en una sola persona** — ni siquiera tu amigo más cercano puede acceder solo a tus secretos
+- **Sin confiar en una sola persona** — ni siquiera tu guardián más cercano puede acceder solo a tus secretos
 - **Sin conexión y autónomo** — la recuperación funciona sin internet ni servidores\*
 - **Diseñado para cualquiera** — instrucciones claras, no acertijos criptográficos
 
@@ -50,12 +50,12 @@ Kaitiaki toma un camino diferente:
 
 Tres pasos. Todo ocurre en tu navegador — tus archivos nunca salen de tu dispositivo. Abre el [creador de kits](maker.html) para comenzar.
 
-### Paso 1: Agregar amigos {#step1}
+### Paso 1: Agregar guardianes {#step1}
 
 Agrega a las personas que guardarán partes de tu clave de recuperación. Para cada una, indica un nombre y opcionalmente información de contacto.
 
 <figure class="screenshot">
-<img src="screenshots/es/friends.png" alt="Agregando amigos en el Paso 1">
+<img src="screenshots/es/friends.png" alt="Agregando guardianes en el Paso 1">
 <figcaption>Cada persona aquí guardará una parte de la clave</figcaption>
 </figure>
 
@@ -83,11 +83,14 @@ Arrastra y suelta los archivos o la carpeta que quieres proteger.
 **Buenos candidatos:**
 
 - Códigos de recuperación de gestor de contraseñas
-- Semillas/claves de criptomonedas
 - Credenciales de cuentas importantes
 - Instrucciones para seres queridos
 - Ubicaciones de documentos legales
 - Combinaciones de cajas fuertes
+
+<div class="warning">
+<strong>No para semillas de Bitcoin ni claves privadas.</strong> Nunca pongas palabras semilla ni claves privadas en un kit. Eso pertenece a un respaldo en acero o a una división codex32, guardado sin conexión. Usa Kaitiaki para las instrucciones alrededor, como dónde están las placas de acero y a quién llamar.
+</div>
 
 <div class="warning">
 <strong>Nota:</strong> Evita archivos que cambien con frecuencia. Esto está diseñado para secretos que configuras una vez y dejas.
@@ -104,14 +107,13 @@ Haz clic en "Generar kits" para cifrar tus archivos y crear un kit para cada per
 
 Cada kit incluye la herramienta de recuperación completa. Funciona incluso si este sitio web desaparece.
 
-### Distribuir a los amigos {#distributing}
+### Distribuir a los guardianes {#distributing}
 
-Envía a cada persona su kit como prefieras:
+Entrega a cada guardián su kit por el canal más privado que puedas, en este orden de preferencia:
 
-- **Correo electrónico:** Adjunta el archivo ZIP
-- **Almacenamiento en la nube:** Comparte por Dropbox, Google Drive, etc.
-- **Memoria USB:** Entrega en mano
-- **Mensajería cifrada:** Signal, WhatsApp, etc.
+1. **En persona:** Una memoria USB o un PDF impreso, entregado en mano. La opción más privada.
+1. **Mensajería cifrada:** Signal u otro mensajero cifrado de extremo a extremo.
+1. **Correo simple o nube:** Desaconsejado para contenido sensible. El proveedor guarda una copia y tu cuenta se convierte en un punto de acumulación.
 
 Si envías los kits por correo o mensajería, borra los mensajes de tu carpeta de enviados cuando cada persona confirme que los recibió. De lo contrario, tu cuenta acabará guardando una copia de cada parte — lo que anula el sentido de haberlas separado.
 
@@ -133,7 +135,7 @@ Si estás aquí porque alguien que te importa ya no está disponible — respira
 
 Si no tienes un kit todavía, puedes abrir la [herramienta de recuperación](recover.html) directamente — agregarás las piezas a mano a medida que las reúnas.
 
-### Qué reciben los amigos {#bundle-contents}
+### Qué reciben los guardianes {#bundle-contents}
 
 Cada kit contiene:
 
@@ -157,7 +159,7 @@ Cada kit contiene:
 </div>
 
 <p style="margin-top: 1rem;">
-Cada kit es personalizado — la parte de tu amigo ya está cargada, y una lista de contactos muestra quién más tiene partes. Cuando los datos cifrados son lo suficientemente pequeños, también se incluyen dentro del kit.
+Cada kit es personalizado — la parte de tu guardián ya está cargada, y una lista de contactos muestra quién más tiene partes. Cuando los datos cifrados son lo suficientemente pequeños, también se incluyen dentro del kit.
 </p>
 
 ### Opción A: Tengo el ZIP del kit {#recovery-bundle}
@@ -183,16 +185,16 @@ El camino más sencillo. Si tienes el ZIP del kit (o los archivos que contiene):
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Coordina con otros amigos</h4>
-<p>La herramienta muestra una lista de contactos con los nombres de otros amigos y cómo comunicarte con ellos. Pídeles que envíen su <code>README.txt</code>.</p>
+<h4>Coordina con otros guardianes</h4>
+<p>La herramienta muestra una lista de contactos con los nombres de otros guardianes y cómo comunicarte con ellos. Pídeles que envíen su <code>README.txt</code>.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Agrega las partes de otros amigos</h4>
-<p>Por cada parte: arrastra el <code>README.txt</code> de tu amigo a la página, pega el texto, o escanea el código QR de su PDF. Una marca aparece conforme se agrega cada parte.</p>
+<h4>Agrega las partes de otros guardianes</h4>
+<p>Por cada parte: arrastra el <code>README.txt</code> de tu guardián a la página, pega el texto, o escanea el código QR de su PDF. Una marca aparece conforme se agrega cada parte.</p>
 </div>
 </div>
 
@@ -205,7 +207,7 @@ El camino más sencillo. Si tienes el ZIP del kit (o los archivos que contiene):
 </div>
 
 <div class="tip">
-<strong>Consejo:</strong> Si un amigo te envía su kit <code>.zip</code> completo, arrástralo a la página — tanto la parte como el archivo cifrado se importan a la vez.
+<strong>Consejo:</strong> Si un guardián te envía su kit <code>.zip</code> completo, arrástralo a la página — tanto la parte como el archivo cifrado se importan a la vez.
 </div>
 
 <figure class="screenshot">
@@ -226,7 +228,7 @@ Cada PDF impreso incluye tu parte como una lista de palabras numeradas. Escríbe
 <div class="step-number">1</div>
 <div class="step-content">
 <h4>Abre la herramienta de recuperación</h4>
-<p>Visita la URL impresa en el PDF, o abre <code>recover.html</code> del kit de cualquier amigo.</p>
+<p>Visita la URL impresa en el PDF, o abre <code>recover.html</code> del kit de cualquier guardián.</p>
 </div>
 </div>
 
@@ -252,15 +254,15 @@ Cada PDF impreso incluye tu parte como una lista de palabras numeradas. Escríbe
 <div class="step-number">3</div>
 <div class="step-content">
 <h4>Carga el archivo cifrado</h4>
-<p>Puede que necesites el archivo <code>MANIFEST.age</code> — arrástralo a la página o haz clic para buscarlo. Si no lo tienes, cualquier amigo puede enviarte el suyo. Todos los kits tienen la misma copia.</p>
+<p>Puede que necesites el archivo <code>MANIFEST.age</code> — arrástralo a la página o haz clic para buscarlo. Si no lo tienes, cualquier guardián puede enviarte el suyo. Todos los kits tienen la misma copia.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Reúne las partes de otros amigos</h4>
-<p>Contacta a otros amigos y pídeles sus partes. Pueden enviar su <code>README.txt</code>, leer sus palabras por teléfono, o puedes escanear su código QR.</p>
+<h4>Reúne las partes de otros guardianes</h4>
+<p>Contacta a otros guardianes y pídeles sus partes. Pueden enviar su <code>README.txt</code>, leer sus palabras por teléfono, o puedes escanear su código QR.</p>
 </div>
 </div>
 
@@ -273,7 +275,7 @@ Cada PDF impreso incluye tu parte como una lista de palabras numeradas. Escríbe
 </div>
 
 <div class="tip">
-<strong>Consejo:</strong> Las palabras son la forma más fácil de compartir por teléfono. Si un amigo no puede enviar su parte digitalmente, puede leer las palabras en voz alta y tú las escribes.
+<strong>Consejo:</strong> Las palabras son la forma más fácil de compartir por teléfono. Si un guardián no puede enviar su parte digitalmente, puede leer las palabras en voz alta y tú las escribes.
 </div>
 
 ### Opción C: Tengo un PDF impreso con código QR {#recovery-pdf}
@@ -302,7 +304,7 @@ Si tu dispositivo tiene cámara, escanea el código QR del PDF para importar tu 
 <div class="step-number">2</div>
 <div class="step-content">
 <h4>Carga el archivo cifrado</h4>
-<p>Puede que necesites el archivo <code>MANIFEST.age</code> — arrástralo a la página o haz clic para buscarlo. Si no lo tienes, cualquier amigo puede enviarte el suyo. Todos los kits tienen la misma copia.</p>
+<p>Puede que necesites el archivo <code>MANIFEST.age</code> — arrástralo a la página o haz clic para buscarlo. Si no lo tienes, cualquier guardián puede enviarte el suyo. Todos los kits tienen la misma copia.</p>
 </div>
 </div>
 
@@ -314,8 +316,8 @@ Si tu dispositivo tiene cámara, escanea el código QR del PDF para importar tu 
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Reúne las partes de otros amigos</h4>
-<p>Contacta a otros amigos y pídeles sus partes. Pueden enviar su <code>README.txt</code>, o puedes escanear su código QR.</p>
+<h4>Reúne las partes de otros guardianes</h4>
+<p>Contacta a otros guardianes y pídeles sus partes. Pueden enviar su <code>README.txt</code>, o puedes escanear su código QR.</p>
 </div>
 </div>
 
@@ -332,13 +334,13 @@ Si tu dispositivo tiene cámara, escanea el código QR del PDF para importar tu 
 <ul>
 <li>Funciona completamente <span title="No necesita internet. Los archivos con bloqueo por fecha necesitan una conexión para verificar la fecha de apertura.">sin conexión*</span></li>
 <li>Nada sale del navegador</li>
-<li>Los amigos pueden estar en cualquier lugar — solo necesitan enviar sus archivos README.txt</li>
+<li>Los guardianes pueden estar en cualquier lugar — solo necesitan enviar sus archivos README.txt</li>
 </ul>
 </div>
 
 ## Buenas prácticas {#best-practices}
 
-### Elegir amigos
+### Elegir guardianes
 
 - **Permanencia:** Personas con quienes puedas contactarte en 5 a 10 años
 - **Distribución geográfica:** Que no estén todos en el mismo lugar
@@ -359,15 +361,15 @@ Los kits son pequeños (menos de 10 MB) y están diseñados para guardarse en lu
 - **El correo electrónico** es una opción sorprendentemente buena. La mayoría de las personas mantiene la misma dirección de correo durante décadas, y los kits son lo suficientemente pequeños para adjuntarlos. Muchos proveedores conservan los mensajes indefinidamente.
 - **El almacenamiento en la nube** (Google Drive, Dropbox, iCloud) funciona bien como copia secundaria.
 - **Las memorias USB** pueden servir, pero ten en cuenta que los conectores cambian con el tiempo (el USB-A ya está dando paso al USB-C) y la memoria flash puede degradarse si pasa años sin energía. No es ideal como única copia.
-- **El papel** es la opción más duradera. Imprimir `README.pdf` le da a tus amigos una copia que no necesita adaptadores, electricidad ni ningún dispositivo funcional.
+- **El papel** es la opción más duradera. Imprimir `README.pdf` le da a tus guardianes una copia que no necesita adaptadores, electricidad ni ningún dispositivo funcional.
 
 El mejor enfoque es la redundancia — correo más papel, o nube más papel. Más de una copia, en más de una forma.
 
 ### Mantener los kits actualizados {#keeping-current}
 
-Pon un recordatorio anual para hablar con tus amigos. Confirma que aún tienen sus kits y actualiza los datos de contacto si algo cambió.
+Pon un recordatorio anual para hablar con tus guardianes. Confirma que aún tienen sus kits y actualiza los datos de contacto si algo cambió.
 
-Cuando tus archivos cambien, crea nuevos kits y envíalos. Los kits antiguos no abrirán el nuevo archivo, así que no hay riesgo en dejarlos por ahí — pero pide a tus amigos que reemplacen los suyos para mantener el orden.
+Cuando tus archivos cambien, crea nuevos kits y envíalos. Los kits antiguos no abrirán el nuevo archivo, así que no hay riesgo en dejarlos por ahí — pero pide a tus guardianes que reemplacen los suyos para mantener el orden.
 
 Cuando los contactos cambien — alguien se muda, cambia su número de teléfono, o quieres agregar o quitar a alguien — lo mismo: nuevos kits, pide que borren los anteriores.
 
@@ -379,11 +381,11 @@ Piénsalo como actualizar tus contactos de emergencia. Breve, periódico, vale l
 
 Nadie prueba su plan de respaldo. Un simulacro de recuperación cambia eso — y resulta que es básicamente un escape room.
 
-Crea un kit de prueba con un secreto inofensivo (una foto, un mensaje, una receta). Reparte las partes a tus amigos. Pon un [bloqueo por fecha](#timelock) si quieres una cuenta regresiva real. Después aléjate y déjalos resolver: coordinarse, combinar partes, desbloquear los archivos — sin tu ayuda.
+Crea un kit de prueba con un secreto inofensivo (una foto, un mensaje, una receta). Reparte las partes a tus guardianes. Pon un [bloqueo por fecha](#timelock) si quieres una cuenta regresiva real. Después aléjate y déjalos resolver: coordinarse, combinar partes, desbloquear los archivos — sin tu ayuda.
 
 Lo que aprendes:
 
-- ¿Pueden tus amigos encontrar sus kits cuando los necesitan?
+- ¿Pueden tus guardianes encontrar sus kits cuando los necesitan?
 - ¿Entienden las instrucciones, o se quedan atascados?
 - ¿Pueden contactarse entre ellos sin que tú coordines?
 
@@ -395,21 +397,21 @@ Una vez que una parte ha sido distribuida, no se puede revocar. Esto es por dise
 
 Si necesitas cambiar quién tiene partes:
 
-1. **Crea nuevos kits** con un nuevo grupo de amigos y una clave nueva
-1. **Envía los nuevos kits** a los amigos en quienes sigues confiando
-1. **Pide a cada amigo que borre su kit anterior** y lo reemplace con el nuevo
+1. **Crea nuevos kits** con un nuevo grupo de guardianes y una clave nueva
+1. **Envía los nuevos kits** a los guardianes en quienes sigues confiando
+1. **Pide a cada guardián que borre su kit anterior** y lo reemplace con el nuevo
 
 <div class="warning">
 <strong>Importante:</strong> Las partes previas siguen funcionando con los archivos que protegían. Cuando envíes un nuevo kit, sé claro: <strong>borra el anterior</strong>, quédate solo con el nuevo. Sin historial de versiones, sin "por si acaso."
 </div>
 
-Lo mismo aplica cuando los secretos cambian. Nuevos kits significan una clave nueva y partes nuevas. Las partes anteriores no abrirán el nuevo archivo, pero siguen funcionando con el anterior. Asegúrate de que tus amigos no conserven copias viejas.
+Lo mismo aplica cuando los secretos cambian. Nuevos kits significan una clave nueva y partes nuevas. Las partes anteriores no abrirán el nuevo archivo, pero siguen funcionando con el anterior. Asegúrate de que tus guardianes no conserven copias viejas.
 
 ### Sobre project.yml {#project-file}
 
 Cuando creas kits, tu proyecto se guarda en un archivo `project.yml`. Este archivo almacena:
 
-- Nombres e información de contacto de los amigos
+- Nombres e información de contacto de los guardianes
 - El umbral que elegiste (por ejemplo, 3 de 5)
 - Un hash de verificación para comprobar si los kits coinciden
 - Sumas de verificación de las partes para confirmar la integridad de los kits
@@ -438,16 +440,16 @@ Cada kit incluye sumas de verificación para que la herramienta de recuperación
 
 <div class="bundle-contents">
 <div class="file">
-<span class="file-name">Un amigo pierde su kit</span>
-<span class="file-desc">No hay problema, siempre que suficientes amigos conserven el suyo. Para eso fijas el umbral por debajo del total.</span>
+<span class="file-name">Un guardián pierde su kit</span>
+<span class="file-desc">No hay problema, siempre que suficientes guardianes conserven el suyo. Para eso fijas el umbral por debajo del total.</span>
 </div>
 <div class="file">
-<span class="file-name">Un amigo expone su parte públicamente</span>
+<span class="file-name">Un guardián expone su parte públicamente</span>
 <span class="file-desc">Una sola parte es inútil sin las demás. Alguien aún necesitaría el umbral menos una parte adicional para hacer algo.</span>
 </div>
 <div class="file">
-<span class="file-name">Algunos amigos no están disponibles</span>
-<span class="file-desc">Para eso fijas el umbral por debajo del total de amigos. Si elegiste 3 de 5, cualquier tres sirven.</span>
+<span class="file-name">Algunos guardianes no están disponibles</span>
+<span class="file-desc">Para eso fijas el umbral por debajo del total de guardianes. Si elegiste 3 de 5, cualquier tres sirven.</span>
 </div>
 <div class="file">
 <span class="file-name">Kaitiaki desaparece en 10 años</span>
@@ -459,7 +461,7 @@ Cada kit incluye sumas de verificación para que la herramienta de recuperación
 </div>
 <div class="file">
 <span class="file-name">Olvidas cómo funciona esto</span>
-<span class="file-desc">El README.txt de cada kit lo explica todo. Tus amigos no necesitan recordar nada — todo está escrito para ellos.</span>
+<span class="file-desc">El README.txt de cada kit lo explica todo. Tus guardianes no necesitan recordar nada — todo está escrito para ellos.</span>
 </div>
 </div>
 
@@ -472,8 +474,8 @@ Para una evaluación técnica detallada, consulta la [autoevaluación de segurid
 Kaitiaki no es la primera herramienta en usar Shamir's Secret Sharing. Hay muchas otras, desde herramientas de línea de comandos hasta aplicaciones web. Esto es lo que distingue a Kaitiaki:
 
 - **Maneja archivos, no solo texto.** La mayoría de las herramientas Shamir solo dividen contraseñas o texto corto. Kaitiaki cifra archivos y carpetas enteras.
-- **Herramienta de recuperación autónoma.** Cada amigo recibe `recover.html` — una herramienta completa que funciona en cualquier navegador, sin conexión.\* Sin instalación, sin línea de comandos.
-- **Datos de contacto incluidos.** Cada kit incluye una lista de los otros amigos y cómo contactarlos, para que la coordinación no dependa de que tú estés disponible.
+- **Herramienta de recuperación autónoma.** Cada guardián recibe `recover.html` — una herramienta completa que funciona en cualquier navegador, sin conexión.\* Sin instalación, sin línea de comandos.
+- **Datos de contacto incluidos.** Cada kit incluye una lista de los otros guardianes y cómo contactarlos, para que la coordinación no dependa de que tú estés disponible.
 - **Sin dependencia de servidores.** Todo se ejecuta localmente. No hay servicio al que registrarse, ni cuenta que mantener, ni nada que deba permanecer en línea.
 
 Para una comparación detallada con otras herramientas, consulta la [tabla comparativa completa en GitHub]({{GITHUB_REPO}}#other-similar-tools).
@@ -508,9 +510,9 @@ Es útil cuando:
 
 ### Cómo activarlo
 
-En el [creador de kits](maker.html), activa el interruptor **Anónimo** en la sección de Amigos:
+En el [creador de kits](maker.html), activa el interruptor **Anónimo** en la sección de Guardianes:
 
-- La lista de amigos se reemplaza por un conteo de partes
+- La lista de guardianes se reemplaza por un conteo de partes
 - Configura cuántas partes y el umbral
 - Los kits se nombran `bundle-share-1.zip`, `bundle-share-2.zip`, etc.
 
@@ -528,20 +530,20 @@ Cada persona puede recibir su kit en su idioma preferido. Está disponible en si
 
 ### Cómo funciona
 
-- Cada entrada de amigo tiene un menú desplegable de **Idioma del kit**
+- Cada entrada de guardián tiene un menú desplegable de **Idioma del kit**
 - "Por defecto" usa el idioma actual de la interfaz
 - Se puede personalizar por persona para mezclar idiomas
 - recover.html se abre en el idioma seleccionado
 - Cualquiera puede cambiar de idioma en cualquier momento
 
 <figure class="screenshot">
-<img src="screenshots/es/multilingual-language-dropdown.png" alt="Entrada de amigo mostrando el menú desplegable de idioma del kit en la interfaz web">
-<figcaption>Cada amigo tiene un menú desplegable de idioma para configurar el idioma de su kit</figcaption>
+<img src="screenshots/es/multilingual-language-dropdown.png" alt="Entrada de guardián mostrando el menú desplegable de idioma del kit en la interfaz web">
+<figcaption>Cada guardián tiene un menú desplegable de idioma para configurar el idioma de su kit</figcaption>
 </figure>
 
 <figure class="screenshot">
 <img src="screenshots/demo-pdf/page-1.png" alt="README.pdf abierto en inglés">
-<figcaption>La herramienta de recuperación se abre en el idioma seleccionado del amigo</figcaption>
+<figcaption>La herramienta de recuperación se abre en el idioma seleccionado del guardián</figcaption>
 </figure>
 
 <figure class="screenshot">
@@ -551,7 +553,7 @@ Cada persona puede recibir su kit en su idioma preferido. Está disponible en si
 
 ## Avanzado: Bloqueo por fecha {#timelock}
 
-Puedes establecer un periodo de espera al crear los kits. Incluso si tus amigos combinan sus partes antes de tiempo, los archivos permanecen bloqueados hasta la fecha que elegiste — 30 días, 6 meses, una fecha específica.
+Puedes establecer un periodo de espera al crear los kits. Incluso si tus guardianes combinan sus partes antes de tiempo, los archivos permanecen bloqueados hasta la fecha que elegiste — 30 días, 6 meses, una fecha específica.
 
 ### Cómo activarlo
 
