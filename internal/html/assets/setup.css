@@ -45,7 +45,7 @@
     .setup-card input[type="password"]:focus {
       outline: none;
       border-color: var(--sage);
-      box-shadow: 0 0 0 2px rgba(85, 115, 90, 0.2);
+      box-shadow: 0 0 0 2px rgba(251, 220, 123, 0.2);
     }
     .setup-card button {
       width: 100%;

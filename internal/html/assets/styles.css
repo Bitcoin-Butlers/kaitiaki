@@ -1,20 +1,30 @@
-/* Kaitiaki palette — Bitcoin Butlers dark/gold (matches bitcoinbutlers.com tools pages) */
+/* Kaitiaki palette — Bitcoin Butlers v2.0 design system (gold & neutral darks).
+   Source of truth: Website-frontend/src/app/globals.css brand tokens.
+   Font note: BB uses Geist Sans/Mono via next/font; these static pages must stay
+   self-contained with zero external requests, so we use the same fallback stack
+   BB declares (-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif). */
 :root {
-  --paper: #0a0a0a;
-  --paper-light: #141414;
-  --text: #f5f2ea;
-  --text-secondary: #b0a99a;
-  --text-muted: #8a8478;
-  --sage: #FBDC7B;
-  --sage-dark: #FDA24A;
-  --sage-light: #2a2413;
+  --paper: #0a0a0a;            /* --brand-bg */
+  --paper-light: #141414;      /* --brand-bg-card / surface */
+  --text: #f5f5f5;             /* foreground */
+  --text-secondary: #a1a1a1;   /* muted-foreground */
+  --text-muted: #7a7a7a;
+  --sage: #FBDC7B;             /* --brand-gold */
+  --sage-dark: #FDA24A;        /* --brand-gold-hover */
+  --sage-light: #2a2413;       /* gold-tinted surface */
   --sage-tint: #1d1a10;
-  --sand: #151518;
-  --rose: #2a1a1a;
-  --dusty-blue: #8fa3bb;
-  --dusty-blue-dark: #a9bcd2;
-  --border: #2a2a2a;
-  --border-light: #222;
+  --sand: #1a1a1a;             /* --brand-surface-raised */
+  --rose: #2a1717;
+  --dusty-blue: #FBDC7B;       /* links = gold */
+  --dusty-blue-dark: #FDA24A;
+  --border: rgba(255, 255, 255, 0.08);   /* --brand-border */
+  --border-light: rgba(255, 255, 255, 0.05);
+  --gold-border: rgba(251, 220, 123, 0.15);      /* --brand-border-gold */
+  --gold-border-hover: rgba(251, 220, 123, 0.3);
+  --gradient-gold: linear-gradient(135deg, #FF9125 0%, #FBDC7B 50%, #FDA24A 100%);
+  --gradient-glow: radial-gradient(ellipse 700px 220px at center top, rgba(251,220,123,0.15) 0%, rgba(251,220,123,0.05) 40%, transparent 70%);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-gold: 0 0 20px rgba(251, 220, 123, 0.12);
   /* Functional (derived from palette) */
   --error: #d98a8a;
   --error-dark: #e6a3a3;
@@ -48,6 +58,8 @@ body {
   line-height: 1.6;
   color: var(--text);
   background: var(--paper);
+  background-image: var(--gradient-glow);
+  background-repeat: no-repeat;
   min-height: 100vh;
 }
 
@@ -74,8 +86,9 @@ header p {
 
 .card {
   background: var(--paper-light);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(46,42,38,0.08);
+  box-shadow: var(--shadow-card);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
 }
@@ -91,7 +104,7 @@ header p {
 
 .step-number {
   background: var(--sage);
-  color: var(--paper-light);
+  color: var(--paper);
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -120,7 +133,7 @@ header p {
 }
 
 .drop-zone.dragover {
-  box-shadow: 0 0 0 4px rgba(85, 115, 90, 0.25);
+  box-shadow: 0 0 0 4px rgba(251, 220, 123, 0.25);
   transform: scale(1.01);
 }
 
@@ -128,7 +141,7 @@ header p {
 body.drag-active .drop-zone {
   border-color: var(--sage);
   background: var(--sage-tint);
-  box-shadow: 0 0 0 3px rgba(85, 115, 90, 0.15);
+  box-shadow: 0 0 0 3px rgba(251, 220, 123, 0.15);
   transform: scale(1.005);
 }
 
@@ -153,9 +166,9 @@ body.drag-active .drop-zone::after {
 }
 
 @keyframes highlight-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(85, 115, 90, 0.4); }
+  0% { box-shadow: 0 0 0 0 rgba(251, 220, 123, 0.4); }
   50% { box-shadow: 0 0 0 8px rgba(251, 220, 123, 0.25); }
-  100% { box-shadow: 0 0 0 0 rgba(85, 115, 90, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(251, 220, 123, 0); }
 }
 
 .drop-zone p {
@@ -315,7 +328,12 @@ input[type="file"] {
 
 .btn-primary {
   background: var(--sage);
-  color: var(--paper-light);
+  color: var(--paper);
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-success:hover {
+  box-shadow: var(--shadow-gold);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -329,7 +347,7 @@ input[type="file"] {
 
 .btn-success {
   background: var(--sage);
-  color: var(--paper-light);
+  color: var(--paper);
 }
 
 .btn-success:hover {
@@ -439,6 +457,8 @@ input[type="file"] {
 footer {
   text-align: center;
   padding: 2rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
   color: var(--text-secondary);
   font-size: 0.875rem;
 }
@@ -660,6 +680,12 @@ footer a:hover {
   margin-bottom: 0.25rem;
   font-weight: 500;
 }
+input, textarea, select {
+  background: #1c1c1c;
+  color: var(--text);
+  border: 1px solid var(--border);
+  color-scheme: dark;
+}
 .form-group input, .form-group textarea, .form-group select {
   width: 100%;
   padding: 0.5rem;
@@ -841,7 +867,7 @@ footer a:hover {
   width: 100%;
   padding: 1rem 1.25rem;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(46,42,38,0.12);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
@@ -954,7 +980,7 @@ footer a:hover {
 }
 
 .toast-action:hover {
-  background: rgba(46,42,38,0.05);
+  background: rgba(255,255,255,0.03);
 }
 
 .toast-action-primary {
@@ -1118,7 +1144,7 @@ footer a:hover {
   height: 250px;
   border: 2px solid rgba(255,255,255,0.7);
   border-radius: 12px;
-  box-shadow: 0 0 0 9999px rgba(46,42,38,0.3);
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.6);
   pointer-events: none;
 }
 
@@ -1133,8 +1159,9 @@ footer a:hover {
 .site-nav {
   background: var(--paper-light);
   padding: 1rem 1.5rem;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(46,42,38,0.08);
+  box-shadow: var(--shadow-card);
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
@@ -1143,9 +1170,13 @@ footer a:hover {
 }
 .site-nav .logo {
   font-size: 1.25rem;
-  font-weight: bold;
+  font-weight: 300;
+  letter-spacing: 0.02em;
   color: var(--text);
   text-decoration: none;
+}
+.site-nav .logo:hover {
+  color: var(--sage);
 }
 .site-nav .nav-links {
   display: flex;
@@ -1153,12 +1184,14 @@ footer a:hover {
   gap: 1.5rem;
 }
 .site-nav .nav-links a {
-  color: var(--dusty-blue);
+  color: var(--text-secondary);
   text-decoration: none;
   font-size: 0.95rem;
+  transition: color 0.2s;
 }
 .site-nav .nav-links a:hover {
-  text-decoration: underline;
+  color: var(--sage);
+  text-decoration: none;
 }
 .site-nav .lang-select {
   position: static;
@@ -1168,9 +1201,10 @@ footer a:hover {
 /* Page intro section - shared across pages */
 .page-intro {
   background: var(--paper-light);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1.5rem 2rem;
-  box-shadow: 0 2px 4px rgba(46,42,38,0.08);
+  box-shadow: var(--shadow-card);
   margin-bottom: 1.5rem;
 }
 .page-intro h1 {
