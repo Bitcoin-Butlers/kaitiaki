@@ -1,8 +1,8 @@
 ---
-title: "\U0001F9E0 Guide Kaitiaki"
+title: "Guide Kaitiaki"
 subtitle: "Comment créer des enveloppes et récupérer des fichiers"
 cli_guide_note: 'Il existe aussi un <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">guide en ligne de commande</a>.'
-nav_home: "\U0001F9E0 Kaitiaki"
+nav_home: "Kaitiaki"
 nav_home_link: "Accueil"
 nav_create: "Créer des enveloppes"
 nav_recover: "Récupérer"

@@ -1,8 +1,8 @@
 ---
-title: "\U0001F9E0 Cómo usar Kaitiaki"
+title: "Cómo usar Kaitiaki"
 subtitle: "Cómo crear kits y recuperar archivos"
 cli_guide_note: 'También hay una <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">guía de línea de comandos</a>.'
-nav_home: "\U0001F9E0 Kaitiaki"
+nav_home: "Kaitiaki"
 nav_home_link: "Inicio"
 nav_create: "Crear kits"
 nav_recover: "Recuperar"

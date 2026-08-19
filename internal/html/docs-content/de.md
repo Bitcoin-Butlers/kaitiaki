@@ -1,8 +1,8 @@
 ---
-title: "\U0001F9E0 Kaitiaki Anleitung"
+title: "Kaitiaki Anleitung"
 subtitle: "Pakete erstellen und Dateien wiederherstellen"
 cli_guide_note: 'Es gibt auch eine <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">Anleitung für die Kommandozeile</a>.'
-nav_home: "\U0001F9E0 Kaitiaki"
+nav_home: "Kaitiaki"
 nav_home_link: "Startseite"
 nav_create: "Pakete erstellen"
 nav_recover: "Wiederherstellen"
