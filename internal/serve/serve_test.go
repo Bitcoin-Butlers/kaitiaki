@@ -344,7 +344,7 @@ func TestRootPage(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("expected 200 for setup page, got %d", w.Code)
 	}
-	if !strings.Contains(w.Body.String(), "Set up ReMemory") {
+	if !strings.Contains(w.Body.String(), "Set up Kaitiaki") {
 		t.Error("expected setup page content")
 	}
 
@@ -357,7 +357,7 @@ func TestRootPage(t *testing.T) {
 		t.Errorf("expected 200 for home page, got %d", w.Code)
 	}
 	body := w.Body.String()
-	if !strings.Contains(body, "About ReMemory") {
+	if !strings.Contains(body, "About Kaitiaki") {
 		t.Error("expected home page intro")
 	}
 	if !strings.Contains(body, "var BUNDLES = []") {

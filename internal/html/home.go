@@ -26,12 +26,12 @@ func GenerateHomeHTML(bundlesJSON string) string {
 	scripts.WriteString("\n  <script>" + strings.Replace(homeJS, "{{BUNDLES_JSON}}", bundlesJSON, 1) + "</script>")
 
 	result := applyLayout(LayoutOptions{
-		Title:         "ReMemory",
+		Title:         "Kaitiaki",
 		Selfhosted:    true,
 		PageStyles:    homeCSS,
 		NavExtras:     navExtras,
 		Content:       content,
-		FooterContent: `<p>ReMemory</p><p class="version">{{VERSION}}</p>`,
+		FooterContent: `<p>Kaitiaki</p><p class="version">{{VERSION}}</p>`,
 		Scripts:       scripts.String(),
 	})
 

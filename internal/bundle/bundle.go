@@ -62,6 +62,17 @@ func GenerateAll(p *project.Project, cfg Config) error {
 		disclosedThreshold, disclosedTotal = 0, 0
 	}
 
+	// Reject bundle filename collisions up front: two friend names that
+	// sanitize identically would silently overwrite one bundle ZIP.
+	usedBundleNames := make(map[string]string, len(p.Friends))
+	for _, friend := range p.Friends {
+		fn := core.SanitizeFilename(friend.Name)
+		if prev, ok := usedBundleNames[fn]; ok {
+			return fmt.Errorf("bundle filename collision: %q and %q both map to bundle-%s.zip — rename one friend", prev, friend.Name, fn)
+		}
+		usedBundleNames[fn] = friend.Name
+	}
+
 	// Generate bundle for each friend
 	for i, friend := range p.Friends {
 		share := shares[i]

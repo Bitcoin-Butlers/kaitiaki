@@ -1,6 +1,6 @@
-# Hosting ReMemory
+# Hosting Kaitiaki
 
-There are two ways to host ReMemory for your friends: **static pages** (simplest) and a **self-hosted server** (full-featured).
+There are two ways to host Kaitiaki for your friends: **static pages** (simplest) and a **self-hosted server** (full-featured).
 
 ## Static pages
 
@@ -26,7 +26,7 @@ Limitations:
 
 ## Self-hosted server
 
-Run ReMemory as a web app on your own server — create bundles, store encrypted archives, and recover, all from a browser.
+Run Kaitiaki as a web app on your own server — create bundles, store encrypted archives, and recover, all from a browser.
 
 ### Docker
 

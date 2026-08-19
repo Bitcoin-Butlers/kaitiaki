@@ -19,7 +19,7 @@ test.describe('Documentation Page', () => {
     await page.goto('file://' + docsPath);
 
     // Page title
-    await expect(page).toHaveTitle(/ReMemory Guide/);
+    await expect(page).toHaveTitle(/Kaitiaki Guide/);
 
     // TOC sidebar is visible
     const toc = page.locator('.toc');
@@ -73,7 +73,7 @@ test.describe('Documentation Page', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'es');
 
     // Page title should be in Spanish
-    await expect(page).toHaveTitle(/Cómo usar ReMemory/);
+    await expect(page).toHaveTitle(/Cómo usar Kaitiaki/);
 
     // Nav should have Spanish text
     await expect(page.locator('.docs-nav')).toContainText('Crear kits');

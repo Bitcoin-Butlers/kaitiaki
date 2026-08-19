@@ -17,7 +17,7 @@ test.describe('Landing Page', () => {
     await page.goto('file://' + indexPath);
 
     // Main heading
-    await expect(page.locator('h1')).toContainText('ReMemory');
+    await expect(page.locator('h1')).toContainText('Kaitiaki');
 
     // Key sections
     await expect(page.locator('.intro')).toBeVisible();

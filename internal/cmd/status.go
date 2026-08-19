@@ -14,7 +14,7 @@ import (
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show project status and summary",
-	Long:  `Displays the current state of the rememory project including seal status, friends, and bundle information.`,
+	Long:  `Displays the current state of the kaitiaki project including seal status, friends, and bundle information.`,
 	RunE:  runStatus,
 }
 
@@ -31,7 +31,7 @@ func runStatus(cmd *cobra.Command, args []string) error {
 
 	projectDir, err := project.FindProjectDir(cwd)
 	if err != nil {
-		return fmt.Errorf("no rememory project found (run 'rememory init' first)")
+		return fmt.Errorf("no kaitiaki project found (run 'kaitiaki init' first)")
 	}
 
 	// Load project
@@ -50,7 +50,7 @@ func runStatus(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Manifest Checksum: %s\n", truncateHash(p.Sealed.ManifestChecksum))
 	} else {
 		fmt.Printf("Sealed: %s\n", yellow("No"))
-		fmt.Println("  Run 'rememory seal' to encrypt and split the passphrase")
+		fmt.Println("  Run 'kaitiaki seal' to encrypt and split the passphrase")
 	}
 
 	// Threshold
@@ -79,7 +79,7 @@ func runStatus(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Bundles: %s (%d bundles in %s)\n", green("Generated"), bundleCount, bundlesDir)
 	} else if p.Sealed != nil {
 		fmt.Printf("Bundles: %s\n", yellow("Not yet generated"))
-		fmt.Println("  Run 'rememory bundle' to create distribution bundles")
+		fmt.Println("  Run 'kaitiaki bundle' to create distribution bundles")
 	} else {
 		fmt.Printf("Bundles: %s (seal first)\n", yellow("Not available"))
 	}

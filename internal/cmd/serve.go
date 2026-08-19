@@ -13,8 +13,8 @@ import (
 
 var serveCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "Start a self-hosted ReMemory server",
-	Long: `Start a self-hosted ReMemory web server for creating and recovering bundles.
+	Short: "Start a self-hosted Kaitiaki server",
+	Long: `Start a self-hosted Kaitiaki web server for creating and recovering bundles.
 
 The server provides a web interface for bundle creation (using WASM) and
 recovery (using native JavaScript crypto). An admin password protects
@@ -25,16 +25,16 @@ The first visit prompts for an admin password. After that:
   - If a manifest exists, the recover page is shown
 
 Examples:
-  rememory serve
-  rememory serve --port 3000 --data /var/lib/rememory
-  rememory serve --max-manifest-size 100MB`,
+  kaitiaki serve
+  kaitiaki serve --port 3000 --data /var/lib/kaitiaki
+  kaitiaki serve --max-manifest-size 100MB`,
 	RunE: runServe,
 }
 
 func init() {
 	serveCmd.Flags().StringP("port", "p", "8080", "Port to listen on")
 	serveCmd.Flags().String("host", "127.0.0.1", "Host to bind to")
-	serveCmd.Flags().StringP("data", "d", "./rememory-data", "Data directory for storing bundles and config")
+	serveCmd.Flags().StringP("data", "d", "./kaitiaki-data", "Data directory for storing bundles and config")
 	serveCmd.Flags().String("max-manifest-size", "50MB", "Maximum MANIFEST.age size (e.g. 50MB, 1GB)")
 	rootCmd.AddCommand(serveCmd)
 }
@@ -82,7 +82,7 @@ func runServe(cmd *cobra.Command, args []string) error {
 	}
 
 	addr := host + ":" + port
-	fmt.Printf("ReMemory server listening on http://%s\n", addr)
+	fmt.Printf("Kaitiaki server listening on http://%s\n", addr)
 	fmt.Printf("Data directory: %s\n", dataDir)
 	return srv.ListenAndServe(addr)
 }

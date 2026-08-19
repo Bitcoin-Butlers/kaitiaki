@@ -14,7 +14,7 @@ var demoCmd = &cobra.Command{
 	Short: "Create a demo project with sample data",
 	Long: `Create a complete demo project with sample friends and secret files.
 
-This is useful for testing the recovery workflow or demonstrating ReMemory.
+This is useful for testing the recovery workflow or demonstrating Kaitiaki.
 
 The demo project includes:
   - 5 friends: Alice, Bob, Camila (Spanish), Dominique (French), Elias (German)
@@ -24,8 +24,8 @@ The demo project includes:
   - Camila, Dominique, and Elias's bundles are in their language
 
 Example:
-  rememory demo
-  rememory demo my-demo-project`,
+  kaitiaki demo
+  kaitiaki demo my-demo-project`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runDemo,
 }
@@ -84,7 +84,7 @@ func runDemo(cmd *cobra.Command, args []string) error {
 
 	demoSecretContent := `# Demo Secret File
 
-This is a demonstration of ReMemory's secret recovery system.
+This is a demonstration of Kaitiaki's secret recovery system.
 
 In a real scenario, this file might contain:
 - Password manager recovery codes

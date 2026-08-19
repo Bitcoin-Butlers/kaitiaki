@@ -132,3 +132,56 @@ func TestBundleContainsMetadataFile(t *testing.T) {
 
 	_ = os.Remove(bundlePath)
 }
+
+// TestMetadataHideQuorumOmitsFields: in hide-quorum mode (Threshold and
+// Total zero) METADATA.yaml must not contain the quorum keys at all.
+func TestMetadataHideQuorumOmitsFields(t *testing.T) {
+	created := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	share := core.NewShare(2, 1, 0, 0, "Alice", []byte("test-share-data-bytes-here-12345"))
+
+	raw, err := GenerateMetadata(BundleParams{
+		Friend:    project.Friend{Name: "Alice"},
+		Share:     share,
+		Threshold: 0,
+		Total:     0,
+		SealedAt:  created,
+	}, []ZipFile{{Name: "README.txt", Content: []byte("x")}})
+	if err != nil {
+		t.Fatalf("GenerateMetadata: %v", err)
+	}
+
+	text := string(raw)
+	if strings.Contains(text, "threshold:") || strings.Contains(text, "total_shares:") {
+		t.Fatalf("hide-quorum metadata discloses quorum:\n%s", text)
+	}
+
+	var meta map[string]any
+	if err := yaml.Unmarshal(raw, &meta); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if meta["share_index"] != 1 || meta["holder"] != "Alice" {
+		t.Fatalf("unexpected metadata: %v", meta)
+	}
+}
+
+// TestCreateZipAtomic: a successful CreateZip leaves exactly the target
+// file (no temp leftovers), and the result is a readable ZIP.
+func TestCreateZipAtomic(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "out.zip")
+	if err := CreateZip(path, []ZipFile{{Name: "a.txt", Content: []byte("hello"), ModTime: time.Now()}}); err != nil {
+		t.Fatalf("CreateZip: %v", err)
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 1 || entries[0].Name() != "out.zip" {
+		t.Fatalf("unexpected directory contents: %v", entries)
+	}
+	r, err := zip.OpenReader(path)
+	if err != nil {
+		t.Fatalf("result is not a valid zip: %v", err)
+	}
+	r.Close()
+}

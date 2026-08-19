@@ -111,7 +111,7 @@ export function getIndexHtml(): string {
 
 // Get absolute path to rememory binary
 export function getRememoryBin(): string {
-  const binEnv = process.env.REMEMORY_BIN || './rememory';
+  const binEnv = process.env.REMEMORY_BIN || './kaitiaki';
   return path.resolve(binEnv);
 }
 
@@ -700,7 +700,7 @@ export class CreationPage {
 
   // UI assertions
   async expectUIElements(): Promise<void> {
-    await expect(this.page.locator('.logo')).toContainText('ReMemory');
+    await expect(this.page.locator('.logo')).toContainText('Kaitiaki');
     await expect(this.page.locator('#friends-list')).toBeVisible();
     await expect(this.page.locator('#files-drop-zone')).toBeVisible();
     await expect(this.page.locator('#generate-btn')).toBeVisible();

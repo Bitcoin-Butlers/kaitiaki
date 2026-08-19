@@ -25,11 +25,11 @@ The create and recover HTML files are self-contained with embedded WASM binary,
 JavaScript, and CSS. They work fully offline.
 
 Examples:
-  rememory html about > about.html
-  rememory html create > maker.html
-  rememory html docs > docs.html
-  rememory html recover > recover.html
-  rememory html site -o dist/`,
+  kaitiaki html about > about.html
+  kaitiaki html create > maker.html
+  kaitiaki html docs > docs.html
+  kaitiaki html recover > recover.html
+  kaitiaki html site -o dist/`,
 	Args: cobra.ExactArgs(1),
 	RunE: runHTML,
 }

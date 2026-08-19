@@ -1,34 +1,34 @@
-/* ReMemory palette */
+/* Kaitiaki palette — Bitcoin Butlers dark/gold (matches bitcoinbutlers.com tools pages) */
 :root {
-  --paper: #f5f5f5;
-  --paper-light: #ffffff;
-  --text: #2E2A26;
-  --text-secondary: #6B6560;
-  --text-muted: #766E6A;
-  --sage: #55735A;
-  --sage-dark: #466B4A;
-  --sage-light: #E8F2EA;
-  --sage-tint: #E8EFEA;
-  --sand: #f0f0ee;
-  --rose: #F3E6E6;
-  --dusty-blue: #6B819A;
-  --dusty-blue-dark: #56708A;
-  --border: #ddd;
-  --border-light: #eee;
+  --paper: #0a0a0a;
+  --paper-light: #141414;
+  --text: #f5f2ea;
+  --text-secondary: #b0a99a;
+  --text-muted: #8a8478;
+  --sage: #FBDC7B;
+  --sage-dark: #FDA24A;
+  --sage-light: #2a2413;
+  --sage-tint: #1d1a10;
+  --sand: #151518;
+  --rose: #2a1a1a;
+  --dusty-blue: #8fa3bb;
+  --dusty-blue-dark: #a9bcd2;
+  --border: #2a2a2a;
+  --border-light: #222;
   /* Functional (derived from palette) */
-  --error: #8B5E5E;
-  --error-dark: #6E4A4A;
-  --error-bg: #F3E6E6;
-  --error-border: #D4B5B5;
-  --success-bg: #E8F2EA;
-  --success-border: #B5CCBA;
-  --success-text: #3A5E40;
-  --warning-bg: #FDF6EC;
-  --warning-border: #E8D5AA;
-  --warning-text: #7A6030;
-  --info-bg: #EAF0F5;
-  --info-border: #B5C8D4;
-  --info-text: #4A6B7A;
+  --error: #d98a8a;
+  --error-dark: #e6a3a3;
+  --error-bg: #2a1717;
+  --error-border: #5e3a3a;
+  --success-bg: #16211a;
+  --success-border: #3a5e40;
+  --success-text: #a9d4b0;
+  --warning-bg: #241d10;
+  --warning-border: #7a6030;
+  --warning-text: #e8d5aa;
+  --info-bg: #16202a;
+  --info-border: #3a556b;
+  --info-text: #a9c4d4;
 }
 
 * {
@@ -40,7 +40,7 @@
 :focus-visible {
   outline: 2px solid var(--sage);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(85, 115, 90, 0.2);
+  box-shadow: 0 0 0 4px rgba(251, 220, 123, 0.25);
 }
 
 body {
@@ -154,7 +154,7 @@ body.drag-active .drop-zone::after {
 
 @keyframes highlight-pulse {
   0% { box-shadow: 0 0 0 0 rgba(85, 115, 90, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(85, 115, 90, 0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(251, 220, 123, 0.25); }
   100% { box-shadow: 0 0 0 0 rgba(85, 115, 90, 0); }
 }
 
@@ -531,7 +531,7 @@ footer a:hover {
 .paste-area textarea:focus {
   outline: none;
   border-color: var(--sage);
-  box-shadow: 0 0 0 2px rgba(85, 115, 90, 0.2);
+  box-shadow: 0 0 0 2px rgba(251, 220, 123, 0.25);
 }
 
 /* Step 1 content collapse when threshold is met */
@@ -671,7 +671,7 @@ footer a:hover {
 .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
   outline: none;
   border-color: var(--sage);
-  box-shadow: 0 0 0 2px rgba(85, 115, 90, 0.2);
+  box-shadow: 0 0 0 2px rgba(251, 220, 123, 0.25);
 }
 .form-group small {
   display: block;

@@ -72,7 +72,7 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 	}
 
 	// CSP meta tag
-	headMeta := `<meta name="generator" content="ReMemory {{VERSION}}">
+	headMeta := `<meta name="generator" content="Kaitiaki {{VERSION}}">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-{{CSP_NONCE}}' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src blob: data:; connect-src ` + cspConnectSrc + `; form-action 'none';">`
 
 	// Language selector for nav
@@ -146,7 +146,7 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 
 	// Assemble page using layout
 	result := applyLayout(LayoutOptions{
-		Title:      "\xF0\x9F\xA7\xA0 ReMemory - Create Recovery Bundles",
+		Title:      "\xF0\x9F\xA7\xA0 Kaitiaki - Create Recovery Bundles",
 		HeadMeta:   headMeta,
 		PageStyles: makerCSS,
 		Selfhosted: opts.Selfhosted,
