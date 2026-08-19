@@ -14,7 +14,7 @@ interface SharedSetup {
   makerHtml: string;
   recoverHtml: string;
   docsHtml: string;
-  docsEsHtml: string;
+  docsMiHtml: string;
   indexHtml: string;
   cryptoTestHtml: string;
 }
@@ -101,8 +101,8 @@ export function getDocsHtml(): string {
   return getOrBuild('docsHtml', (dir) => buildHtmlResource(dir, 'docs.html', ['docs']));
 }
 
-export function getDocsEsHtml(): string {
-  return getOrBuild('docsEsHtml', (dir) => buildHtmlResource(dir, 'docs.es.html', ['docs', '--lang', 'es']));
+export function getDocsMiHtml(): string {
+  return getOrBuild('docsMiHtml', (dir) => buildHtmlResource(dir, 'docs.mi.html', ['docs', '--lang', 'mi']));
 }
 
 export function getIndexHtml(): string {

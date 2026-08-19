@@ -239,21 +239,13 @@ friends:
     // Default should be English
     await creation.expectPageTitle('Create Bundles');
 
-    // Switch to Spanish
-    await creation.setLanguage('es');
-    await creation.expectPageTitle('Crear Kits de Recuperación');
-
-    // Switch to German
-    await creation.setLanguage('de');
-    await creation.expectPageTitle('Umschläge erstellen');
+    // Switch to te reo Māori
+    await creation.setLanguage('mi');
+    await creation.expectPageTitle('Waihanga Paihere');
 
     // Switch back to English
     await creation.setLanguage('en');
     await creation.expectPageTitle('Create Bundles');
-
-    // Switch to Portuguese
-    await creation.setLanguage('pt');
-    await creation.expectPageTitle('Criar Pacotes de Recuperação');
   });
 
   test('nav guide link updates for languages with translated docs', async ({ page }) => {
@@ -267,17 +259,9 @@ friends:
     await creation.setLanguage('en');
     await expect(guideLink).toHaveAttribute('href', 'docs.html');
 
-    // German has translated docs — link should point to docs.de.html
-    await creation.setLanguage('de');
-    await expect(guideLink).toHaveAttribute('href', 'docs.de.html');
-
-    // Spanish has translated docs
-    await creation.setLanguage('es');
-    await expect(guideLink).toHaveAttribute('href', 'docs.es.html');
-
-    // Portuguese does NOT have translated docs — should stay docs.html
-    await creation.setLanguage('pt');
-    await expect(guideLink).toHaveAttribute('href', 'docs.html');
+    // Te reo Māori has translated docs — link should point to docs.mi.html
+    await creation.setLanguage('mi');
+    await expect(guideLink).toHaveAttribute('href', 'docs.mi.html');
 
     // Back to English
     await creation.setLanguage('en');

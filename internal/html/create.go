@@ -146,7 +146,7 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 
 	// Assemble page using layout
 	result := applyLayout(LayoutOptions{
-		Title:      "\xF0\x9F\xA7\xA0 Kaitiaki - Create Recovery Bundles",
+		Title:      "Kaitiaki - Create Recovery Bundles",
 		HeadMeta:   headMeta,
 		PageStyles: makerCSS,
 		Selfhosted: opts.Selfhosted,

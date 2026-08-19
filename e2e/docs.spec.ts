@@ -1,10 +1,10 @@
 import { test, expect } from './fixtures';
 import * as fs from 'fs';
-import { getRememoryBin, getDocsHtml, getDocsEsHtml } from './helpers';
+import { getRememoryBin, getDocsHtml, getDocsMiHtml } from './helpers';
 
 test.describe('Documentation Page', () => {
   let docsPath: string;
-  let docsEsPath: string;
+  let docsMiPath: string;
 
   test.beforeAll(async () => {
     if (!fs.existsSync(getRememoryBin())) {
@@ -12,7 +12,7 @@ test.describe('Documentation Page', () => {
       return;
     }
     docsPath = getDocsHtml();
-    docsEsPath = getDocsEsHtml();
+    docsMiPath = getDocsMiHtml();
   });
 
   test('docs.html loads with TOC and sections', async ({ page }) => {
@@ -66,27 +66,27 @@ test.describe('Documentation Page', () => {
     await expect(activeLink).toBeAttached();
   });
 
-  test('docs.es.html loads with Spanish content', async ({ page }) => {
-    await page.goto('file://' + docsEsPath);
+  test('docs.mi.html loads with te reo Māori content', async ({ page }) => {
+    await page.goto('file://' + docsMiPath);
 
-    // Page should have Spanish lang attribute
-    await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+    // Page should have te reo Māori lang attribute
+    await expect(page.locator('html')).toHaveAttribute('lang', 'mi');
 
-    // Page title should be in Spanish
-    await expect(page).toHaveTitle(/Cómo usar Kaitiaki/);
+    // Page title should be in te reo Māori
+    await expect(page).toHaveTitle(/Te Aratohu Kaitiaki/);
 
-    // Nav should have Spanish text
-    await expect(page.locator('.docs-nav')).toContainText('Crear kits');
+    // Nav should have te reo Māori text
+    await expect(page.locator('.docs-nav')).toContainText('Waihanga Paihere');
 
-    // TOC should be in Spanish
-    await expect(page.locator('.toc h2')).toContainText('Contenido');
+    // TOC should be in te reo Māori
+    await expect(page.locator('.toc h2')).toContainText('Ngā Kaupapa');
 
     // Content sections should exist with same IDs
     await expect(page.locator('section#overview')).toBeAttached();
     await expect(page.locator('section#creating')).toBeAttached();
 
-    // Footer should be in Spanish
-    await expect(page.locator('.docs-footer')).toContainText('Código Fuente');
+    // Footer should be in te reo Māori
+    await expect(page.locator('.docs-footer')).toContainText('Pūtake Waehere');
   });
 
   test('nav links are present and correct', async ({ page }) => {

@@ -397,13 +397,7 @@ declare const __SELFHOSTED__: boolean;
 
     const langOptions = [
       { code: 'en', label: 'English' },
-      { code: 'es', label: 'Español' },
-      { code: 'de', label: 'Deutsch' },
-      { code: 'fr', label: 'Français' },
-      { code: 'sl', label: 'Slovenščina' },
-      { code: 'pt', label: 'Português' },
-      { code: 'zh-TW', label: '正體中文' },
-      { code: 'tr', label: 'Türkçe' },
+      { code: 'mi', label: 'Te Reo Māori' },
     ];
     const langOptionsHtml = langOptions.map(o =>
       `<option value="${o.code}"${o.code === effectiveLang ? ' selected' : ''}>${escapeHtml(o.label)}</option>`

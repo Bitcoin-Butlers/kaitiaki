@@ -40,47 +40,47 @@ test.describe('Landing Page', () => {
 
     // English should be available
     await expect(langSelect.locator('option[value="en"]')).toBeAttached();
-    // Spanish should be available
-    await expect(langSelect.locator('option[value="es"]')).toBeAttached();
+    // Te reo Māori should be available
+    await expect(langSelect.locator('option[value="mi"]')).toBeAttached();
   });
 
-  test('language picker switches text to Spanish', async ({ page }) => {
+  test('language picker switches text to te reo Māori', async ({ page }) => {
     await page.goto('file://' + indexPath);
 
     // Start with English content
     await expect(page.locator('.how-it-works h2')).toContainText('How it works');
 
-    // Switch to Spanish
-    await page.locator('#lang-select').selectOption('es');
+    // Switch to te reo Māori
+    await page.locator('#lang-select').selectOption('mi');
 
-    // Text should be in Spanish
-    await expect(page.locator('.how-it-works h2')).toContainText('Cómo funciona');
-    await expect(page.locator('.what-is h2')).toContainText('Qué es y qué no es');
-    await expect(page.locator('.try-it h2')).toContainText('Mira cómo funciona');
-    await expect(page.locator('.background h2')).toContainText('Por qué hice esto');
+    // Text should be in te reo Māori
+    await expect(page.locator('.how-it-works h2')).toContainText('Me pēhea te mahi');
+    await expect(page.locator('.what-is h2')).toContainText('He aha tēnei, he aha hoki ehara');
+    await expect(page.locator('.try-it h2')).toContainText('Kia kite me pēhea te mahi');
+    await expect(page.locator('.background h2')).toContainText('He aha au i hanga ai i tēnei');
   });
 
   test('language preference persists via localStorage', async ({ page }) => {
     await page.goto('file://' + indexPath);
 
-    // Switch to Spanish
-    await page.locator('#lang-select').selectOption('es');
-    await expect(page.locator('.how-it-works h2')).toContainText('Cómo funciona');
+    // Switch to te reo Māori
+    await page.locator('#lang-select').selectOption('mi');
+    await expect(page.locator('.how-it-works h2')).toContainText('Me pēhea te mahi');
 
     // Reload the page
     await page.reload();
 
-    // Should still be in Spanish
-    await expect(page.locator('#lang-select')).toHaveValue('es');
-    await expect(page.locator('.how-it-works h2')).toContainText('Cómo funciona');
+    // Should still be in te reo Māori
+    await expect(page.locator('#lang-select')).toHaveValue('mi');
+    await expect(page.locator('.how-it-works h2')).toContainText('Me pēhea te mahi');
   });
 
   test('switching back to English works', async ({ page }) => {
     await page.goto('file://' + indexPath);
 
-    // Switch to Spanish then back to English
-    await page.locator('#lang-select').selectOption('es');
-    await expect(page.locator('.how-it-works h2')).toContainText('Cómo funciona');
+    // Switch to te reo Māori then back to English
+    await page.locator('#lang-select').selectOption('mi');
+    await expect(page.locator('.how-it-works h2')).toContainText('Me pēhea te mahi');
 
     await page.locator('#lang-select').selectOption('en');
     await expect(page.locator('.how-it-works h2')).toContainText('How it works');
@@ -89,8 +89,8 @@ test.describe('Landing Page', () => {
   test('HTML content in translations renders correctly', async ({ page }) => {
     await page.goto('file://' + indexPath);
 
-    // Switch to Spanish
-    await page.locator('#lang-select').selectOption('es');
+    // Switch to te reo Māori
+    await page.locator('#lang-select').selectOption('mi');
 
     // Elements with data-i18n-html should render HTML (strong tags, spans)
     const summary = page.locator('[data-i18n-html="summary_1"]');

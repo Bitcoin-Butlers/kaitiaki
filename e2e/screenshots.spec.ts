@@ -32,7 +32,7 @@ import {
 // Config
 // ---------------------------------------------------------------------------
 
-const LANGUAGES = ['en', 'es', 'de', 'fr'] as const;
+const LANGUAGES = ['en', 'mi'] as const;
 type Lang = typeof LANGUAGES[number];
 
 const SCREENSHOTS_ROOT = path.resolve(__dirname, '..', 'docs', 'screenshots');
@@ -317,7 +317,7 @@ for (const lang of LANGUAGES) {
       await page.locator('#custom-language-mode').check();
 
       // Set different languages for each friend
-      const friendLangs = ['en', 'es', 'fr'];
+      const friendLangs = ['en', 'mi'];
       for (let i = 0; i < friendLangs.length; i++) {
         await page.locator('.friend-entry').nth(i).locator('.friend-language').selectOption(friendLangs[i]);
       }

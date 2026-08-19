@@ -194,14 +194,14 @@ func TestGenerateDocsHTMLEnglish(t *testing.T) {
 	}
 }
 
-func TestGenerateDocsHTMLSpanish(t *testing.T) {
-	html := GenerateDocsHTML("es", false)
+func TestGenerateDocsHTMLMaori(t *testing.T) {
+	html := GenerateDocsHTML("mi", false)
 
-	if !strings.Contains(html, `<html lang="es">`) {
-		t.Error("should have lang=es")
+	if !strings.Contains(html, `<html lang="mi">`) {
+		t.Error("should have lang=mi")
 	}
-	if !strings.Contains(html, "Cómo usar Kaitiaki") {
-		t.Error("should contain Spanish page title")
+	if !strings.Contains(html, "Te Aratohu Kaitiaki") {
+		t.Error("should contain te reo page title")
 	}
 	// Section IDs should be the same (English) regardless of language
 	if !strings.Contains(html, `id="overview"`) {

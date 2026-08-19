@@ -47,28 +47,6 @@ func TestExtractShareFromZip(t *testing.T) {
 	}
 }
 
-func TestExtractShareFromZip_LocalizedReadme(t *testing.T) {
-	share := testShare()
-	readme := share.Encode()
-
-	zipPath := filepath.Join(t.TempDir(), "bundle.zip")
-	err := CreateZip(zipPath, []ZipFile{
-		{Name: "LEEME.txt", Content: []byte(readme), ModTime: time.Now()},
-	})
-	if err != nil {
-		t.Fatalf("creating zip: %v", err)
-	}
-
-	got, err := ExtractShareFromZip(zipPath)
-	if err != nil {
-		t.Fatalf("ExtractShareFromZip: %v", err)
-	}
-
-	if got.Index != share.Index {
-		t.Errorf("index: got %d, want %d", got.Index, share.Index)
-	}
-}
-
 func TestExtractShareFromZip_NoReadme(t *testing.T) {
 	zipPath := filepath.Join(t.TempDir(), "bundle.zip")
 	err := CreateZip(zipPath, []ZipFile{
