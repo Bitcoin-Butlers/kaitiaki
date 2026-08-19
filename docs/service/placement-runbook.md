@@ -1,6 +1,17 @@
 # Kaitiaki Placement Session — Butler runbook
 
-One session, 2–3 hours, at the client's table. The session ends with a
+**Remote-first, offered globally. USD 495 (bundled free into the
+multisig concierge package). One session, 2–3 hours, over video with
+the client at their own computer.** In-person available where a Butler
+is local; the choreography is identical.
+
+Remote delivery is a security feature, not a compromise: every file and
+every bundle stays on the client's machine and in the client's hands
+for the entire session. Butlers see screens, never bytes: the client
+shares their screen for guidance but never transfers the payload or
+bundles to us.
+
+One session, 2–3 hours, at the client's (virtual) table. The session ends with a
 tested recovery, a completed estate insert, and every bundle physically
 placed. Nothing about this session is technical from the client's side.
 
@@ -16,8 +27,11 @@ placed. Nothing about this session is technical from the client's side.
 - [ ] Decide disclose vs --hide-quorum with the client (default:
       disclose; hide only when a stolen bundle must reveal nothing about
       the scheme's shape).
-- [ ] Butler laptop: offline-capable, kaitiaki binary present, printer
-      access for the estate insert.
+- [ ] Client prep sheet sent ahead: install/download checklist
+      (kaitiaki binary or the web maker page saved locally), 3–5 blank
+      USB sticks or microSD cards purchased by the client, printer for
+      the estate insert. Remote rule: everything runs on the CLIENT's
+      machine; the Butler never receives a file.
 
 ## The session
 

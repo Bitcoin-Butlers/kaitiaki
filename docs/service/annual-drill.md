@@ -1,7 +1,10 @@
 # Kaitiaki Annual Drill — Butler runbook + client sheets
 
-Once a year. One hour. The drill is the service: it finds rot while rot
-is cheap — before the funeral, never at it.
+**Remote, global. USD 195/year.** Once a year. One hour plus guardian
+coordination. The drill is the service: it finds rot while rot is
+cheap — before the funeral, never at it. Guardians join by video from
+wherever they are; the rehearsal recovery runs on a guardian's own
+computer with the Butler directing by voice only.
 
 ## Drill sequence
 
