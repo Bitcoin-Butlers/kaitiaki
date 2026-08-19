@@ -39,6 +39,7 @@ func init() {
 	sealCmd.Flags().Bool("no-embed-manifest", false, "Do not embed MANIFEST.age in recover.html (it is embedded by default when 10 MB or less)")
 	sealCmd.Flags().String("timelock", "", "Time-lock duration or date (e.g., 5min, 30d, 6m, 1y, 2027-06-15T00:00:00Z)")
 	sealCmd.Flags().Bool("pages", false, "Generate a static pages directory (recover.html + MANIFEST.age) for hosting")
+	sealCmd.Flags().Bool("force", false, "Re-seal an already sealed project (overwrites MANIFEST.age and all shares)")
 	rootCmd.AddCommand(sealCmd)
 }
 
@@ -61,6 +62,11 @@ func runSeal(cmd *cobra.Command, args []string) error {
 
 	if err := p.Validate(); err != nil {
 		return fmt.Errorf("invalid project: %w", err)
+	}
+
+	force, _ := cmd.Flags().GetBool("force")
+	if p.Sealed != nil && !force {
+		return fmt.Errorf("project is already sealed (at %s) — re-sealing generates a new passphrase and invalidates every distributed share; pass --force to re-seal", p.Sealed.At.Format("2006-01-02 15:04"))
 	}
 
 	recoveryURL, _ := cmd.Flags().GetString("recovery-url")
@@ -215,6 +221,19 @@ func sealProject(p *project.Project, recoveryURL string, noEmbedManifest bool, t
 	shares, err := core.Split(raw, len(p.Friends), p.Threshold)
 	if err != nil {
 		return fmt.Errorf("splitting passphrase: %w", err)
+	}
+
+	// Reject share filename collisions before writing anything: two
+	// holder names that sanitize to the same filename (e.g. "José" and
+	// "Jose") would silently overwrite one share with another.
+	usedNames := make(map[string]string, len(shares))
+	for i := range shares {
+		share := core.NewShare(2, i+1, len(p.Friends), p.Threshold, p.Friends[i].Name, shares[i])
+		fn := share.Filename()
+		if prev, ok := usedNames[fn]; ok {
+			return fmt.Errorf("share filename collision: %q and %q both map to %s — rename one friend", prev, p.Friends[i].Name, fn)
+		}
+		usedNames[fn] = p.Friends[i].Name
 	}
 
 	// Create share files

@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -15,15 +16,20 @@ type ZipFile struct {
 }
 
 // CreateZip creates a ZIP archive at the given path with the given files.
+// It writes to a temporary file and renames into place, so a failure
+// never leaves a truncated or corrupt ZIP at the destination.
 func CreateZip(path string, files []ZipFile) error {
-	f, err := os.Create(path)
+	f, err := os.CreateTemp(filepath.Dir(path), ".zip-tmp-*")
 	if err != nil {
 		return fmt.Errorf("creating zip file: %w", err)
 	}
-	defer f.Close()
+	tmpPath := f.Name()
+	defer func() {
+		f.Close()
+		os.Remove(tmpPath) // no-op after successful rename
+	}()
 
 	w := zip.NewWriter(f)
-	defer w.Close()
 
 	for _, file := range files {
 		header := &zip.FileHeader{
@@ -40,6 +46,19 @@ func CreateZip(path string, files []ZipFile) error {
 		if _, err := fw.Write(file.Content); err != nil {
 			return fmt.Errorf("writing entry %s: %w", file.Name, err)
 		}
+	}
+
+	if err := w.Close(); err != nil {
+		return fmt.Errorf("finalizing zip: %w", err)
+	}
+	if err := f.Close(); err != nil {
+		return fmt.Errorf("closing zip file: %w", err)
+	}
+	if err := os.Chmod(tmpPath, 0644); err != nil {
+		return fmt.Errorf("setting zip permissions: %w", err)
+	}
+	if err := os.Rename(tmpPath, path); err != nil {
+		return fmt.Errorf("moving zip into place: %w", err)
 	}
 
 	return nil
