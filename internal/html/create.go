@@ -154,7 +154,7 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 		BeforeContainer: `<!-- Toast notifications container -->
   <div id="toast-container" class="toast-container" role="alert" aria-live="polite"></div>`,
 		Content:       content,
-		FooterContent: `<p><span data-i18n="works_offline">Works completely offline</span></p><p class="version">{{VERSION}}</p>`,
+		FooterContent: `<p class="version">Kaitiaki {{VERSION}}</p>`,
 		Scripts:       navHideScript + scripts.String(),
 	})
 
