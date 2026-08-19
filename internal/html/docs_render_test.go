@@ -194,21 +194,6 @@ func TestGenerateDocsHTMLEnglish(t *testing.T) {
 	}
 }
 
-func TestGenerateDocsHTMLMaori(t *testing.T) {
-	html := GenerateDocsHTML("mi", false)
-
-	if !strings.Contains(html, `<html lang="mi">`) {
-		t.Error("should have lang=mi")
-	}
-	if !strings.Contains(html, "Te Aratohu Kaitiaki") {
-		t.Error("should contain te reo page title")
-	}
-	// Section IDs should be the same (English) regardless of language
-	if !strings.Contains(html, `id="overview"`) {
-		t.Error("should contain overview section with English ID")
-	}
-}
-
 func TestGenerateDocsHTMLFallback(t *testing.T) {
 	html := GenerateDocsHTML("xx", false)
 

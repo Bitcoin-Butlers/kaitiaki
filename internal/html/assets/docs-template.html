@@ -333,35 +333,6 @@
       text-decoration: underline;
     }
 
-    .lang-picker {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-top: 0.75rem;
-    }
-
-    .lang-picker a,
-    .lang-picker span {
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.8125rem;
-    }
-
-    .lang-picker span {
-      background: var(--sage-tint);
-      color: var(--text);
-    }
-
-    .lang-picker a {
-      color: var(--dusty-blue);
-      text-decoration: none;
-    }
-
-    .lang-picker a:hover {
-      background: var(--sand);
-    }
-
     /* Mobile: sidebar becomes inline */
     @media (max-width: 768px) {
       .docs-layout {
@@ -450,7 +421,6 @@
         <a href="{{GITHUB_URL}}" target="_blank">{{FOOTER_DOWNLOAD}}</a> ·
         <a href="{{LOGO_HREF}}">{{FOOTER_HOME}}</a>
       </p>
-{{LANG_PICKER}}
     </footer>
     </div><!-- .docs-main -->
   </div><!-- .docs-layout -->

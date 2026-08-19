@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/translations"
 )
 
 // DocsLanguages returns the language codes that have a translated docs guide
@@ -27,55 +26,6 @@ func DocsLanguages() []string {
 		}
 	}
 	return langs
-}
-
-// DocsLanguagesJS returns a JS array literal of language codes that have
-// a translated docs guide (e.g. ['es']). English is excluded since it's
-// the default and uses docs.html without a language suffix.
-func DocsLanguagesJS() string {
-	langs := DocsLanguages()
-	quoted := make([]string, len(langs))
-	for i, l := range langs {
-		quoted[i] = "'" + l + "'"
-	}
-	return "[" + strings.Join(quoted, ",") + "]"
-}
-
-// renderDocsLangPicker generates the HTML for the language picker shown
-// in the docs footer. The current language is shown as plain text; others
-// are links to their respective docs file. Only languages that have a
-// translated guide are included.
-func renderDocsLangPicker(currentLang string) string {
-	allLangs := append([]string{"en"}, DocsLanguages()...)
-	if len(allLangs) < 2 {
-		return ""
-	}
-
-	// Build a lookup from translations.LangNames
-	nameOf := make(map[string]string)
-	for _, entry := range translations.LangNames {
-		nameOf[entry[0]] = entry[1]
-	}
-
-	var b strings.Builder
-	b.WriteString(`      <div class="lang-picker">`)
-	for _, lang := range allLangs {
-		name := nameOf[lang]
-		if name == "" {
-			name = strings.ToUpper(lang)
-		}
-		if lang == currentLang {
-			b.WriteString(fmt.Sprintf(`<span>%s</span>`, name))
-		} else {
-			href := "docs.html"
-			if lang != "en" {
-				href = "docs." + lang + ".html"
-			}
-			b.WriteString(fmt.Sprintf(`<a href="%s">%s</a>`, href, name))
-		}
-	}
-	b.WriteString(`</div>`)
-	return b.String()
 }
 
 // GenerateDocsHTML creates the documentation page HTML from Markdown content.
@@ -142,9 +92,6 @@ func GenerateDocsHTML(lang string, selfhosted bool) string {
 	// Content
 	result = strings.Replace(result, "{{TOC}}", tocHTML, 1)
 	result = strings.Replace(result, "{{DOCS_CONTENT}}", content, 1)
-
-	// Language picker
-	result = strings.Replace(result, "{{LANG_PICKER}}", renderDocsLangPicker(lang), 1)
 
 	// Replace version and GitHub URLs
 	result = strings.Replace(result, "{{VERSION}}", pkgVersion, -1)

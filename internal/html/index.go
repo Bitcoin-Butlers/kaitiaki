@@ -1,17 +1,8 @@
 package html
 
-import (
-	"strings"
-
-	"github.com/eljojo/rememory/internal/translations"
-)
-
 // GenerateIndexHTML creates the landing page HTML with embedded CSS.
 func GenerateIndexHTML(selfhosted bool) string {
 	content := aboutHTMLTemplate
-
-	// Embed language picker options
-	content = strings.Replace(content, "{{LANG_OPTIONS}}", translations.LangSelectOptions(), 1)
 
 	result := applyLayout(LayoutOptions{
 		Title:      "Kaitiaki - A digital safe with multiple keys",
@@ -43,7 +34,6 @@ func GenerateIndexHTML(selfhosted bool) string {
 
   <script>` + dataflowJS + `</script>` + i18nScript(I18nScriptOptions{
 			Component:         "index",
-			ExtraDeclarations: `const docsLangs = ` + DocsLanguagesJS() + `;`,
 			SetLanguageExtra:  i18nIndexSetlangJS,
 		}),
 	})

@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/translations"
 )
 
 // tlockTabsHTML is the Simple/Advanced tab switcher injected into maker.html step 3.
@@ -75,10 +74,7 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 	headMeta := `<meta name="generator" content="Kaitiaki {{VERSION}}">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-{{CSP_NONCE}}' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src blob: data:; connect-src ` + cspConnectSrc + `; form-action 'none';">`
 
-	// Language selector for nav
-	navExtras := `<select class="lang-select" id="lang-select">
-        ` + translations.LangSelectOptions() + `
-      </select>`
+	navExtras := ""
 
 	// Selfhosted config
 	var selfhostedConfigJSON string
@@ -113,7 +109,6 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 	scripts.WriteString(i18nScript(I18nScriptOptions{
 		Component:         "maker",
 		UseNonce:          true,
-		ExtraDeclarations: `const docsLangs = ` + DocsLanguagesJS() + `;`,
 	}))
 
 	// WASM runtime

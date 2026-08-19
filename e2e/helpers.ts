@@ -14,7 +14,6 @@ interface SharedSetup {
   makerHtml: string;
   recoverHtml: string;
   docsHtml: string;
-  docsMiHtml: string;
   indexHtml: string;
   cryptoTestHtml: string;
 }
@@ -99,10 +98,6 @@ export function getCryptoTestHtml(): string {
 
 export function getDocsHtml(): string {
   return getOrBuild('docsHtml', (dir) => buildHtmlResource(dir, 'docs.html', ['docs']));
-}
-
-export function getDocsMiHtml(): string {
-  return getOrBuild('docsMiHtml', (dir) => buildHtmlResource(dir, 'docs.mi.html', ['docs', '--lang', 'mi']));
 }
 
 export function getIndexHtml(): string {
@@ -708,11 +703,6 @@ export class CreationPage {
 
   async expectPageTitle(title: string): Promise<void> {
     await expect(this.page.locator('h1')).toContainText(title);
-  }
-
-  // Language
-  async setLanguage(lang: string): Promise<void> {
-    await this.page.locator('#lang-select').selectOption(lang);
   }
 
   // Dismiss dialogs (for validation error tests)

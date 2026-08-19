@@ -56,7 +56,7 @@ func init() {
 	initCmd.Flags().BoolVar(&initAnonymous, "anonymous", false, "Anonymous mode (no contact info for shareholders)")
 	initCmd.Flags().BoolVar(&initHideQuorum, "hide-quorum", false, "Omit total/threshold from shares and bundle documents")
 	initCmd.Flags().IntVar(&initShares, "shares", 0, "Number of shares (for anonymous mode)")
-	initCmd.Flags().StringVar(&initLanguage, "language", "", "Default bundle language (en, es, de, fr, sl)")
+	initCmd.Flags().StringVar(&initLanguage, "language", "", "Default bundle language (en)")
 }
 
 // validLanguage returns true if the given language code is supported.

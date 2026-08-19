@@ -28,74 +28,9 @@ test.describe('Landing Page', () => {
     await expect(page.locator('.background')).toBeVisible();
   });
 
-  test('language picker is present', async ({ page }) => {
+  test('no language picker is present', async ({ page }) => {
     await page.goto('file://' + indexPath);
-
-    const langSelect = page.locator('#lang-select');
-    await expect(langSelect).toBeVisible();
-
-    // Should have multiple options
-    const options = langSelect.locator('option');
-    expect(await options.count()).toBeGreaterThan(1);
-
-    // English should be available
-    await expect(langSelect.locator('option[value="en"]')).toBeAttached();
-    // Te reo Māori should be available
-    await expect(langSelect.locator('option[value="mi"]')).toBeAttached();
-  });
-
-  test('language picker switches text to te reo Māori', async ({ page }) => {
-    await page.goto('file://' + indexPath);
-
-    // Start with English content
-    await expect(page.locator('.how-it-works h2')).toContainText('How it works');
-
-    // Switch to te reo Māori
-    await page.locator('#lang-select').selectOption('mi');
-
-    // Text should be in te reo Māori
-    await expect(page.locator('.how-it-works h2')).toContainText('Me pēhea te mahi');
-    await expect(page.locator('.what-is h2')).toContainText('He aha tēnei, he aha hoki ehara');
-    await expect(page.locator('.try-it h2')).toContainText('Kia kite me pēhea te mahi');
-    await expect(page.locator('.background h2')).toContainText('He aha au i hanga ai i tēnei');
-  });
-
-  test('language preference persists via localStorage', async ({ page }) => {
-    await page.goto('file://' + indexPath);
-
-    // Switch to te reo Māori
-    await page.locator('#lang-select').selectOption('mi');
-    await expect(page.locator('.how-it-works h2')).toContainText('Me pēhea te mahi');
-
-    // Reload the page
-    await page.reload();
-
-    // Should still be in te reo Māori
-    await expect(page.locator('#lang-select')).toHaveValue('mi');
-    await expect(page.locator('.how-it-works h2')).toContainText('Me pēhea te mahi');
-  });
-
-  test('switching back to English works', async ({ page }) => {
-    await page.goto('file://' + indexPath);
-
-    // Switch to te reo Māori then back to English
-    await page.locator('#lang-select').selectOption('mi');
-    await expect(page.locator('.how-it-works h2')).toContainText('Me pēhea te mahi');
-
-    await page.locator('#lang-select').selectOption('en');
-    await expect(page.locator('.how-it-works h2')).toContainText('How it works');
-  });
-
-  test('HTML content in translations renders correctly', async ({ page }) => {
-    await page.goto('file://' + indexPath);
-
-    // Switch to te reo Māori
-    await page.locator('#lang-select').selectOption('mi');
-
-    // Elements with data-i18n-html should render HTML (strong tags, spans)
-    const summary = page.locator('[data-i18n-html="summary_1"]');
-    const strong = summary.locator('strong');
-    await expect(strong.first()).toBeAttached();
+    await expect(page.locator('#lang-select')).toHaveCount(0);
   });
 
   test('footer links are present', async ({ page }) => {

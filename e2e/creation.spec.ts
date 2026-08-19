@@ -231,43 +231,6 @@ friends:
     await creation.expectFileCount(4);
   });
 
-  test('language switching works', async ({ page }) => {
-    const creation = new CreationPage(page, htmlPath);
-
-    await creation.open();
-
-    // Default should be English
-    await creation.expectPageTitle('Create Bundles');
-
-    // Switch to te reo Māori
-    await creation.setLanguage('mi');
-    await creation.expectPageTitle('Waihanga Paihere');
-
-    // Switch back to English
-    await creation.setLanguage('en');
-    await creation.expectPageTitle('Create Bundles');
-  });
-
-  test('nav guide link updates for languages with translated docs', async ({ page }) => {
-    const creation = new CreationPage(page, htmlPath);
-
-    await creation.open();
-
-    const guideLink = page.locator('#nav-links-main a[data-i18n="nav_guide"]');
-
-    // English: docs.html
-    await creation.setLanguage('en');
-    await expect(guideLink).toHaveAttribute('href', 'docs.html');
-
-    // Te reo Māori has translated docs — link should point to docs.mi.html
-    await creation.setLanguage('mi');
-    await expect(guideLink).toHaveAttribute('href', 'docs.mi.html');
-
-    // Back to English
-    await creation.setLanguage('en');
-    await expect(guideLink).toHaveAttribute('href', 'docs.html');
-  });
-
   test('minimum 2 friends required — remove clears fields instead', async ({ page }) => {
     const creation = new CreationPage(page, htmlPath);
 

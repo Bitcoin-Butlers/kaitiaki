@@ -28,7 +28,7 @@ var homeFS embed.FS
 var commonFS embed.FS
 
 // Languages lists all supported language codes.
-var Languages = []string{"en", "mi"}
+var Languages = []string{"en"}
 
 // LangNames maps language codes to their native display names, in the same
 // order as Languages. This is the single source of truth for the language
@@ -36,7 +36,6 @@ var Languages = []string{"en", "mi"}
 // hardcoding option lists.
 var LangNames = [][2]string{
 	{"en", "English"},
-	{"mi", "Te Reo Māori"},
 }
 
 // LangSelectOptions returns HTML <option> elements for all languages,
