@@ -176,7 +176,7 @@ func runRecover(cmd *cobra.Command, args []string) error {
 			} else if _, err := os.Stat("recover.html"); err == nil {
 				manifestPath = "recover.html"
 			} else {
-				return fmt.Errorf("no manifest found — pass --manifest or include a bundle zip that contains one")
+				return fmt.Errorf("no manifest found. Pass --manifest or include a bundle zip that contains one")
 			}
 		}
 	}
@@ -219,7 +219,7 @@ func runRecover(cmd *cobra.Command, args []string) error {
 
 		unlockTime, _ := meta.UnlockTime()
 		if time.Now().Before(unlockTime) {
-			return fmt.Errorf("this archive is time-locked until %s — try again after that date", unlockTime.Format("2006-01-02 15:04"))
+			return fmt.Errorf("this archive is time-locked until %s. Try again after that date", unlockTime.Format("2006-01-02 15:04"))
 		}
 
 		fmt.Println("Opening time lock...")
@@ -281,7 +281,7 @@ func validateSharesCompatible(shares []*core.Share) error {
 	first := shares[0]
 	for i, share := range shares[1:] {
 		if share.Version != first.Version {
-			return fmt.Errorf("share %d has different version (v%d vs v%d) — all shares must be from the same bundle", i+2, share.Version, first.Version)
+			return fmt.Errorf("share %d has different version (v%d vs v%d). All shares must be from the same bundle", i+2, share.Version, first.Version)
 		}
 		if share.Total != first.Total {
 			return fmt.Errorf("share %d has different total (%d vs %d)", i+2, share.Total, first.Total)
@@ -292,7 +292,7 @@ func validateSharesCompatible(shares []*core.Share) error {
 		if !share.Created.IsZero() {
 			for _, prev := range shares[:i+1] {
 				if !prev.Created.IsZero() && !share.Created.Equal(prev.Created) {
-					return fmt.Errorf("share %d has different creation time — shares may be from different operations", i+2)
+					return fmt.Errorf("share %d has different creation time. Shares may be from different operations", i+2)
 				}
 			}
 		}

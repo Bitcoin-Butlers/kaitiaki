@@ -97,7 +97,7 @@
   "tlock_error_title": "Time lock check failed",
   "tlock_error_message": "Your pieces worked, but the time lock couldn't be verified. This usually means the network request was blocked.",
   "tlock_error_guidance": "Try a different browser (Chrome works best), or download the locked archive and use the CLI tool.",
-  "tlock_error_status": "Time lock check failed. Your pieces are correct — try a different browser.",
+  "tlock_error_status": "Time lock check failed. Your pieces are correct. Try a different browser.",
   "tlock_download_archive": "Download locked archive",
   "verification_title": "Your bundle is working",
   "verification_piece": "You hold piece {0} of {1}.",

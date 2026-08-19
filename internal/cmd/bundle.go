@@ -13,8 +13,8 @@ import (
 
 var bundleCmd = &cobra.Command{
 	Use:   "bundle",
-	Short: "Regenerate distribution bundles for all friends",
-	Long: `Regenerates ZIP bundles for each friend. This is useful if you:
+	Short: "Regenerate distribution bundles for all guardians",
+	Long: `Regenerates ZIP bundles for each guardian. This is useful if you:
   - Lost the original bundle files
   - Want to update bundles with a newer version of recover.html
 
@@ -60,7 +60,7 @@ func runBundle(cmd *cobra.Command, args []string) error {
 	}
 
 	// Generate bundles
-	fmt.Printf("Generating bundles for %d friends...\n\n", len(p.Friends))
+	fmt.Printf("Generating bundles for %d guardians...\n\n", len(p.Friends))
 
 	recoveryURL, _ := cmd.Flags().GetString("recovery-url")
 	noEmbedManifest, _ := cmd.Flags().GetBool("no-embed-manifest")
@@ -89,7 +89,7 @@ func runBundle(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Printf("\nBundles saved to: %s\n", bundlesDir)
-	fmt.Println("\nNote: Each README contains the friend's share - remind them not to share it!")
+	fmt.Println("\nNote: Each README contains the guardian's share. Remind them not to share it!")
 
 	pages, _ := cmd.Flags().GetBool("pages")
 	if pages {

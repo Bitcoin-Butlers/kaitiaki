@@ -1,8 +1,8 @@
 ---
-title: "\U0001F9E0 Kaitiaki Guide"
+title: "Kaitiaki Guide"
 subtitle: "How to create bundles and recover files"
 cli_guide_note: 'There is also a <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">CLI guide</a>.'
-nav_home: "\U0001F9E0 Kaitiaki"
+nav_home: "Kaitiaki"
 nav_home_link: "Home"
 nav_create: "Create Bundles"
 nav_recover: "Recover"
@@ -23,43 +23,43 @@ Recovery is opening a file in a browser.\* No servers, no need for this website 
 <p style="font-size: 0.8125rem; color: #8A8480;">* <a href="#timelock" style="color: #8A8480;">Time-locked</a> archives need a brief internet connection at recovery time.</p>
 
 <div class="tip">
-<strong>Tip:</strong> No one person can access your data. They need to bring together enough pieces — say, 3 of 5.
+<strong>Tip:</strong> No one person can access your data. They need to bring together enough pieces, for example 3 of 5.
 </div>
 
 ## Why Kaitiaki {#why-rememory}
 
-You probably have digital secrets that matter: password manager recovery codes, cryptocurrency seeds, important documents, instructions for loved ones. What happens to these if you're suddenly unavailable?
+You probably have digital secrets that matter: password manager recovery codes, important documents, instructions for loved ones. What happens to these if you're suddenly unavailable?
 
-Think of it like a safe deposit box that needs two keys to open — no single person holds enough to get in alone.
+Think of it like a safe deposit box that needs two keys to open. No single person holds enough to get in alone.
 
 Traditional approaches have weaknesses:
 
-- **Give one person everything** — a single point of failure and trust
-- **Split files manually** — confusing, error-prone, no encryption
-- **Use a password manager's emergency access** — similar to "give one person everything", also relies on the company existing
-- **Write it in a will** — becomes public record, slow legal process
+- **Give one person everything**: a single point of failure and trust
+- **Split files manually**: confusing, error-prone, no encryption
+- **Use a password manager's emergency access**: similar to "give one person everything", also relies on the company existing
+- **Write it in a will**: becomes public record, slow legal process
 
 Kaitiaki takes a different approach:
 
-- **No single point of failure** — requires multiple people to cooperate
-- **No trust in any one person** — even your most trusted friend can't access your secrets alone
-- **Offline and self-contained** — recovery works without internet or servers\*
-- **Designed for anyone** — clear instructions, not cryptographic puzzles
+- **No single point of failure**: requires multiple people to cooperate
+- **No trust in any one person**: even your most trusted guardian cannot access your secrets alone
+- **Offline and self-contained**: recovery works without internet or servers\*
+- **Designed for anyone**: clear instructions, not cryptographic puzzles
 
 ## Creating Bundles {#creating}
 
-Three steps. Everything happens in your browser — your files never leave your device. Open the [bundle creator](maker.html) to get started.
+Three steps. Everything happens in your browser. Your files never leave your device. Open the [bundle creator](maker.html) to get started.
 
-### Step 1: Add Friends {#step1}
+### Step 1: Add Guardians {#step1}
 
 Add the people who will hold pieces of your recovery key. For each, provide a name and optionally contact information.
 
 <figure class="screenshot">
-<img src="screenshots/en/friends.png" alt="Adding friends in Step 1">
+<img src="screenshots/en/friends.png" alt="Adding guardians in Step 1">
 <figcaption>Each person here will hold one piece of the key</figcaption>
 </figure>
 
-Then choose your **threshold** — how many people must come together to recover your files.
+Then choose your **threshold**: how many people must come together to recover your files.
 
 <div class="tip">
 <strong>Choosing a threshold:</strong>
@@ -83,11 +83,14 @@ Drag and drop the files or folder you want to protect.
 **Good candidates:**
 
 - Password manager recovery codes
-- Cryptocurrency seeds/keys
 - Important account credentials
 - Instructions for loved ones
 - Legal document locations
 - Safe combinations
+
+<div class="warning">
+<strong>Not for Bitcoin seeds or private keys.</strong> Never put seed words or private keys in a bundle. Those belong on a steel backup or a codex32 split, kept offline. Use Kaitiaki for the instructions around them, such as where the steel plates are and who to call.
+</div>
 
 <div class="warning">
 <strong>Note:</strong> Avoid files that change often. This is designed for secrets you set once and leave.
@@ -104,36 +107,35 @@ Click "Generate Bundles" to encrypt your files and create a bundle for each pers
 
 Each bundle includes the full recovery tool. It works even if this website is gone.
 
-### Distributing to Friends {#distributing}
+### Distributing to Guardians {#distributing}
 
-Send each person their bundle however you prefer:
+Hand each guardian their bundle by the most private channel you can manage, in this order of preference:
 
-- **Email:** Attach the ZIP file
-- **Cloud storage:** Share via Dropbox, Google Drive, etc.
-- **USB drive:** Physical handoff
-- **Encrypted messaging:** Signal, WhatsApp, etc.
+1. **In person:** A USB drive or printed PDF, handed over directly. The most private option.
+1. **Encrypted messaging:** Signal or another end-to-end encrypted messenger.
+1. **Plain email or cloud drives:** Discouraged for sensitive payloads. The provider keeps a copy, and your account becomes a collection point.
 
-If you send bundles by email or messaging, delete the messages from your sent folder once each friend confirms receipt. Otherwise your account ends up holding a copy of every piece — defeating the point of splitting them.
+If you must send bundles by email or messaging, delete the messages from your sent folder once each guardian confirms receipt. Otherwise your account ends up holding a copy of every piece, which defeats the point of splitting them.
 
 ### After Creating Bundles {#after-creating}
 
 Once your bundles are ready, there are a few things worth doing before you put this out of your mind:
 
 - Verify each person received their bundle and can open `recover.html`
-- Tell each person what this is, why they have it, and that they should keep it safe. They cannot use it alone — they will need to coordinate with others.
-- Keep a copy of `MANIFEST.age` somewhere safe — it's just encrypted data, useless without enough pieces
+- Tell each person what this is, why they have it, and that they should keep it safe. They cannot use it alone. They will need to coordinate with others.
+- Keep a copy of `MANIFEST.age` somewhere safe. It is just encrypted data, useless without enough pieces
 - Save your `project.yml` so you can regenerate bundles later
 - Print `README.pdf` as a paper backup before sending the digital bundle. Paper doesn't need adapters or power.
-- Set a yearly reminder to check in — see [Keeping Bundles Current](#keeping-current)
-- Consider running a [recovery drill](#recovery-drills) — it's the only way to know your plan actually works
+- Set a yearly reminder to check in. See [Keeping Bundles Current](#keeping-current)
+- Consider running a [recovery drill](#recovery-drills). It is the only way to know your plan actually works
 
 ## Recovering Files {#recovering}
 
-If you're here because someone you care about is no longer available — take a breath. There's no rush. The bundles don't expire, and the process is designed to be done at your own pace.
+If you are here because someone you care about is no longer available, take a breath. There's no rush. The bundles don't expire, and the process is designed to be done at your own pace.
 
-If you don't have a bundle yet, you can open the [recovery tool](recover.html) directly — you'll add pieces manually as you collect them from other holders.
+If you don't have a bundle yet, you can open the [recovery tool](recover.html) directly. You will add pieces manually as you collect them from other holders.
 
-### What Friends Receive {#bundle-contents}
+### What Guardians Receive {#bundle-contents}
 
 Each bundle contains:
 
@@ -157,7 +159,7 @@ Each bundle contains:
 </div>
 
 <p style="margin-top: 1rem;">
-Each bundle is personalized — the friend's share is pre-loaded, and a contact list shows who else holds pieces. When the encrypted data is small enough, it's embedded too.
+Each bundle is personalized. The guardian's share is pre-loaded, and a contact list shows who else holds pieces. When the encrypted data is small enough, it's embedded too.
 </p>
 
 ### Path A: I Have the Bundle ZIP {#recovery-bundle}
@@ -176,23 +178,23 @@ The simplest path. If you have the bundle ZIP (or the files from it):
 <div class="step-number">2</div>
 <div class="step-content">
 <h4>Load the encrypted manifest</h4>
-<p>For small archives (≤ 10 MB), this is automatic — the data is already embedded. Otherwise, drag <code>MANIFEST.age</code> from the bundle onto the page.</p>
+<p>For small archives (≤ 10 MB), this is automatic because the data is already embedded. Otherwise, drag <code>MANIFEST.age</code> from the bundle onto the page.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Coordinate with other friends</h4>
-<p>The tool shows a contact list with other friends' names and how to reach them. Ask them to send their <code>README.txt</code>.</p>
+<h4>Coordinate with other guardians</h4>
+<p>The tool shows a contact list with other guardians' names and how to reach them. Ask them to send their <code>README.txt</code>.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Add shares from other friends</h4>
-<p>For each friend's piece: drag their <code>README.txt</code> onto the page, paste the text, or scan a QR code from their PDF. A checkmark appears as each piece is added.</p>
+<h4>Add shares from other guardians</h4>
+<p>For each guardian's piece: drag their <code>README.txt</code> onto the page, paste the text, or scan a QR code from their PDF. A checkmark appears as each piece is added.</p>
 </div>
 </div>
 
@@ -205,7 +207,7 @@ The simplest path. If you have the bundle ZIP (or the files from it):
 </div>
 
 <div class="tip">
-<strong>Tip:</strong> If a friend sends their entire <code>.zip</code> bundle, drag it onto the page — both the piece and the archive are imported at once.
+<strong>Tip:</strong> If a guardian sends their entire <code>.zip</code> bundle, drag it onto the page. Both the piece and the archive are imported at once.
 </div>
 
 <figure class="screenshot">
@@ -220,13 +222,13 @@ The simplest path. If you have the bundle ZIP (or the files from it):
 
 ### Path B: I Have a Printed PDF with Words {#recovery-words}
 
-Each printed PDF includes your share as a list of numbered words. Type them into the recovery tool — no camera or scanner needed.
+Each printed PDF includes your share as a list of numbered words. Type them into the recovery tool. No camera or scanner is needed.
 
 <div class="step-guide">
 <div class="step-number">1</div>
 <div class="step-content">
 <h4>Open the recovery tool</h4>
-<p>Visit the URL printed on the PDF, or open <code>recover.html</code> from any friend's bundle.</p>
+<p>Visit the URL printed on the PDF, or open <code>recover.html</code> from any guardian's bundle.</p>
 </div>
 </div>
 
@@ -234,7 +236,7 @@ Each printed PDF includes your share as a list of numbered words. Type them into
 <div class="step-number">2</div>
 <div class="step-content">
 <h4>Type in your recovery words</h4>
-<p>Find the word list on your PDF and type the words into the text area. You don't need the numbers — just the words, separated by spaces.</p>
+<p>Find the word list on your PDF and type the words into the text area. You do not need the numbers, just the words, separated by spaces.</p>
 </div>
 </div>
 
@@ -252,15 +254,15 @@ Each printed PDF includes your share as a list of numbered words. Type them into
 <div class="step-number">3</div>
 <div class="step-content">
 <h4>Load the encrypted manifest</h4>
-<p>You may need the <code>MANIFEST.age</code> file — drag it onto the page or click to browse. If you don't have it, any friend can send theirs. Every bundle has the same copy.</p>
+<p>You may need the <code>MANIFEST.age</code> file. Drag it onto the page or click to browse. If you do not have it, any guardian can send theirs. Every bundle has the same copy.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Collect shares from other friends</h4>
-<p>Contact other friends and ask for their pieces. They can send their <code>README.txt</code>, read their words over the phone, or you can scan their QR code.</p>
+<h4>Collect shares from other guardians</h4>
+<p>Contact other guardians and ask for their pieces. They can send their <code>README.txt</code>, read their words over the phone, or you can scan their QR code.</p>
 </div>
 </div>
 
@@ -273,7 +275,7 @@ Each printed PDF includes your share as a list of numbered words. Type them into
 </div>
 
 <div class="tip">
-<strong>Tip:</strong> Words are the easiest to share over the phone. If a friend can't send their share digitally, they can read the words aloud and you type them in.
+<strong>Tip:</strong> Words are the easiest to share over the phone. If a guardian cannot send their share digitally, they can read the words aloud and you type them in.
 </div>
 
 ### Path C: I Have a Printed PDF with QR Code {#recovery-pdf}
@@ -284,7 +286,7 @@ If your device has a camera, scan the QR code on the PDF to import your share di
 <div class="step-number">1</div>
 <div class="step-content">
 <h4>Open the recovery tool</h4>
-<p>Scan the QR code with your phone camera — it opens the recovery tool with your share pre-filled. Or visit the URL on the PDF and type the short code shown below the QR code.</p>
+<p>Scan the QR code with your phone camera. It opens the recovery tool with your share pre-filled. Or visit the URL on the PDF and type the short code shown below the QR code.</p>
 </div>
 </div>
 
@@ -302,7 +304,7 @@ If your device has a camera, scan the QR code on the PDF to import your share di
 <div class="step-number">2</div>
 <div class="step-content">
 <h4>Load the encrypted manifest</h4>
-<p>You may need the <code>MANIFEST.age</code> file — drag it onto the page or click to browse. If you don't have it, any friend can send theirs. Every bundle has the same copy.</p>
+<p>You may need the <code>MANIFEST.age</code> file. Drag it onto the page or click to browse. If you do not have it, any guardian can send theirs. Every bundle has the same copy.</p>
 </div>
 </div>
 
@@ -314,8 +316,8 @@ If your device has a camera, scan the QR code on the PDF to import your share di
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Collect shares from other friends</h4>
-<p>Contact other friends and ask for their pieces. They can send their <code>README.txt</code>, or you can scan their QR code.</p>
+<h4>Collect shares from other guardians</h4>
+<p>Contact other guardians and ask for their pieces. They can send their <code>README.txt</code>, or you can scan their QR code.</p>
 </div>
 </div>
 
@@ -332,24 +334,24 @@ If your device has a camera, scan the QR code on the PDF to import your share di
 <ul>
 <li>Works entirely <span title="No internet needed. Time-locked archives need a connection to verify the unlock date.">offline*</span></li>
 <li>Nothing leaves the browser</li>
-<li>Friends can be anywhere — they just need to send their README.txt files</li>
+<li>Guardians can be anywhere. They just need to send their README.txt files</li>
 </ul>
 </div>
 
 ## Best Practices {#best-practices}
 
-### Choosing Friends
+### Choosing Guardians
 
 - **Longevity:** People likely to be reachable in 5–10 years
 - **Geographic spread:** Not all in the same place
-- **Technical ability:** Any mix is fine — the tool is designed for everyone
+- **Technical ability:** Any mix is fine. The tool is designed for everyone
 - **Relationships:** Will they cooperate with each other?
 - **Trust:** A single piece reveals nothing, but you're trusting them with responsibility
 
 ### Security Considerations
 
-- Don't keep all bundles together — that defeats the point of splitting
-- Consider printing `README.pdf` — paper survives digital disasters
+- Do not keep all bundles together. That defeats the point of splitting
+- Consider printing `README.pdf`. Paper survives digital disasters
 - Save `project.yml` if you want to regenerate bundles later
 
 ### Storing Bundles Safely {#storing-bundles}
@@ -359,62 +361,62 @@ Bundles are small (under 10 MB) and designed to be stored in everyday places. He
 - **Email** is a surprisingly good option. Most people keep the same email address for decades, and bundles are small enough to attach. Many email providers retain messages indefinitely.
 - **Cloud storage** (Google Drive, Dropbox, iCloud) works well as a secondary copy.
 - **USB drives** can work, but keep in mind that connectors change over time (USB-A is already giving way to USB-C) and flash memory can degrade if left unpowered for years. Not ideal as the only copy.
-- **Paper** is the most durable option. Printing `README.pdf` gives your friends a copy that doesn't need adapters, power, or any working device.
+- **Paper** is the most durable option. Printing `README.pdf` gives your guardians a copy that does not need adapters, power, or any working device.
 
-The best approach is redundancy — email plus paper, or cloud plus paper. More than one copy, in more than one form.
+The best approach is redundancy: email plus paper, or cloud plus paper. More than one copy, in more than one form.
 
 ### Keeping Bundles Current {#keeping-current}
 
-Set a yearly reminder to check in with your friends. Confirm they still have their bundles and update contact details if anything has changed.
+Set a yearly reminder to check in with your guardians. Confirm they still have their bundles and update contact details if anything has changed.
 
-When your files change, create new bundles and send them. The old bundles won't open the new archive, so there's no risk in leaving them around — but ask friends to replace theirs to keep things tidy.
+When your files change, create new bundles and send them. The old bundles won't open the new archive, so there is no risk in leaving them around. Still, ask guardians to replace theirs to keep things tidy.
 
-When contacts change — someone moves, changes their phone number, or you want to add or remove someone — same thing: new bundles, ask people to delete the old ones.
+When contacts change, for example someone moves or you want to add or remove someone, do the same thing: new bundles, ask people to delete the old ones.
 
-Between updates, keep your source files in an encrypted vault — tools like [Cryptomator](https://cryptomator.org) or [VeraCrypt](https://veracrypt.fr) work well. Don't leave plaintext copies sitting in a regular folder.
+Between updates, keep your source files in an encrypted vault. Tools like [Cryptomator](https://cryptomator.org) or [VeraCrypt](https://veracrypt.fr) work well. Don't leave plaintext copies sitting in a regular folder.
 
 Think of it like updating your emergency contacts. Brief, periodic, worth doing.
 
 ### Recovery Drills {#recovery-drills}
 
-Nobody tests their backup plan. A recovery drill changes that — and it turns out, it's basically an escape room.
+Nobody tests their backup plan. A recovery drill changes that, and it turns out to be basically an escape room.
 
-Create a test bundle with a harmless secret (a photo, a message, a recipe). Hand out pieces to your friends. Set a [timelock](#timelock) if you want a real countdown. Then step back and let them figure it out: coordinate, combine pieces, unlock the files — without your help.
+Create a test bundle with a harmless secret (a photo, a message, a recipe). Hand out pieces to your guardians. Set a [timelock](#timelock) if you want a real countdown. Then step back and let them figure it out: coordinate, combine pieces, and unlock the files without your help.
 
 What you learn:
 
-- Can your friends actually find their bundles when they need them?
+- Can your guardians actually find their bundles when they need them?
 - Do they understand the instructions, or do they get stuck?
 - Can they reach each other without you coordinating?
 
-A drill that goes smoothly means your real plan will too. A drill that goes badly is a gift — you found the problem before it mattered.
+A drill that goes smoothly means your real plan will too. A drill that goes badly is a gift: you found the problem before it mattered.
 
 ### Revoking Access {#revoking-access}
 
-Once a piece has been distributed, it cannot be revoked. This is by design — there is no server, no central authority.
+Once a piece has been distributed, it cannot be revoked. This is by design. There is no server, no central authority.
 
 If you need to change who holds pieces:
 
-1. **Create new bundles** with a new set of friends and a fresh key
-1. **Send new bundles** to the friends you still trust
-1. **Ask every remaining friend to delete their old bundle** and replace it with the new one
+1. **Create new bundles** with a new set of guardians and a fresh key
+1. **Send new bundles** to the guardians you still trust
+1. **Ask every remaining guardian to delete their old bundle** and replace it with the new one
 
 <div class="warning">
 <strong>Important:</strong> Old pieces still work with old archives. When you send a new bundle, be clear: <strong>delete the old one</strong>, keep only the new one. No version history, no "just in case."
 </div>
 
-The same applies when secrets change. New bundles mean a new key and new pieces. Old pieces won't open the new archive, but they still work with the old one. Make sure friends aren't holding on to old copies.
+The same applies when secrets change. New bundles mean a new key and new pieces. Old pieces won't open the new archive, but they still work with the old one. Make sure guardians are not holding on to old copies.
 
 ### About project.yml {#project-file}
 
 When you create bundles, your project is saved in a `project.yml` file. This file stores:
 
-- Friends' names and contact information
+- Guardians' names and contact information
 - Your chosen threshold (e.g., 3 of 5)
 - A verification hash for checking if bundles match
 - Share checksums for verifying bundle integrity
 
-It does **not** store any secrets — no passphrase, no key material, no file contents. It's safe to keep alongside your other project files.
+It does **not** store any secrets: no passphrase, no key material, no file contents. It's safe to keep alongside your other project files.
 
 With `project.yml`, you can regenerate bundles, verify existing ones, and check the status of your setup.
 
@@ -424,11 +426,11 @@ Kaitiaki composes well-established cryptographic tools rather than inventing its
 
 ### What Protects Your Data {#cryptography}
 
-Your files are locked with a modern encryption tool ([age](https://github.com/FiloSottile/age)) — widely reviewed, no known weaknesses.
+Your files are locked with a modern encryption tool ([age](https://github.com/FiloSottile/age)), which is widely reviewed with no known weaknesses.
 
 The key that locks them is 256 bits long, generated from your operating system's random number generator. For scale: guessing it would take longer than the universe has existed.
 
-Even if someone tried every possible password, scrypt makes each guess deliberately slow — millions of times slower than a naive attempt.
+Even if someone tried every possible password, scrypt makes each guess deliberately slow, millions of times slower than a naive attempt.
 
 The key is then split using Shamir's Secret Sharing. **Any fewer than *threshold* pieces contain zero information about the original.** Not "very little." Mathematically zero.
 
@@ -438,28 +440,28 @@ Each bundle includes checksums so the recovery tool can verify nothing was corru
 
 <div class="bundle-contents">
 <div class="file">
-<span class="file-name">A friend loses their bundle</span>
-<span class="file-desc">Fine, as long as enough other friends still have theirs. That's why you set the threshold below the total.</span>
+<span class="file-name">A guardian loses their bundle</span>
+<span class="file-desc">Fine, as long as enough other guardians still have theirs. That's why you set the threshold below the total.</span>
 </div>
 <div class="file">
-<span class="file-name">A friend leaks their piece publicly</span>
+<span class="file-name">A guardian leaks their piece publicly</span>
 <span class="file-desc">A single piece is useless without the others. Someone would still need threshold-1 more pieces to do anything.</span>
 </div>
 <div class="file">
-<span class="file-name">Some friends can't be reached</span>
-<span class="file-desc">That's why you set the threshold below the total number of friends. If you chose 3-of-5, any three will do.</span>
+<span class="file-name">Some guardians cannot be reached</span>
+<span class="file-desc">That is why you set the threshold below the total number of guardians. If you chose 3-of-5, any three will do.</span>
 </div>
 <div class="file">
 <span class="file-name">Kaitiaki disappears in 10 years</span>
-<span class="file-desc"><code>recover.html</code> still works — it's self-contained. No servers, no downloads, no dependencies on this project.</span>
+<span class="file-desc"><code>recover.html</code> still works because it is self-contained. No servers, no downloads, no dependencies on this project.</span>
 </div>
 <div class="file">
 <span class="file-name">Browsers change dramatically</span>
-<span class="file-desc">The recovery tool uses standard JavaScript and the Web Crypto API — browser fundamentals, not trends.</span>
+<span class="file-desc">The recovery tool uses standard JavaScript and the Web Crypto API: browser fundamentals, not trends.</span>
 </div>
 <div class="file">
 <span class="file-name">You forget how this works</span>
-<span class="file-desc">Each bundle's README.txt explains everything. Your friends don't need to remember anything — it's all written down for them.</span>
+<span class="file-desc">Each bundle's README.txt explains everything. Your guardians do not need to remember anything. It is all written down for them.</span>
 </div>
 </div>
 
@@ -472,8 +474,8 @@ For a detailed technical evaluation, see the [security self-review]({{GITHUB_REP
 Kaitiaki isn't the first tool to use Shamir's Secret Sharing. There are many others, from command-line tools to web apps. Here's what sets Kaitiaki apart:
 
 - **Handles files, not just text.** Most Shamir tools only split passwords or short text. Kaitiaki encrypts entire files and folders.
-- **Self-contained recovery tool.** Each friend receives `recover.html` — a complete recovery tool that runs in any browser, offline.\* No installation, no CLI needed.
-- **Contact details included.** Each bundle includes a list of other friends and how to reach them, so coordination doesn't depend on you being available.
+- **Self-contained recovery tool.** Each guardian receives `recover.html`, a complete recovery tool that runs in any browser, offline.\* No installation, no CLI needed.
+- **Contact details included.** Each bundle includes a list of other guardians and how to reach them, so coordination doesn't depend on you being available.
 - **No server dependency.** Everything runs locally. There's no service to sign up for, no account to maintain, nothing that needs to stay online.
 
 For a detailed comparison with other tools, see the [full comparison table on GitHub]({{GITHUB_REPO}}#other-similar-tools).
@@ -508,9 +510,9 @@ This is useful when:
 
 ### How to Enable
 
-In the [bundle creator](maker.html), enable the **Anonymous** toggle in the Friends section:
+In the [bundle creator](maker.html), enable the **Anonymous** toggle in the Guardians section:
 
-- The friend list is replaced by a share count
+- The guardian list is replaced by a share count
 - Set how many shares and the threshold
 - Bundles are named `bundle-share-1.zip`, `bundle-share-2.zip`, etc.
 
@@ -528,20 +530,20 @@ Each person can receive their bundle in their preferred language. Seven language
 
 ### How It Works
 
-- Each friend entry has a **Bundle language** dropdown
+- Each guardian entry has a **Bundle language** dropdown
 - "Default" uses the current UI language
 - Override per person to mix languages
 - recover.html opens in the selected language
 - Anyone can switch languages at any time
 
 <figure class="screenshot">
-<img src="screenshots/en/multilingual-language-dropdown.png" alt="Friend entry showing the bundle language dropdown in the web UI">
-<figcaption>Each friend has a language dropdown to set their bundle language</figcaption>
+<img src="screenshots/en/multilingual-language-dropdown.png" alt="Guardian entry showing the bundle language dropdown in the web UI">
+<figcaption>Each guardian has a language dropdown to set their bundle language</figcaption>
 </figure>
 
 <figure class="screenshot">
 <img src="screenshots/demo-pdf-es/page-1.png" alt="recover.pdf opened in Spanish">
-<figcaption>The recovery tool opens in the friend's selected language</figcaption>
+<figcaption>The recovery tool opens in the guardian's selected language</figcaption>
 </figure>
 
 <figure class="screenshot">
@@ -551,11 +553,11 @@ Each person can receive their bundle in their preferred language. Seven language
 
 ## Advanced: Time-Delayed Recovery {#timelock}
 
-You can set a waiting period when creating bundles. Even if your friends combine their pieces early, the files stay locked until the date you chose — 30 days, 6 months, a specific date.
+You can set a waiting period when creating bundles. Even if your guardians combine their pieces early, the files stay locked until the date you chose: 30 days, 6 months, or a specific date.
 
 ### How to Enable
 
-In the [bundle creator](maker.html), switch to **Advanced** mode and check **Add a time lock**. Choose how long the files should stay locked — up to two years.
+In the [bundle creator](maker.html), switch to **Advanced** mode and check **Add a time lock**. Choose how long the files should stay locked, up to two years.
 
 The two-year limit is deliberate. Time locks depend on the League of Entropy continuing to operate, and we don't think it's responsible to lock your files behind a longer bet on external infrastructure. If you need a longer duration and understand the trade-off, the CLI has no cap: `kaitiaki seal --timelock 5y`.
 
@@ -573,7 +575,7 @@ When someone opens a time-locked bundle before the date, the recovery tool shows
 <figcaption>The recovery tool waits until the time lock expires</figcaption>
 </figure>
 
-Opening a time-locked archive requires a brief internet connection. Your files aren't sent anywhere — the connection verifies that enough time has passed. Without the time lock, recovery is fully offline.
+Opening a time-locked archive requires a brief internet connection. Your files are not sent anywhere. The connection only verifies that enough time has passed. Without the time lock, recovery is fully offline.
 
 <div class="warning">
 <strong>Experimental.</strong> Time-delayed recovery depends on the <a href="https://www.cloudflare.com/en-ca/leagueofentropy/" target="_blank">League of Entropy</a>, a distributed network operated by serious organizations around the world. If this network stops operating before a time lock expires, that archive becomes unrecoverable. Bundles without a time lock are not affected.
@@ -581,7 +583,7 @@ Opening a time-locked archive requires a brief internet connection. Your files a
 
 ### How It Works {#timelock-technical}
 
-The League of Entropy produces a new cryptographic value every 3 seconds. Each value is numbered. You can predict which number corresponds to a given time, but the value for that number can't be produced early — not by anyone, including the network operators.
+The League of Entropy produces a new cryptographic value every 3 seconds. Each value is numbered. You can predict which number corresponds to a given time, but no one can produce the value for that number early, not even the network operators.
 
 When you create a time-locked bundle, the archive is encrypted to a specific future value. The key to open it doesn't exist yet. It will come from the network when that moment arrives.
 
@@ -589,6 +591,6 @@ For a deeper look at the cryptography behind this, see the [drand timelock encry
 
 ## Self-Hosting {#selfhosted}
 
-Kaitiaki can also run as a web app on your own server using `kaitiaki serve`. The server provides the same creation and recovery tools through a browser. Friends only need their share — the encrypted archive is served automatically.
+Kaitiaki can also run as a web app on your own server using `kaitiaki serve`. The server provides the same creation and recovery tools through a browser. Guardians only need their share. The encrypted archive is served automatically.
 
 This is an advanced option for people who already run a homelab or want a shared web UI. The offline bundles remain the primary way to use Kaitiaki and work without any server. See the [self-hosting guide](https://github.com/eljojo/rememory/blob/main/docs/selfhosted.md) on GitHub for details.

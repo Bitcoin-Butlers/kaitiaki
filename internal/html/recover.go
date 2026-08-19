@@ -205,7 +205,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
       <div class="qr-scanner-overlay"></div>
     </div>
     <div class="qr-scanner-hint">
-      <span data-i18n="scan_hint">Point your camera at a QR code from a friend's PDF</span>
+      <span data-i18n="scan_hint">Point your camera at a QR code from a guardian's PDF</span>
     </div>
   </div>`,
 		Content: content,

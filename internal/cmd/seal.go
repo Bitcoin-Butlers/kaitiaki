@@ -66,7 +66,7 @@ func runSeal(cmd *cobra.Command, args []string) error {
 
 	force, _ := cmd.Flags().GetBool("force")
 	if p.Sealed != nil && !force {
-		return fmt.Errorf("project is already sealed (at %s) — re-sealing generates a new passphrase and invalidates every distributed share; pass --force to re-seal", p.Sealed.At.Format("2006-01-02 15:04"))
+		return fmt.Errorf("project is already sealed (at %s). Re-sealing generates a new passphrase and invalidates every distributed share; pass --force to re-seal", p.Sealed.At.Format("2006-01-02 15:04"))
 	}
 
 	recoveryURL, _ := cmd.Flags().GetString("recovery-url")
@@ -121,7 +121,7 @@ func sealProject(p *project.Project, recoveryURL string, noEmbedManifest bool, t
 				return fmt.Errorf("rendering manifest template: %w", err)
 			}
 			if bytes.Equal(actual, expected) {
-				return fmt.Errorf("manifest contains only the template README — add your files to %s before sealing", manifestDir)
+				return fmt.Errorf("manifest contains only the template README. Add your files to %s before sealing", manifestDir)
 			}
 		}
 	}
@@ -231,7 +231,7 @@ func sealProject(p *project.Project, recoveryURL string, noEmbedManifest bool, t
 		share := core.NewShare(2, i+1, len(p.Friends), p.Threshold, p.Friends[i].Name, shares[i])
 		fn := share.Filename()
 		if prev, ok := usedNames[fn]; ok {
-			return fmt.Errorf("share filename collision: %q and %q both map to %s — rename one friend", prev, p.Friends[i].Name, fn)
+			return fmt.Errorf("share filename collision: %q and %q both map to %s. Rename one guardian", prev, p.Friends[i].Name, fn)
 		}
 		usedNames[fn] = p.Friends[i].Name
 	}

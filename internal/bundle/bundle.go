@@ -68,7 +68,7 @@ func GenerateAll(p *project.Project, cfg Config) error {
 	for _, friend := range p.Friends {
 		fn := core.SanitizeFilename(friend.Name)
 		if prev, ok := usedBundleNames[fn]; ok {
-			return fmt.Errorf("bundle filename collision: %q and %q both map to bundle-%s.zip — rename one friend", prev, friend.Name, fn)
+			return fmt.Errorf("bundle filename collision: %q and %q both map to bundle-%s.zip. Rename one guardian", prev, friend.Name, fn)
 		}
 		usedBundleNames[fn] = friend.Name
 	}

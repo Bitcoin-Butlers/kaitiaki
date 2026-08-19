@@ -12,13 +12,13 @@ import (
 var demoCmd = &cobra.Command{
 	Use:   "demo [directory]",
 	Short: "Create a demo project with sample data",
-	Long: `Create a complete demo project with sample friends and secret files.
+	Long: `Create a complete demo project with sample guardians and secret files.
 
 This is useful for testing the recovery workflow or demonstrating Kaitiaki.
 
 The demo project includes:
-  - 5 friends: Alice, Bob, Camila (Spanish), Dominique (French), Elias (German)
-  - Threshold of 3 (any 3 friends can recover)
+  - 5 guardians: Alice, Bob, Camila (Spanish), Dominique (French), Elias (German)
+  - Threshold of 3 (any 3 guardians can recover)
   - Sample secret files in the manifest
   - Fully sealed and bundled, ready to test
   - Camila, Dominique, and Elias's bundles are in their language
@@ -65,7 +65,7 @@ func runDemo(cmd *cobra.Command, args []string) error {
 	}
 	threshold := 3
 
-	fmt.Printf("Friends: %s\n", friendNames(friends))
+	fmt.Printf("Guardians: %s\n", friendNames(friends))
 	fmt.Printf("Threshold: %d of %d\n\n", threshold, len(friends))
 
 	// Create the project
@@ -93,7 +93,7 @@ In a real scenario, this file might contain:
 - Instructions for loved ones
 
 Remember: This file will be encrypted and can only be recovered
-when enough friends combine their shares.
+when enough guardians combine their shares.
 `
 	if err := os.WriteFile(filepath.Join(manifestDir, "demo-secret.txt"), []byte(demoSecretContent), 0600); err != nil {
 		return fmt.Errorf("writing demo secret: %w", err)
@@ -138,10 +138,10 @@ Note: In a real project, these would be your actual sensitive credentials.
 	fmt.Println("To test recovery:")
 	fmt.Printf("  1. Open %s/output/bundles/bundle-alice.zip\n", dirName)
 	fmt.Println("  2. Extract and open recover.html in a browser")
-	fmt.Println("  3. Alice's piece is pre-loaded — add two more README files to reach the threshold")
+	fmt.Println("  3. Alice's piece is pre-loaded. Add two more README files to reach the threshold")
 	fmt.Println("  4. Recovery will happen automatically")
 	fmt.Println()
-	fmt.Println("Camila, Dominique, and Elias's bundles are in their language — check bundle-camila.zip to see.")
+	fmt.Println("Camila, Dominique, and Elias's bundles are in their language. Check bundle-camila.zip to see.")
 
 	return nil
 }

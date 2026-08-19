@@ -678,7 +678,7 @@ declare const __SELFHOSTED__: boolean;
       const overLimit = totalSize > maxTotalFileSize;
 
       if (overLimit) {
-        summaryText += ` — ${t('files_too_large', formatSize(maxTotalFileSize))}`;
+        summaryText += `. ${t('files_too_large', formatSize(maxTotalFileSize))}`;
       }
 
       elements.filesSummary.textContent = summaryText;
