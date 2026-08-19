@@ -227,6 +227,12 @@ func GenerateBundle(params BundleParams) error {
 		files = append(files, ZipFile{Name: "MANIFEST.age", Content: params.ManifestData, ModTime: params.SealedAt})
 	}
 
+	metadata, err := GenerateMetadata(params, files)
+	if err != nil {
+		return err
+	}
+	files = append(files, ZipFile{Name: MetadataFilename, Content: metadata, ModTime: params.SealedAt})
+
 	return CreateZip(params.OutputPath, files)
 }
 
