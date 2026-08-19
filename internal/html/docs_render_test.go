@@ -183,7 +183,7 @@ func TestGenerateDocsHTMLEnglish(t *testing.T) {
 	}
 
 	// Key content should be present
-	if !strings.Contains(html, "ReMemory Guide") {
+	if !strings.Contains(html, "Kaitiaki Guide") {
 		t.Error("should contain page title")
 	}
 	if !strings.Contains(html, `id="overview"`) {
@@ -200,7 +200,7 @@ func TestGenerateDocsHTMLSpanish(t *testing.T) {
 	if !strings.Contains(html, `<html lang="es">`) {
 		t.Error("should have lang=es")
 	}
-	if !strings.Contains(html, "Cómo usar ReMemory") {
+	if !strings.Contains(html, "Cómo usar Kaitiaki") {
 		t.Error("should contain Spanish page title")
 	}
 	// Section IDs should be the same (English) regardless of language
@@ -216,7 +216,7 @@ func TestGenerateDocsHTMLFallback(t *testing.T) {
 	if !strings.Contains(html, `<html lang="en">`) {
 		t.Error("should fall back to lang=en for unknown language")
 	}
-	if !strings.Contains(html, "ReMemory Guide") {
+	if !strings.Contains(html, "Kaitiaki Guide") {
 		t.Error("should contain English title after fallback")
 	}
 }

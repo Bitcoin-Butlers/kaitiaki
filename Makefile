@@ -1,6 +1,6 @@
 .PHONY: build test test-tlock test-e2e test-e2e-headed lint clean install wasm wasm-cjk build-cjk ts build-all bump man html serve demo demo-tlock generate-fixtures full update-pdf-png screenshots release check-translations
 
-BINARY := rememory
+BINARY := kaitiaki
 VERSION := $(shell cat VERSION 2>/dev/null || echo "dev")
 BUILD_DATE := $(shell date -u +%Y-%m-%d)
 LDFLAGS := -ldflags "-s -w -X main.version=$(VERSION) -X main.buildDate=$(BUILD_DATE)"

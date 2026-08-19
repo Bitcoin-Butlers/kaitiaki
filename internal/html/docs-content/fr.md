@@ -1,8 +1,8 @@
 ---
-title: "\U0001F9E0 Guide ReMemory"
+title: "\U0001F9E0 Guide Kaitiaki"
 subtitle: "Comment créer des enveloppes et récupérer des fichiers"
 cli_guide_note: 'Il existe aussi un <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">guide en ligne de commande</a>.'
-nav_home: "\U0001F9E0 ReMemory"
+nav_home: "\U0001F9E0 Kaitiaki"
 nav_home_link: "Accueil"
 nav_create: "Créer des enveloppes"
 nav_recover: "Récupérer"
@@ -14,7 +14,7 @@ footer_home: "Accueil"
 
 ## Présentation {#overview}
 
-ReMemory est un coffre-fort numérique à plusieurs clés. Vous choisissez qui les détient et combien doivent se réunir pour l'ouvrir.
+Kaitiaki est un coffre-fort numérique à plusieurs clés. Vous choisissez qui les détient et combien doivent se réunir pour l'ouvrir.
 
 Sous le capot, il chiffre vos fichiers avec [age](https://github.com/FiloSottile/age), répartit la clé entre des personnes de confiance et donne à chacune une enveloppe autonome pour la récupération.
 
@@ -26,7 +26,7 @@ Récupérer, c'est ouvrir un fichier dans un navigateur.\* Pas de serveur, pas b
 <strong>À noter :</strong> Aucune personne seule ne peut accéder à vos données. Il faut réunir suffisamment de parts — par exemple, 3 sur 5.
 </div>
 
-## Pourquoi ReMemory {#why-rememory}
+## Pourquoi Kaitiaki {#why-rememory}
 
 Vous avez probablement des secrets numériques qui comptent : codes de récupération de votre gestionnaire de mots de passe, clés de cryptomonnaie, documents importants, instructions pour vos proches. Que deviennent-ils si un jour vous n'êtes plus disponible ?
 
@@ -39,7 +39,7 @@ Les approches classiques ont leurs faiblesses :
 - **Utiliser l'accès d'urgence d'un gestionnaire de mots de passe** — revient à « tout confier à une personne », et dépend en plus de la pérennité de l'entreprise
 - **L'inscrire dans un testament** — devient un document public, procédure juridique lente
 
-ReMemory prend un chemin différent :
+Kaitiaki prend un chemin différent :
 
 - **Pas de point de défaillance unique** — plusieurs personnes doivent coopérer
 - **Pas de confiance aveugle en une seule personne** — même votre ami le plus proche ne peut pas accéder seul à vos secrets
@@ -420,7 +420,7 @@ Avec `project.yml`, vous pouvez recréer les enveloppes, vérifier celles qui ex
 
 ## Comprendre la sécurité {#security}
 
-ReMemory combine des outils cryptographiques éprouvés au lieu d'inventer les siens. Voici ce que cela signifie concrètement.
+Kaitiaki combine des outils cryptographiques éprouvés au lieu d'inventer les siens. Voici ce que cela signifie concrètement.
 
 ### Ce qui protège vos données {#cryptography}
 
@@ -450,7 +450,7 @@ Chaque enveloppe inclut des sommes de contrôle pour que l'outil de récupérati
 <span class="file-desc">C'est pour cela que le seuil est inférieur au nombre total d'amis. Si vous avez choisi 3 sur 5, n'importe lesquels trois suffisent.</span>
 </div>
 <div class="file">
-<span class="file-name">ReMemory disparaît dans 10 ans</span>
+<span class="file-name">Kaitiaki disparaît dans 10 ans</span>
 <span class="file-desc"><code>recover.html</code> fonctionne toujours — il est autonome. Pas de serveur, pas de téléchargement, aucune dépendance à ce projet.</span>
 </div>
 <div class="file">
@@ -469,9 +469,9 @@ Pour une évaluation technique détaillée, consultez l'[auto-évaluation de sé
 
 ## Comparaison {#comparison}
 
-ReMemory n'est pas le premier outil à utiliser le partage de secret de Shamir. Il en existe beaucoup d'autres, des outils en ligne de commande aux applications web. Voici ce qui distingue ReMemory :
+Kaitiaki n'est pas le premier outil à utiliser le partage de secret de Shamir. Il en existe beaucoup d'autres, des outils en ligne de commande aux applications web. Voici ce qui distingue Kaitiaki :
 
-- **Gère des fichiers, pas seulement du texte.** La plupart des outils Shamir ne divisent que des mots de passe ou du texte court. ReMemory chiffre des fichiers et des dossiers entiers.
+- **Gère des fichiers, pas seulement du texte.** La plupart des outils Shamir ne divisent que des mots de passe ou du texte court. Kaitiaki chiffre des fichiers et des dossiers entiers.
 - **Outil de récupération autonome.** Chaque ami reçoit `recover.html` — un outil complet qui fonctionne dans n'importe quel navigateur, hors ligne.\* Pas d'installation, pas de ligne de commande.
 - **Coordonnées incluses.** Chaque enveloppe contient une liste des autres amis et comment les joindre, pour que la coordination ne dépende pas de votre disponibilité.
 - **Aucune dépendance à un serveur.** Tout s'exécute localement. Pas de service auquel s'inscrire, pas de compte à maintenir, rien qui doive rester en ligne.
@@ -557,7 +557,7 @@ Vous pouvez définir un délai d'attente lors de la création des enveloppes. M�
 
 Dans le [créateur d'enveloppes](maker.html), passez en mode **Avancé** et cochez **Ajouter un verrou temporel**. Choisissez combien de temps les fichiers doivent rester verrouillés — jusqu'à deux ans.
 
-La limite de deux ans est délibérée. Les verrous temporels dépendent du fonctionnement continu de la League of Entropy, et nous ne pensons pas qu'il soit responsable de verrouiller vos fichiers sur un pari plus long concernant une infrastructure externe. Si vous avez besoin d'une durée plus longue et comprenez le compromis, la CLI n'a pas de limite : `rememory seal --timelock 5y`.
+La limite de deux ans est délibérée. Les verrous temporels dépendent du fonctionnement continu de la League of Entropy, et nous ne pensons pas qu'il soit responsable de verrouiller vos fichiers sur un pari plus long concernant une infrastructure externe. Si vous avez besoin d'une durée plus longue et comprenez le compromis, la CLI n'a pas de limite : `kaitiaki seal --timelock 5y`.
 
 <figure class="screenshot">
 <img src="screenshots/fr/tlock-setup.png" alt="Configuration du verrouillage temporel en mode Avancé">

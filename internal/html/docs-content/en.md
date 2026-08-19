@@ -1,8 +1,8 @@
 ---
-title: "\U0001F9E0 ReMemory Guide"
+title: "\U0001F9E0 Kaitiaki Guide"
 subtitle: "How to create bundles and recover files"
 cli_guide_note: 'There is also a <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">CLI guide</a>.'
-nav_home: "\U0001F9E0 ReMemory"
+nav_home: "\U0001F9E0 Kaitiaki"
 nav_home_link: "Home"
 nav_create: "Create Bundles"
 nav_recover: "Recover"
@@ -14,7 +14,7 @@ footer_home: "Home"
 
 ## Overview {#overview}
 
-ReMemory is a digital safe with multiple keys. You choose who holds them and how many must come together to open it.
+Kaitiaki is a digital safe with multiple keys. You choose who holds them and how many must come together to open it.
 
 Under the hood, it encrypts your files with [age](https://github.com/FiloSottile/age), splits the key among people you trust, and gives each person a self-contained bundle for recovery.
 
@@ -26,7 +26,7 @@ Recovery is opening a file in a browser.\* No servers, no need for this website 
 <strong>Tip:</strong> No one person can access your data. They need to bring together enough pieces — say, 3 of 5.
 </div>
 
-## Why ReMemory {#why-rememory}
+## Why Kaitiaki {#why-rememory}
 
 You probably have digital secrets that matter: password manager recovery codes, cryptocurrency seeds, important documents, instructions for loved ones. What happens to these if you're suddenly unavailable?
 
@@ -39,7 +39,7 @@ Traditional approaches have weaknesses:
 - **Use a password manager's emergency access** — similar to "give one person everything", also relies on the company existing
 - **Write it in a will** — becomes public record, slow legal process
 
-ReMemory takes a different approach:
+Kaitiaki takes a different approach:
 
 - **No single point of failure** — requires multiple people to cooperate
 - **No trust in any one person** — even your most trusted friend can't access your secrets alone
@@ -420,7 +420,7 @@ With `project.yml`, you can regenerate bundles, verify existing ones, and check 
 
 ## Understanding the Security {#security}
 
-ReMemory composes well-established cryptographic tools rather than inventing its own. Here's what that means in practice.
+Kaitiaki composes well-established cryptographic tools rather than inventing its own. Here's what that means in practice.
 
 ### What Protects Your Data {#cryptography}
 
@@ -450,7 +450,7 @@ Each bundle includes checksums so the recovery tool can verify nothing was corru
 <span class="file-desc">That's why you set the threshold below the total number of friends. If you chose 3-of-5, any three will do.</span>
 </div>
 <div class="file">
-<span class="file-name">ReMemory disappears in 10 years</span>
+<span class="file-name">Kaitiaki disappears in 10 years</span>
 <span class="file-desc"><code>recover.html</code> still works — it's self-contained. No servers, no downloads, no dependencies on this project.</span>
 </div>
 <div class="file">
@@ -469,9 +469,9 @@ For a detailed technical evaluation, see the [security self-review]({{GITHUB_REP
 
 ## How It Compares {#comparison}
 
-ReMemory isn't the first tool to use Shamir's Secret Sharing. There are many others, from command-line tools to web apps. Here's what sets ReMemory apart:
+Kaitiaki isn't the first tool to use Shamir's Secret Sharing. There are many others, from command-line tools to web apps. Here's what sets Kaitiaki apart:
 
-- **Handles files, not just text.** Most Shamir tools only split passwords or short text. ReMemory encrypts entire files and folders.
+- **Handles files, not just text.** Most Shamir tools only split passwords or short text. Kaitiaki encrypts entire files and folders.
 - **Self-contained recovery tool.** Each friend receives `recover.html` — a complete recovery tool that runs in any browser, offline.\* No installation, no CLI needed.
 - **Contact details included.** Each bundle includes a list of other friends and how to reach them, so coordination doesn't depend on you being available.
 - **No server dependency.** Everything runs locally. There's no service to sign up for, no account to maintain, nothing that needs to stay online.
@@ -557,7 +557,7 @@ You can set a waiting period when creating bundles. Even if your friends combine
 
 In the [bundle creator](maker.html), switch to **Advanced** mode and check **Add a time lock**. Choose how long the files should stay locked — up to two years.
 
-The two-year limit is deliberate. Time locks depend on the League of Entropy continuing to operate, and we don't think it's responsible to lock your files behind a longer bet on external infrastructure. If you need a longer duration and understand the trade-off, the CLI has no cap: `rememory seal --timelock 5y`.
+The two-year limit is deliberate. Time locks depend on the League of Entropy continuing to operate, and we don't think it's responsible to lock your files behind a longer bet on external infrastructure. If you need a longer duration and understand the trade-off, the CLI has no cap: `kaitiaki seal --timelock 5y`.
 
 <figure class="screenshot">
 <img src="screenshots/en/tlock-setup.png" alt="Time lock setup in Advanced mode">
@@ -589,6 +589,6 @@ For a deeper look at the cryptography behind this, see the [drand timelock encry
 
 ## Self-Hosting {#selfhosted}
 
-ReMemory can also run as a web app on your own server using `rememory serve`. The server provides the same creation and recovery tools through a browser. Friends only need their share — the encrypted archive is served automatically.
+Kaitiaki can also run as a web app on your own server using `kaitiaki serve`. The server provides the same creation and recovery tools through a browser. Friends only need their share — the encrypted archive is served automatically.
 
-This is an advanced option for people who already run a homelab or want a shared web UI. The offline bundles remain the primary way to use ReMemory and work without any server. See the [self-hosting guide](https://github.com/eljojo/rememory/blob/main/docs/selfhosted.md) on GitHub for details.
+This is an advanced option for people who already run a homelab or want a shared web UI. The offline bundles remain the primary way to use Kaitiaki and work without any server. See the [self-hosting guide](https://github.com/eljojo/rememory/blob/main/docs/selfhosted.md) on GitHub for details.

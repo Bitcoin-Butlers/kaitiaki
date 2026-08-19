@@ -1,8 +1,8 @@
 ---
-title: "\U0001F9E0 ReMemory Anleitung"
+title: "\U0001F9E0 Kaitiaki Anleitung"
 subtitle: "Pakete erstellen und Dateien wiederherstellen"
 cli_guide_note: 'Es gibt auch eine <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">Anleitung für die Kommandozeile</a>.'
-nav_home: "\U0001F9E0 ReMemory"
+nav_home: "\U0001F9E0 Kaitiaki"
 nav_home_link: "Startseite"
 nav_create: "Pakete erstellen"
 nav_recover: "Wiederherstellen"
@@ -14,7 +14,7 @@ footer_home: "Startseite"
 
 ## Überblick {#overview}
 
-ReMemory ist ein digitaler Tresor mit mehreren Schlüsseln. Du entscheidest, wer sie hält und wie viele zusammenkommen müssen, um ihn zu öffnen.
+Kaitiaki ist ein digitaler Tresor mit mehreren Schlüsseln. Du entscheidest, wer sie hält und wie viele zusammenkommen müssen, um ihn zu öffnen.
 
 Unter der Haube verschlüsselt es deine Dateien mit [age](https://github.com/FiloSottile/age), teilt den Schlüssel unter Vertrauenspersonen auf und gibt jeder Person ein eigenständiges Paket zur Wiederherstellung.
 
@@ -26,7 +26,7 @@ Wiederherstellung heißt: eine Datei im Browser öffnen.\* Keine Server, die Web
 <strong>Hinweis:</strong> Keine einzelne Person kann auf deine Daten zugreifen. Dazu müssen genügend Teile zusammenkommen — zum Beispiel 3 von 5.
 </div>
 
-## Warum ReMemory {#why-rememory}
+## Warum Kaitiaki {#why-rememory}
 
 Du hast wahrscheinlich digitale Informationen, die wichtig sind: Wiederherstellungscodes deines Passwort-Managers, Kryptowährungs-Seeds, wichtige Dokumente, Anweisungen für deine Liebsten. Was passiert damit, wenn du eines Tages nicht mehr erreichbar bist?
 
@@ -39,7 +39,7 @@ Herkömmliche Ansätze haben Schwächen:
 - **Notfallzugang eines Passwort-Managers nutzen** — im Grunde auch „einer Person alles geben", und die Firma muss weiter bestehen
 - **Im Testament hinterlegen** — wird öffentlich, langsamer Rechtsweg
 
-ReMemory geht einen anderen Weg:
+Kaitiaki geht einen anderen Weg:
 
 - **Kein einzelner Ausfallpunkt** — mehrere Personen müssen zusammenarbeiten
 - **Kein blindes Vertrauen in eine Person** — selbst dein engster Freund kommt allein nicht an deine Geheimnisse
@@ -420,7 +420,7 @@ Mit `project.yml` kannst du Pakete neu erstellen, bestehende überprüfen und de
 
 ## Die Sicherheit verstehen {#security}
 
-ReMemory kombiniert bewährte kryptografische Werkzeuge, statt eigene zu erfinden. Das bedeutet in der Praxis:
+Kaitiaki kombiniert bewährte kryptografische Werkzeuge, statt eigene zu erfinden. Das bedeutet in der Praxis:
 
 ### Was deine Daten schützt {#cryptography}
 
@@ -450,7 +450,7 @@ Jedes Paket enthält Prüfsummen, damit das Wiederherstellungstool überprüfen 
 <span class="file-desc">Deshalb setzt du die Schwelle unter die Gesamtzahl. Bei 3 von 5 reichen irgendwelche drei.</span>
 </div>
 <div class="file">
-<span class="file-name">ReMemory gibt es in 10 Jahren nicht mehr</span>
+<span class="file-name">Kaitiaki gibt es in 10 Jahren nicht mehr</span>
 <span class="file-desc"><code>recover.html</code> funktioniert weiterhin — es ist eigenständig. Keine Server, keine Downloads, keine Abhängigkeit von diesem Projekt.</span>
 </div>
 <div class="file">
@@ -469,9 +469,9 @@ Für eine detaillierte technische Bewertung siehe die [Sicherheits-Selbstbewertu
 
 ## Vergleich {#comparison}
 
-ReMemory ist nicht das erste Tool, das Shamir's Secret Sharing verwendet. Es gibt viele andere, von Kommandozeilen-Werkzeugen bis zu Web-Apps. Das unterscheidet ReMemory:
+Kaitiaki ist nicht das erste Tool, das Shamir's Secret Sharing verwendet. Es gibt viele andere, von Kommandozeilen-Werkzeugen bis zu Web-Apps. Das unterscheidet Kaitiaki:
 
-- **Verarbeitet Dateien, nicht nur Text.** Die meisten Shamir-Tools teilen nur Passwörter oder kurzen Text. ReMemory verschlüsselt ganze Dateien und Ordner.
+- **Verarbeitet Dateien, nicht nur Text.** Die meisten Shamir-Tools teilen nur Passwörter oder kurzen Text. Kaitiaki verschlüsselt ganze Dateien und Ordner.
 - **Eigenständiges Wiederherstellungstool.** Jeder Freund bekommt `recover.html` — ein vollständiges Tool, das in jedem Browser läuft, offline.\* Keine Installation, keine Kommandozeile nötig.
 - **Kontaktdaten inklusive.** Jedes Paket enthält eine Liste der anderen Freunde und wie man sie erreicht, damit die Koordination nicht davon abhängt, ob du selbst erreichbar bist.
 - **Keine Serverabhängigkeit.** Alles läuft lokal. Kein Dienst zum Anmelden, kein Konto zum Pflegen, nichts das online bleiben muss.
@@ -557,7 +557,7 @@ Du kannst beim Erstellen der Pakete eine Wartezeit festlegen. Selbst wenn deine 
 
 Wechsle im [Paket-Ersteller](maker.html) in den Modus **Erweitert** und aktiviere **Zeitsperre hinzufügen**. Wähle, wie lange die Dateien gesperrt bleiben sollen — bis zu zwei Jahre.
 
-Das Limit von zwei Jahren ist bewusst gewählt. Zeitsperren hängen davon ab, dass die League of Entropy weiter betrieben wird, und wir halten es nicht für verantwortbar, deine Dateien mit einer längeren Wette auf externe Infrastruktur zu sperren. Wenn du eine längere Dauer brauchst und den Kompromiss verstehst, hat die CLI kein Limit: `rememory seal --timelock 5y`.
+Das Limit von zwei Jahren ist bewusst gewählt. Zeitsperren hängen davon ab, dass die League of Entropy weiter betrieben wird, und wir halten es nicht für verantwortbar, deine Dateien mit einer längeren Wette auf externe Infrastruktur zu sperren. Wenn du eine längere Dauer brauchst und den Kompromiss verstehst, hat die CLI kein Limit: `kaitiaki seal --timelock 5y`.
 
 <figure class="screenshot">
 <img src="screenshots/de/tlock-setup.png" alt="Zeitsperre-Einrichtung im erweiterten Modus">

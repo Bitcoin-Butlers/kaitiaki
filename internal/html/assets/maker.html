@@ -35,16 +35,16 @@
       </details>
     </div>
 
-    <!-- Step 1: Friends -->
+    <!-- Step 1: Guardians -->
     <div class="card">
       <div class="card-header">
-        <h2><span class="step-number">1</span> <span data-i18n="step1_title">Friends</span></h2>
+        <h2><span class="step-number">1</span> <span data-i18n="step1_title">Guardians</span></h2>
         <div class="mode-tabs" id="mode-tabs">
           <button type="button" class="mode-tab active" data-mode="named" data-i18n="mode_named">Named</button>
           <button type="button" class="mode-tab" data-mode="anonymous" data-i18n="mode_anonymous">Anonymous</button>
         </div>
       </div>
-      <p class="hint" id="friends-hint" data-i18n="friends_hint">Each person here will hold one piece of your recovery key</p>
+      <p class="hint" id="guardians-hint" data-i18n="guardians_hint">Each person here will hold one piece of your recovery key</p>
 
       <!-- Anonymous mode: shares input -->
       <div id="shares-input" class="shares-input hidden">
@@ -52,13 +52,13 @@
         <input type="number" id="num-shares" min="2" max="20" value="5">
       </div>
 
-      <!-- Normal mode: friends list -->
-      <div id="friends-section">
-        <div id="friends-list"></div>
+      <!-- Normal mode: guardians list -->
+      <div id="guardians-section">
+        <div id="guardians-list"></div>
 
-        <div class="friends-actions">
-          <button id="add-friend-btn" class="btn btn-secondary" type="button">
-            <span>+</span> <span data-i18n="add_friend">Add Friend</span>
+        <div class="guardians-actions">
+          <button id="add-guardian-btn" class="btn btn-secondary" type="button">
+            <span>+</span> <span data-i18n="add_friend">Add Guardian</span>
           </button>
           <label class="custom-language-toggle" id="custom-language-toggle">
             <input type="checkbox" id="custom-language-mode">
@@ -80,7 +80,7 @@
         <button id="import-btn" class="btn btn-secondary" type="button" data-i18n="import_btn">Import Contacts</button>
       </details>
 
-      <div id="friends-validation" class="validation-error hidden"></div>
+      <div id="guardians-validation" class="validation-error hidden"></div>
     </div>
 
     <!-- Step 2: Manifest Files -->
@@ -89,7 +89,7 @@
 
       <div id="files-drop-zone" class="drop-zone">
         <p data-i18n="files_drop">Drag &amp; drop a folder here, or click to select files</p>
-        <small data-i18n="files_hint">These files will be encrypted and split among your friends</small>
+        <small data-i18n="files_hint">These files will be encrypted and split among your guardians</small>
       </div>
       <input type="file" id="files-input" multiple>
       <input type="file" id="folder-input" webkitdirectory directory multiple style="display: none;">

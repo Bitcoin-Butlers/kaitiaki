@@ -1,8 +1,8 @@
 ---
-title: "\U0001F9E0 Cómo usar ReMemory"
+title: "\U0001F9E0 Cómo usar Kaitiaki"
 subtitle: "Cómo crear kits y recuperar archivos"
 cli_guide_note: 'También hay una <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">guía de línea de comandos</a>.'
-nav_home: "\U0001F9E0 ReMemory"
+nav_home: "\U0001F9E0 Kaitiaki"
 nav_home_link: "Inicio"
 nav_create: "Crear kits"
 nav_recover: "Recuperar"
@@ -14,7 +14,7 @@ footer_home: "Inicio"
 
 ## Descripción general {#overview}
 
-ReMemory es una caja fuerte digital con varias llaves. Tú eliges quién las guarda y cuántas personas deben juntarse para abrirla.
+Kaitiaki es una caja fuerte digital con varias llaves. Tú eliges quién las guarda y cuántas personas deben juntarse para abrirla.
 
 Por dentro, cifra tus archivos con [age](https://github.com/FiloSottile/age), divide la clave entre personas de tu confianza y entrega a cada persona un kit autónomo para la recuperación.
 
@@ -26,7 +26,7 @@ Recuperar es abrir un archivo en el navegador.\* Sin servidores, sin necesidad d
 <strong>Consejo:</strong> Ninguna persona puede acceder a tus datos por sí sola. Necesitan reunir suficientes partes — por ejemplo, 3 de 5.
 </div>
 
-## Por qué ReMemory {#why-rememory}
+## Por qué Kaitiaki {#why-rememory}
 
 Probablemente tienes secretos digitales que importan: códigos de recuperación de tu gestor de contraseñas, semillas de criptomonedas, documentos importantes, instrucciones para tus seres queridos. ¿Qué pasa si un día no estás disponible?
 
@@ -39,7 +39,7 @@ Los enfoques tradicionales tienen debilidades:
 - **Usar el acceso de emergencia de un gestor de contraseñas** — similar a "darle todo a una persona", y además depende de que la empresa siga existiendo
 - **Dejarlo en un testamento** — se vuelve registro público, proceso legal lento
 
-ReMemory toma un camino diferente:
+Kaitiaki toma un camino diferente:
 
 - **Sin un único punto de fallo** — requiere la cooperación de varias personas
 - **Sin confiar en una sola persona** — ni siquiera tu amigo más cercano puede acceder solo a tus secretos
@@ -420,7 +420,7 @@ Con `project.yml`, puedes regenerar los kits, verificar los existentes y revisar
 
 ## Entender la seguridad {#security}
 
-ReMemory combina herramientas criptográficas bien establecidas en lugar de inventar las suyas. Esto es lo que significa en la práctica.
+Kaitiaki combina herramientas criptográficas bien establecidas en lugar de inventar las suyas. Esto es lo que significa en la práctica.
 
 ### Qué protege tus datos {#cryptography}
 
@@ -450,7 +450,7 @@ Cada kit incluye sumas de verificación para que la herramienta de recuperación
 <span class="file-desc">Para eso fijas el umbral por debajo del total de amigos. Si elegiste 3 de 5, cualquier tres sirven.</span>
 </div>
 <div class="file">
-<span class="file-name">ReMemory desaparece en 10 años</span>
+<span class="file-name">Kaitiaki desaparece en 10 años</span>
 <span class="file-desc"><code>recover.html</code> sigue funcionando — es autónomo. Sin servidores, sin descargas, sin dependencia de este proyecto.</span>
 </div>
 <div class="file">
@@ -469,9 +469,9 @@ Para una evaluación técnica detallada, consulta la [autoevaluación de segurid
 
 ## Cómo se compara {#comparison}
 
-ReMemory no es la primera herramienta en usar Shamir's Secret Sharing. Hay muchas otras, desde herramientas de línea de comandos hasta aplicaciones web. Esto es lo que distingue a ReMemory:
+Kaitiaki no es la primera herramienta en usar Shamir's Secret Sharing. Hay muchas otras, desde herramientas de línea de comandos hasta aplicaciones web. Esto es lo que distingue a Kaitiaki:
 
-- **Maneja archivos, no solo texto.** La mayoría de las herramientas Shamir solo dividen contraseñas o texto corto. ReMemory cifra archivos y carpetas enteras.
+- **Maneja archivos, no solo texto.** La mayoría de las herramientas Shamir solo dividen contraseñas o texto corto. Kaitiaki cifra archivos y carpetas enteras.
 - **Herramienta de recuperación autónoma.** Cada amigo recibe `recover.html` — una herramienta completa que funciona en cualquier navegador, sin conexión.\* Sin instalación, sin línea de comandos.
 - **Datos de contacto incluidos.** Cada kit incluye una lista de los otros amigos y cómo contactarlos, para que la coordinación no dependa de que tú estés disponible.
 - **Sin dependencia de servidores.** Todo se ejecuta localmente. No hay servicio al que registrarse, ni cuenta que mantener, ni nada que deba permanecer en línea.
@@ -557,7 +557,7 @@ Puedes establecer un periodo de espera al crear los kits. Incluso si tus amigos 
 
 En el [creador de kits](maker.html), cambia al modo **Avanzado** y marca **Agregar un bloqueo por fecha**. Elige cuánto tiempo deben permanecer bloqueados los archivos — hasta dos años.
 
-El límite de dos años es deliberado. Los bloqueos por fecha dependen de que la League of Entropy siga operando, y no nos parece responsable bloquear tus archivos con una apuesta más larga sobre infraestructura externa. Si necesitas una duración mayor y entiendes el compromiso, la CLI no tiene límite: `rememory seal --timelock 5y`.
+El límite de dos años es deliberado. Los bloqueos por fecha dependen de que la League of Entropy siga operando, y no nos parece responsable bloquear tus archivos con una apuesta más larga sobre infraestructura externa. Si necesitas una duración mayor y entiendes el compromiso, la CLI no tiene límite: `kaitiaki seal --timelock 5y`.
 
 <figure class="screenshot">
 <img src="screenshots/es/tlock-setup.png" alt="Configuración del bloqueo por fecha en modo Avanzado">
