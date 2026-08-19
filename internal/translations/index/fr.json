@@ -15,7 +15,7 @@
   "how_title": "Comment ça fonctionne",
   "how_subtitle": "Vous choisissez <strong>à qui faire confiance</strong> et <strong>combien doivent se mettre d'accord</strong>. Vos fichiers sont chiffrés, la clé est divisée en parts, et chaque personne en garde une. Quand suffisamment de personnes se réunissent, les fichiers sont déverrouillés.",
   "how_caption": "Trois personnes sur cinq suffisent pour récupérer les fichiers",
-  "how_fallback": "<strong>Votre fichier</strong> → <strong>Chiffrer</strong> → <strong>Diviser la clé en 5 parts</strong> → <strong>Distribuer aux amis</strong><br>↓<br><strong>3 amis quelconques</strong> → <strong>Rassembler les parts</strong> → <strong>Déverrouiller</strong> → <strong>Fichier récupéré</strong>",
+  "how_fallback": "<strong>Votre fichier</strong> → <strong>Chiffrer</strong> → <strong>Diviser la clé en 5 parts</strong> → <strong>Distribuer aux gardiens</strong><br>↓<br><strong>3 gardiens quelconques</strong> → <strong>Rassembler les parts</strong> → <strong>Déverrouiller</strong> → <strong>Fichier récupéré</strong>",
   "bundles_title": "Ce que chaque personne reçoit",
   "bundles_desc": "Chaque personne reçoit une <strong>enveloppe autonome</strong> — un fichier ZIP contenant un outil de récupération qui fonctionne dans <strong>n'importe quel navigateur, hors ligne, sans installation</strong>. Si ce projet disparaît, la récupération fonctionne quand même.",
   "bundles_contacts": "Chaque enveloppe inclut les <strong>coordonnées</strong> des autres personnes impliquées, pour qu'elles puissent <strong>se coordonner sans vous</strong>.",

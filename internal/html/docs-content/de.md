@@ -28,7 +28,7 @@ Wiederherstellung heißt: eine Datei im Browser öffnen.\* Keine Server, die Web
 
 ## Warum Kaitiaki {#why-rememory}
 
-Du hast wahrscheinlich digitale Informationen, die wichtig sind: Wiederherstellungscodes deines Passwort-Managers, Kryptowährungs-Seeds, wichtige Dokumente, Anweisungen für deine Liebsten. Was passiert damit, wenn du eines Tages nicht mehr erreichbar bist?
+Du hast wahrscheinlich digitale Informationen, die wichtig sind: Wiederherstellungscodes deines Passwort-Managers, wichtige Dokumente, Anweisungen für deine Liebsten. Was passiert damit, wenn du eines Tages nicht mehr erreichbar bist?
 
 Stell dir einen Tresor vor, der zwei Schlüssel braucht — keine einzelne Person hat genug, um allein hineinzukommen.
 
@@ -42,7 +42,7 @@ Herkömmliche Ansätze haben Schwächen:
 Kaitiaki geht einen anderen Weg:
 
 - **Kein einzelner Ausfallpunkt** — mehrere Personen müssen zusammenarbeiten
-- **Kein blindes Vertrauen in eine Person** — selbst dein engster Freund kommt allein nicht an deine Geheimnisse
+- **Kein blindes Vertrauen in eine Person** — selbst dein engster Wächter kommt allein nicht an deine Geheimnisse
 - **Offline und eigenständig** — die Wiederherstellung funktioniert ohne Internet oder Server\*
 - **Für alle gemacht** — klare Anleitungen, keine kryptografischen Fachkenntnisse nötig
 
@@ -50,12 +50,12 @@ Kaitiaki geht einen anderen Weg:
 
 Drei Schritte. Alles passiert in deinem Browser — deine Dateien verlassen dein Gerät nicht. Öffne den [Paket-Ersteller](maker.html), um loszulegen.
 
-### Schritt 1: Freunde hinzufügen {#step1}
+### Schritt 1: Wächter hinzufügen {#step1}
 
 Füge die Personen hinzu, die Teile deines Wiederherstellungsschlüssels aufbewahren sollen. Für jede Person gibst du einen Namen und optional Kontaktdaten an.
 
 <figure class="screenshot">
-<img src="screenshots/de/friends.png" alt="Freunde hinzufügen in Schritt 1">
+<img src="screenshots/de/friends.png" alt="Wächter hinzufügen in Schritt 1">
 <figcaption>Jede Person hier bewahrt einen Teil des Schlüssels auf</figcaption>
 </figure>
 
@@ -83,11 +83,14 @@ Ziehe die Dateien oder den Ordner, den du schützen willst, per Drag & Drop in d
 **Gute Kandidaten:**
 
 - Wiederherstellungscodes des Passwort-Managers
-- Kryptowährungs-Seeds und -Schlüssel
 - Wichtige Zugangsdaten
 - Anweisungen für Angehörige
 - Standorte wichtiger Dokumente
 - Tresor-Kombinationen
+
+<div class="warning">
+<strong>Nicht für Bitcoin-Seeds oder private Schlüssel.</strong> Lege niemals Seed-Wörter oder private Schlüssel in ein Paket. Diese gehören auf ein Stahl-Backup oder einen codex32-Split, offline aufbewahrt. Nutze Kaitiaki für die Anweisungen drumherum, etwa wo die Stahlplatten liegen und wen man anrufen soll.
+</div>
 
 <div class="warning">
 <strong>Hinweis:</strong> Vermeide Dateien, die sich häufig ändern. Das hier ist für Geheimnisse gedacht, die du einmal festlegst und dann liegen lässt.
@@ -104,14 +107,13 @@ Klicke auf „Pakete erstellen", um deine Dateien zu verschlüsseln und für jed
 
 Jedes Paket enthält das vollständige Wiederherstellungstool. Es funktioniert selbst dann, wenn diese Website nicht mehr existiert.
 
-### An Freunde verteilen {#distributing}
+### An Wächter verteilen {#distributing}
 
-Schicke jeder Person ihr Paket, wie du willst:
+Übergib jeder Person ihr Paket über den privatesten Kanal, den du schaffst, in dieser Reihenfolge:
 
-- **E-Mail:** Die ZIP-Datei als Anhang
-- **Cloud-Speicher:** Über Dropbox, Google Drive usw. teilen
-- **USB-Stick:** Persönliche Übergabe
-- **Verschlüsselter Messenger:** Signal, WhatsApp usw.
+1. **Persönlich:** Ein USB-Stick oder ein gedrucktes PDF, direkt übergeben. Die privateste Option.
+1. **Verschlüsselter Messenger:** Signal oder ein anderer Ende-zu-Ende-verschlüsselter Messenger.
+1. **Einfache E-Mail oder Cloud-Speicher:** Für sensible Inhalte nicht empfohlen. Der Anbieter behält eine Kopie, und dein Konto wird zum Sammelpunkt.
 
 Wenn du Pakete per E-Mail oder Messenger verschickst, lösche die Nachrichten aus deinem Gesendet-Ordner, sobald die jeweilige Person den Empfang bestätigt hat. Sonst behält dein Konto eine Kopie jedes Teils — und genau das wollte das Aufteilen verhindern.
 
@@ -133,7 +135,7 @@ Wenn du hier bist, weil jemand, der dir wichtig ist, nicht mehr erreichbar ist �
 
 Falls du noch kein Paket hast, kannst du das [Wiederherstellungstool](recover.html) direkt öffnen — du fügst die Teile nach und nach von Hand hinzu.
 
-### Was Freunde erhalten {#bundle-contents}
+### Was Wächter erhalten {#bundle-contents}
 
 Jedes Paket enthält:
 
@@ -157,7 +159,7 @@ Jedes Paket enthält:
 </div>
 
 <p style="margin-top: 1rem;">
-Jedes Paket ist personalisiert — der Teil deines Freundes ist bereits geladen, und eine Kontaktliste zeigt, wer sonst Teile hat. Wenn die verschlüsselten Daten klein genug sind, sind sie ebenfalls eingebettet.
+Jedes Paket ist personalisiert — der Teil deines Wächters ist bereits geladen, und eine Kontaktliste zeigt, wer sonst Teile hat. Wenn die verschlüsselten Daten klein genug sind, sind sie ebenfalls eingebettet.
 </p>
 
 ### Weg A: Ich habe die Paket-ZIP {#recovery-bundle}
@@ -183,16 +185,16 @@ Der einfachste Weg. Wenn du die Paket-ZIP hast (oder die Dateien daraus):
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Mit anderen Freunden abstimmen</h4>
-<p>Das Tool zeigt eine Kontaktliste mit den Namen und Kontaktdaten der anderen Freunde. Bitte sie, ihre <code>README.txt</code> zu schicken.</p>
+<h4>Mit anderen Wächtern abstimmen</h4>
+<p>Das Tool zeigt eine Kontaktliste mit den Namen und Kontaktdaten der anderen Wächter. Bitte sie, ihre <code>README.txt</code> zu schicken.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Teile anderer Freunde hinzufügen</h4>
-<p>Für jeden Teil eines Freundes: Ziehe die <code>README.txt</code> auf die Seite, füge den Text ein, oder scanne den QR-Code aus dem PDF. Ein Häkchen erscheint, wenn ein Teil hinzugefügt wird.</p>
+<h4>Teile anderer Wächter hinzufügen</h4>
+<p>Für jeden Teil eines Wächters: Ziehe die <code>README.txt</code> auf die Seite, füge den Text ein, oder scanne den QR-Code aus dem PDF. Ein Häkchen erscheint, wenn ein Teil hinzugefügt wird.</p>
 </div>
 </div>
 
@@ -205,7 +207,7 @@ Der einfachste Weg. Wenn du die Paket-ZIP hast (oder die Dateien daraus):
 </div>
 
 <div class="tip">
-<strong>Tipp:</strong> Wenn ein Freund dir sein gesamtes <code>.zip</code>-Paket schickt, ziehe es einfach auf die Seite — Teil und Archiv werden auf einmal importiert.
+<strong>Tipp:</strong> Wenn ein Wächter dir sein gesamtes <code>.zip</code>-Paket schickt, ziehe es einfach auf die Seite — Teil und Archiv werden auf einmal importiert.
 </div>
 
 <figure class="screenshot">
@@ -226,7 +228,7 @@ Jedes ausgedruckte PDF enthält deinen Teil als Liste nummerierter Wörter. Tipp
 <div class="step-number">1</div>
 <div class="step-content">
 <h4>Wiederherstellungstool öffnen</h4>
-<p>Rufe die URL auf, die auf dem PDF steht, oder öffne <code>recover.html</code> aus dem Paket eines Freundes.</p>
+<p>Rufe die URL auf, die auf dem PDF steht, oder öffne <code>recover.html</code> aus dem Paket eines Wächters.</p>
 </div>
 </div>
 
@@ -252,15 +254,15 @@ Jedes ausgedruckte PDF enthält deinen Teil als Liste nummerierter Wörter. Tipp
 <div class="step-number">3</div>
 <div class="step-content">
 <h4>Verschlüsseltes Archiv laden</h4>
-<p>Möglicherweise brauchst du die Datei <code>MANIFEST.age</code> — ziehe sie auf die Seite oder klicke zum Durchsuchen. Falls du sie nicht hast, kann dir jeder Freund seine schicken. Alle Pakete enthalten dieselbe Kopie.</p>
+<p>Möglicherweise brauchst du die Datei <code>MANIFEST.age</code> — ziehe sie auf die Seite oder klicke zum Durchsuchen. Falls du sie nicht hast, kann dir jeder Wächter seine schicken. Alle Pakete enthalten dieselbe Kopie.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Teile anderer Freunde sammeln</h4>
-<p>Kontaktiere andere Freunde und bitte sie um ihre Teile. Sie können ihre <code>README.txt</code> senden, die Wörter am Telefon vorlesen, oder du scannst ihren QR-Code.</p>
+<h4>Teile anderer Wächter sammeln</h4>
+<p>Kontaktiere andere Wächter und bitte sie um ihre Teile. Sie können ihre <code>README.txt</code> senden, die Wörter am Telefon vorlesen, oder du scannst ihren QR-Code.</p>
 </div>
 </div>
 
@@ -273,7 +275,7 @@ Jedes ausgedruckte PDF enthält deinen Teil als Liste nummerierter Wörter. Tipp
 </div>
 
 <div class="tip">
-<strong>Tipp:</strong> Wörter sind am einfachsten telefonisch zu teilen. Wenn ein Freund seinen Teil nicht digital senden kann, liest er die Wörter vor und du tippst sie ein.
+<strong>Tipp:</strong> Wörter sind am einfachsten telefonisch zu teilen. Wenn ein Wächter seinen Teil nicht digital senden kann, liest er die Wörter vor und du tippst sie ein.
 </div>
 
 ### Weg C: Ich habe ein ausgedrucktes PDF mit QR-Code {#recovery-pdf}
@@ -302,7 +304,7 @@ Wenn dein Gerät eine Kamera hat, scanne den QR-Code auf dem PDF, um deinen Teil
 <div class="step-number">2</div>
 <div class="step-content">
 <h4>Verschlüsseltes Archiv laden</h4>
-<p>Möglicherweise brauchst du die Datei <code>MANIFEST.age</code> — ziehe sie auf die Seite oder klicke zum Durchsuchen. Falls du sie nicht hast, kann dir jeder Freund seine schicken. Alle Pakete enthalten dieselbe Kopie.</p>
+<p>Möglicherweise brauchst du die Datei <code>MANIFEST.age</code> — ziehe sie auf die Seite oder klicke zum Durchsuchen. Falls du sie nicht hast, kann dir jeder Wächter seine schicken. Alle Pakete enthalten dieselbe Kopie.</p>
 </div>
 </div>
 
@@ -314,8 +316,8 @@ Wenn dein Gerät eine Kamera hat, scanne den QR-Code auf dem PDF, um deinen Teil
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Teile anderer Freunde sammeln</h4>
-<p>Kontaktiere andere Freunde und bitte sie um ihre Teile. Sie können ihre <code>README.txt</code> senden, oder du scannst ihren QR-Code.</p>
+<h4>Teile anderer Wächter sammeln</h4>
+<p>Kontaktiere andere Wächter und bitte sie um ihre Teile. Sie können ihre <code>README.txt</code> senden, oder du scannst ihren QR-Code.</p>
 </div>
 </div>
 
@@ -332,13 +334,13 @@ Wenn dein Gerät eine Kamera hat, scanne den QR-Code auf dem PDF, um deinen Teil
 <ul>
 <li>Funktioniert komplett <span title="Kein Internet nötig. Archive mit Zeitsperre brauchen eine Verbindung zur Prüfung des Entsperrdatums.">offline*</span></li>
 <li>Nichts verlässt den Browser</li>
-<li>Freunde können überall sein — sie müssen nur ihre README.txt-Dateien schicken</li>
+<li>Wächter können überall sein — sie müssen nur ihre README.txt-Dateien schicken</li>
 </ul>
 </div>
 
 ## Empfehlungen {#best-practices}
 
-### Freunde wählen
+### Wächter wählen
 
 - **Langfristigkeit:** Personen, die du in 5 bis 10 Jahren noch erreichen kannst
 - **Geografische Verteilung:** Nicht alle am gleichen Ort
@@ -359,15 +361,15 @@ Pakete sind klein (unter 10 MB) und dafür gedacht, an ganz normalen Orten aufbe
 - **E-Mail** ist eine überraschend gute Wahl. Die meisten Menschen behalten dieselbe E-Mail-Adresse jahrzehntelang, und Pakete sind klein genug als Anhang. Viele Anbieter speichern Nachrichten unbegrenzt.
 - **Cloud-Speicher** (Google Drive, Dropbox, iCloud) eignet sich gut als Zweitkopie.
 - **USB-Sticks** können funktionieren, aber bedenke: Anschlüsse ändern sich (USB-A weicht bereits USB-C), und Flash-Speicher kann über Jahre ohne Strom an Qualität verlieren. Nicht ideal als einzige Kopie.
-- **Papier** ist die haltbarste Option. `README.pdf` ausdrucken gibt deinen Freunden eine Kopie, die keine Adapter, keinen Strom und kein funktionierendes Gerät braucht.
+- **Papier** ist die haltbarste Option. `README.pdf` ausdrucken gibt deinen Wächtern eine Kopie, die keine Adapter, keinen Strom und kein funktionierendes Gerät braucht.
 
 Am besten ist Redundanz — E-Mail plus Papier, oder Cloud plus Papier. Mehr als eine Kopie, in mehr als einer Form.
 
 ### Pakete aktuell halten {#keeping-current}
 
-Setze eine jährliche Erinnerung, um bei deinen Freunden nachzufragen. Bestätige, dass sie noch ihre Pakete haben, und aktualisiere Kontaktdaten, wenn sich etwas geändert hat.
+Setze eine jährliche Erinnerung, um bei deinen Wächtern nachzufragen. Bestätige, dass sie noch ihre Pakete haben, und aktualisiere Kontaktdaten, wenn sich etwas geändert hat.
 
-Wenn sich deine Dateien ändern, erstelle neue Pakete und verschicke sie. Die alten Pakete öffnen das neue Archiv nicht, also schadet es nicht, wenn sie noch herumliegen — aber bitte deine Freunde, ihre durch die neuen zu ersetzen.
+Wenn sich deine Dateien ändern, erstelle neue Pakete und verschicke sie. Die alten Pakete öffnen das neue Archiv nicht, also schadet es nicht, wenn sie noch herumliegen — aber bitte deine Wächter, ihre durch die neuen zu ersetzen.
 
 Wenn sich Kontakte ändern — jemand zieht um, wechselt die Telefonnummer, oder du willst jemanden hinzufügen oder entfernen — dasselbe Vorgehen: neue Pakete, alte löschen lassen.
 
@@ -379,11 +381,11 @@ Denk daran wie ans Aktualisieren deiner Notfallkontakte. Kurz, regelmäßig, es 
 
 Niemand testet seinen Notfallplan. Eine Wiederherstellungsübung ändert das — und es stellt sich heraus, dass es im Grunde ein Escape Room ist.
 
-Erstelle ein Test-Paket mit einem harmlosen Geheimnis (ein Foto, eine Nachricht, ein Rezept). Verteile die Teile an deine Freunde. Setze einen [Zeitschloss](#timelock), wenn du einen echten Countdown willst. Dann tritt zurück und lass sie es herausfinden: koordinieren, Teile zusammenführen, Dateien entsperren — ohne deine Hilfe.
+Erstelle ein Test-Paket mit einem harmlosen Geheimnis (ein Foto, eine Nachricht, ein Rezept). Verteile die Teile an deine Wächter. Setze einen [Zeitschloss](#timelock), wenn du einen echten Countdown willst. Dann tritt zurück und lass sie es herausfinden: koordinieren, Teile zusammenführen, Dateien entsperren — ohne deine Hilfe.
 
 Was du lernst:
 
-- Können deine Freunde ihre Pakete finden, wenn sie sie brauchen?
+- Können deine Wächter ihre Pakete finden, wenn sie sie brauchen?
 - Verstehen sie die Anleitung, oder kommen sie nicht weiter?
 - Können sie sich untereinander erreichen, ohne dass du vermittelst?
 
@@ -395,21 +397,21 @@ Sobald ein Teil verteilt ist, kann er nicht zurückgerufen werden. Das ist beabs
 
 Wenn du ändern willst, wer Teile hat:
 
-1. **Erstelle neue Pakete** mit einer neuen Gruppe von Freunden und einem neuen Schlüssel
-1. **Verschicke die neuen Pakete** an die Freunde, denen du weiterhin vertraust
-1. **Bitte jeden Freund, sein altes Paket zu löschen** und durch das neue zu ersetzen
+1. **Erstelle neue Pakete** mit einer neuen Gruppe von Wächtern und einem neuen Schlüssel
+1. **Verschicke die neuen Pakete** an die Wächter, denen du weiterhin vertraust
+1. **Bitte jeden Wächter, sein altes Paket zu löschen** und durch das neue zu ersetzen
 
 <div class="warning">
 <strong>Wichtig:</strong> Alte Teile funktionieren weiterhin mit alten Archiven. Wenn du ein neues Paket verschickst, mach es deutlich: <strong>Das alte löschen</strong>, nur das neue behalten. Keine Versionshistorie, kein „zur Sicherheit."
 </div>
 
-Dasselbe gilt, wenn sich Geheimnisse ändern. Neue Pakete bedeuten einen neuen Schlüssel und neue Teile. Die alten Teile öffnen das neue Archiv nicht, funktionieren aber weiterhin mit dem alten. Achte darauf, dass deine Freunde keine alten Kopien aufheben.
+Dasselbe gilt, wenn sich Geheimnisse ändern. Neue Pakete bedeuten einen neuen Schlüssel und neue Teile. Die alten Teile öffnen das neue Archiv nicht, funktionieren aber weiterhin mit dem alten. Achte darauf, dass deine Wächter keine alten Kopien aufheben.
 
 ### Über project.yml {#project-file}
 
 Wenn du Pakete erstellst, wird dein Projekt in einer `project.yml`-Datei gespeichert. Diese Datei enthält:
 
-- Namen und Kontaktdaten der Freunde
+- Namen und Kontaktdaten der Wächter
 - Die gewählte Schwelle (z.B. 3 von 5)
 - Einen Prüf-Hash, um festzustellen, ob Pakete zusammengehören
 - Prüfsummen der Teile, um die Integrität der Pakete zu bestätigen
@@ -438,15 +440,15 @@ Jedes Paket enthält Prüfsummen, damit das Wiederherstellungstool überprüfen 
 
 <div class="bundle-contents">
 <div class="file">
-<span class="file-name">Ein Freund verliert sein Paket</span>
+<span class="file-name">Ein Wächter verliert sein Paket</span>
 <span class="file-desc">Kein Problem, solange genügend andere ihres noch haben. Deshalb setzt du die Schwelle unter die Gesamtzahl.</span>
 </div>
 <div class="file">
-<span class="file-name">Ein Freund macht seinen Teil öffentlich</span>
+<span class="file-name">Ein Wächter macht seinen Teil öffentlich</span>
 <span class="file-desc">Ein einzelner Teil ist ohne die anderen nutzlos. Jemand bräuchte noch Schwelle minus eins weitere Teile.</span>
 </div>
 <div class="file">
-<span class="file-name">Einige Freunde sind nicht erreichbar</span>
+<span class="file-name">Einige Wächter sind nicht erreichbar</span>
 <span class="file-desc">Deshalb setzt du die Schwelle unter die Gesamtzahl. Bei 3 von 5 reichen irgendwelche drei.</span>
 </div>
 <div class="file">
@@ -459,7 +461,7 @@ Jedes Paket enthält Prüfsummen, damit das Wiederherstellungstool überprüfen 
 </div>
 <div class="file">
 <span class="file-name">Du vergisst, wie das funktioniert</span>
-<span class="file-desc">Die README.txt in jedem Paket erklärt alles. Deine Freunde müssen sich nichts merken — alles ist für sie aufgeschrieben.</span>
+<span class="file-desc">Die README.txt in jedem Paket erklärt alles. Deine Wächter müssen sich nichts merken — alles ist für sie aufgeschrieben.</span>
 </div>
 </div>
 
@@ -472,8 +474,8 @@ Für eine detaillierte technische Bewertung siehe die [Sicherheits-Selbstbewertu
 Kaitiaki ist nicht das erste Tool, das Shamir's Secret Sharing verwendet. Es gibt viele andere, von Kommandozeilen-Werkzeugen bis zu Web-Apps. Das unterscheidet Kaitiaki:
 
 - **Verarbeitet Dateien, nicht nur Text.** Die meisten Shamir-Tools teilen nur Passwörter oder kurzen Text. Kaitiaki verschlüsselt ganze Dateien und Ordner.
-- **Eigenständiges Wiederherstellungstool.** Jeder Freund bekommt `recover.html` — ein vollständiges Tool, das in jedem Browser läuft, offline.\* Keine Installation, keine Kommandozeile nötig.
-- **Kontaktdaten inklusive.** Jedes Paket enthält eine Liste der anderen Freunde und wie man sie erreicht, damit die Koordination nicht davon abhängt, ob du selbst erreichbar bist.
+- **Eigenständiges Wiederherstellungstool.** Jeder Wächter bekommt `recover.html` — ein vollständiges Tool, das in jedem Browser läuft, offline.\* Keine Installation, keine Kommandozeile nötig.
+- **Kontaktdaten inklusive.** Jedes Paket enthält eine Liste der anderen Wächter und wie man sie erreicht, damit die Koordination nicht davon abhängt, ob du selbst erreichbar bist.
 - **Keine Serverabhängigkeit.** Alles läuft lokal. Kein Dienst zum Anmelden, kein Konto zum Pflegen, nichts das online bleiben muss.
 
 Einen detaillierten Vergleich mit anderen Tools findest du in der [Vergleichstabelle auf GitHub]({{GITHUB_REPO}}#other-similar-tools).
@@ -508,9 +510,9 @@ Nützlich wenn:
 
 ### So aktivierst du ihn
 
-Aktiviere im [Paket-Ersteller](maker.html) den Schalter **Anonym** im Bereich Freunde:
+Aktiviere im [Paket-Ersteller](maker.html) den Schalter **Anonym** im Bereich Wächter:
 
-- Die Freundesliste wird durch eine Teilanzahl ersetzt
+- Die Wächterliste wird durch eine Teilanzahl ersetzt
 - Lege die Anzahl der Teile und die Schwelle fest
 - Die Pakete heißen `bundle-share-1.zip`, `bundle-share-2.zip` usw.
 
@@ -528,20 +530,20 @@ Jede Person kann ihr Paket in ihrer bevorzugten Sprache erhalten. Es ist in sieb
 
 ### So funktioniert es
 
-- Jeder Freundeintrag hat ein Dropdown-Menü für die **Paket-Sprache**
+- Jeder Wächtereintrag hat ein Dropdown-Menü für die **Paket-Sprache**
 - „Standard" verwendet die aktuelle Sprache der Oberfläche
 - Pro Person anpassbar, um Sprachen zu mischen
 - recover.html öffnet sich in der gewählten Sprache
 - Jeder kann jederzeit die Sprache wechseln
 
 <figure class="screenshot">
-<img src="screenshots/de/multilingual-language-dropdown.png" alt="Freundeintrag mit dem Sprach-Dropdown für das Paket">
-<figcaption>Jeder Freund hat ein Dropdown-Menü, um die Sprache seines Pakets festzulegen</figcaption>
+<img src="screenshots/de/multilingual-language-dropdown.png" alt="Wächtereintrag mit dem Sprach-Dropdown für das Paket">
+<figcaption>Jeder Wächter hat ein Dropdown-Menü, um die Sprache seines Pakets festzulegen</figcaption>
 </figure>
 
 <figure class="screenshot">
 <img src="screenshots/demo-pdf-es/page-1.png" alt="recover.pdf auf Spanisch geöffnet">
-<figcaption>Das Wiederherstellungstool öffnet sich in der gewählten Sprache des Freundes</figcaption>
+<figcaption>Das Wiederherstellungstool öffnet sich in der gewählten Sprache des Wächters</figcaption>
 </figure>
 
 <figure class="screenshot">
@@ -551,7 +553,7 @@ Jede Person kann ihr Paket in ihrer bevorzugten Sprache erhalten. Es ist in sieb
 
 ## Erweitert: Zeitverzögerte Wiederherstellung {#timelock}
 
-Du kannst beim Erstellen der Pakete eine Wartezeit festlegen. Selbst wenn deine Freunde ihre Teile vorzeitig zusammenbringen, bleiben die Dateien bis zum gewählten Datum gesperrt — 30 Tage, 6 Monate, ein bestimmtes Datum.
+Du kannst beim Erstellen der Pakete eine Wartezeit festlegen. Selbst wenn deine Wächter ihre Teile vorzeitig zusammenbringen, bleiben die Dateien bis zum gewählten Datum gesperrt — 30 Tage, 6 Monate, ein bestimmtes Datum.
 
 ### So aktivierst du es
 

@@ -15,7 +15,7 @@
   "how_title": "Nasıl çalışır",
   "how_subtitle": "<strong>Kime güveneceğini</strong> ve <strong>kaç kişinin onayının gerekeceğini</strong> sen belirlersin. Dosyaların şifrelenir, anahtar parçalara bölünür ve her kişi bir parçayı saklar. Yeterli sayıda kişi bir araya geldiğinde dosyaların açılır.",
 "how_caption": "Beş kişiden herhangi üçü dosyaları kurtarabilir",
-"how_fallback": "<strong>Dosyan</strong> → <strong>Şifrele</strong> → <strong>Anahtarı 5 parçaya böl</strong> → <strong>Arkadaşlarına dağıt</strong><br>↓<br><strong>Herhangi 3 arkadaş</strong> → <strong>Parçaları birleştir</strong> → <strong>Kilidi aç</strong> → <strong>Dosya kurtarıldı</strong>",
+"how_fallback": "<strong>Dosyan</strong> → <strong>Şifrele</strong> → <strong>Anahtarı 5 parçaya böl</strong> → <strong>Koruyucularına dağıt</strong><br>↓<br><strong>Herhangi 3 koruyucu</strong> → <strong>Parçaları birleştir</strong> → <strong>Kilidi aç</strong> → <strong>Dosya kurtarıldı</strong>",
 "bundles_title": "Paketlerin içinde ne var",
 "bundles_desc": "Herkese <strong>içinde gerekli olan her şeyi bulunduran bir paket</strong> verilir — içinde <strong>herhangi bir tarayıcıda, çevrimdışı ve kurulum gerektirmeden</strong> çalışan bir kurtarma aracı bulunan bir ZIP dosyası. Bu proje ortadan kalksa bile kurtarma işlemi çalışmaya devam eder.",
 "bundles_contacts": "Her pakette, sürece dahil olan diğer kişilerin <strong>iletişim bilgileri</strong> de bulunur; böylece <strong>sen olmadan da koordinasyon sağlayabilirler</strong>.",

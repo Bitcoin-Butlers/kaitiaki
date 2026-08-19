@@ -2,7 +2,7 @@
   "title": "REMEMORY 復原包",
   "for": "持有人：{0}",
   "warning_title": "你持有的復原金鑰片段",
-  "warning_message_friends": "這份金鑰片段已託付給你。請妥善保管——當需要復原時，你將把它與下列朋友持有的片段合併使用。",
+  "warning_message_friends": "這份金鑰片段已託付給你。請妥善保管——當需要復原時，你將把它與下列守護人持有的片段合併使用。",
   "warning_message_shares": "這份金鑰片段已託付給你。請妥善保管——當需要復原時，你將把它與其他片段合併使用。",
   "what_is_this": "這是什麼？",
   "what_bundle_for": "這個復原包讓你能協助解鎖「{0}」的檔案。",

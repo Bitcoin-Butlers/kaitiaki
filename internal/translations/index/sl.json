@@ -15,7 +15,7 @@
   "how_title": "Kako deluje",
   "how_subtitle": "Vi izberete, <strong>komu zaupate</strong> in <strong>koliko jih mora soglašati</strong>. Vaše datoteke so šifrirane, ključ je razdeljen na dele in vsaka oseba obdrži enega. Ko se jih dovolj zbere, se datoteke odklenejo.",
   "how_caption": "Trije od petih zadostujejo za obnovitev datotek",
-  "how_fallback": "<strong>Vaša datoteka</strong> → <strong>Šifriranje</strong> → <strong>Ključ razdeljen na 5 delov</strong> → <strong>Razdelitev prijateljem</strong><br>↓<br><strong>3 poljubni prijatelji</strong> → <strong>Sestavljanje delov</strong> → <strong>Odklepanje</strong> → <strong>Datoteka obnovljena</strong>",
+  "how_fallback": "<strong>Vaša datoteka</strong> → <strong>Šifriranje</strong> → <strong>Ključ razdeljen na 5 delov</strong> → <strong>Razdelitev skrbnikom</strong><br>↓<br><strong>3 poljubni skrbniki</strong> → <strong>Sestavljanje delov</strong> → <strong>Odklepanje</strong> → <strong>Datoteka obnovljena</strong>",
   "bundles_title": "Kaj prejme vsaka oseba",
   "bundles_desc": "Vsaka oseba prejme <strong>samostojen sveženj</strong> — datoteko ZIP z orodjem za obnovitev, ki deluje v <strong>vsakem brskalniku, brez povezave, brez namestitve</strong>. Če ta projekt izgine, obnovitev še vedno deluje.",
   "bundles_contacts": "Vsak sveženj vsebuje <strong>kontaktne podatke</strong> drugih vključenih oseb, da se lahko <strong>uskladijo brez vas</strong>.",

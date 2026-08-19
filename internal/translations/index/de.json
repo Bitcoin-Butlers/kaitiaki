@@ -15,7 +15,7 @@
   "how_title": "So funktioniert es",
   "how_subtitle": "Du entscheidest, <strong>wem du vertraust</strong> und <strong>wie viele zustimmen müssen</strong>. Deine Dateien werden verschlüsselt, der Schlüssel wird in Teile aufgeteilt, und jede Person behält einen. Wenn genügend zusammenkommen, werden die Dateien entsperrt.",
   "how_caption": "Drei von fünf genügen, um die Dateien wiederherzustellen",
-  "how_fallback": "<strong>Deine Datei</strong> → <strong>Verschlüsseln</strong> → <strong>Schlüssel in 5 Teile aufteilen</strong> → <strong>An Freunde verteilen</strong><br>↓<br><strong>3 beliebige Freunde</strong> → <strong>Teile zusammenführen</strong> → <strong>Entsperren</strong> → <strong>Datei wiederhergestellt</strong>",
+  "how_fallback": "<strong>Deine Datei</strong> → <strong>Verschlüsseln</strong> → <strong>Schlüssel in 5 Teile aufteilen</strong> → <strong>An Wächter verteilen</strong><br>↓<br><strong>3 beliebige Wächter</strong> → <strong>Teile zusammenführen</strong> → <strong>Entsperren</strong> → <strong>Datei wiederhergestellt</strong>",
   "bundles_title": "Was jede Person erhält",
   "bundles_desc": "Jede Person erhält ein <strong>eigenständiges Paket</strong> — eine ZIP-Datei mit einem Wiederherstellungswerkzeug, das in <strong>jedem Browser funktioniert, offline, ohne Installation</strong>. Wenn dieses Projekt verschwindet, funktioniert die Wiederherstellung trotzdem.",
   "bundles_contacts": "Jedes Paket enthält <strong>Kontaktdaten</strong> der anderen beteiligten Personen, damit sie sich <strong>ohne dich abstimmen</strong> können.",

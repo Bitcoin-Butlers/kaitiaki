@@ -28,7 +28,7 @@ Récupérer, c'est ouvrir un fichier dans un navigateur.\* Pas de serveur, pas b
 
 ## Pourquoi Kaitiaki {#why-rememory}
 
-Vous avez probablement des secrets numériques qui comptent : codes de récupération de votre gestionnaire de mots de passe, clés de cryptomonnaie, documents importants, instructions pour vos proches. Que deviennent-ils si un jour vous n'êtes plus disponible ?
+Vous avez probablement des secrets numériques qui comptent : codes de récupération de votre gestionnaire de mots de passe, documents importants, instructions pour vos proches. Que deviennent-ils si un jour vous n'êtes plus disponible ?
 
 Imaginez un coffre qui a besoin de deux clés pour s'ouvrir — aucune personne seule n'a de quoi y accéder.
 
@@ -42,7 +42,7 @@ Les approches classiques ont leurs faiblesses :
 Kaitiaki prend un chemin différent :
 
 - **Pas de point de défaillance unique** — plusieurs personnes doivent coopérer
-- **Pas de confiance aveugle en une seule personne** — même votre ami le plus proche ne peut pas accéder seul à vos secrets
+- **Pas de confiance aveugle en une seule personne** — même votre gardien le plus proche ne peut pas accéder seul à vos secrets
 - **Hors ligne et autonome** — la récupération fonctionne sans internet ni serveur\*
 - **Conçu pour tout le monde** — des instructions claires, pas des énigmes cryptographiques
 
@@ -50,12 +50,12 @@ Kaitiaki prend un chemin différent :
 
 Trois étapes. Tout se passe dans votre navigateur — vos fichiers ne quittent jamais votre appareil. Ouvrez le [créateur d'enveloppes](maker.html) pour commencer.
 
-### Étape 1 : Ajouter des amis {#step1}
+### Étape 1 : Ajouter des gardiens {#step1}
 
 Ajoutez les personnes qui garderont une part de votre clé de récupération. Pour chacune, indiquez un nom et éventuellement des coordonnées.
 
 <figure class="screenshot">
-<img src="screenshots/fr/friends.png" alt="Ajout d'amis à l'étape 1">
+<img src="screenshots/fr/friends.png" alt="Ajout d'gardiens à l'étape 1">
 <figcaption>Chaque personne ici gardera une part de la clé</figcaption>
 </figure>
 
@@ -83,11 +83,14 @@ Glissez-déposez les fichiers ou le dossier que vous souhaitez protéger.
 **Bons candidats :**
 
 - Codes de récupération du gestionnaire de mots de passe
-- Clés et seeds de cryptomonnaie
 - Identifiants de comptes importants
 - Instructions pour vos proches
 - Emplacements de documents juridiques
 - Combinaisons de coffre-fort
+
+<div class="warning">
+<strong>Pas pour les seeds Bitcoin ni les clés privées.</strong> Ne mettez jamais de mots de seed ni de clés privées dans une enveloppe. Ils appartiennent à une sauvegarde sur acier ou à une division codex32, conservée hors ligne. Utilisez Kaitiaki pour les instructions autour, comme l'emplacement des plaques d'acier et qui appeler.
+</div>
 
 <div class="warning">
 <strong>Note :</strong> Évitez les fichiers qui changent souvent. Cet outil est conçu pour des secrets que vous configurez une fois, puis laissez de côté.
@@ -104,14 +107,13 @@ Cliquez sur « Créer les enveloppes » pour chiffrer vos fichiers et créer une
 
 Chaque enveloppe contient l'outil de récupération complet. Il fonctionne même si ce site n'existe plus.
 
-### Distribuer aux amis {#distributing}
+### Distribuer aux gardiens {#distributing}
 
-Envoyez à chaque personne son enveloppe comme vous le souhaitez :
+Remettez à chaque gardien son enveloppe par le canal le plus privé possible, dans cet ordre de préférence :
 
-- **E-mail :** Le fichier ZIP en pièce jointe
-- **Stockage en ligne :** Partagez via Dropbox, Google Drive, etc.
-- **Clé USB :** Remise en main propre
-- **Messagerie chiffrée :** Signal, WhatsApp, etc.
+1. **En personne :** Une clé USB ou un PDF imprimé, remis en main propre. L'option la plus privée.
+1. **Messagerie chiffrée :** Signal ou une autre messagerie chiffrée de bout en bout.
+1. **E-mail simple ou stockage en ligne :** Déconseillé pour un contenu sensible. Le fournisseur garde une copie et votre compte devient un point de collecte.
 
 Si vous envoyez les enveloppes par e-mail ou messagerie, supprimez les messages de votre dossier d'envoi une fois la réception confirmée par chaque personne. Sinon, votre compte finit par garder une copie de chaque part — ce qui annule l'intérêt de les avoir séparées.
 
@@ -133,7 +135,7 @@ Si vous êtes ici parce qu'une personne qui vous est chère n'est plus disponibl
 
 Si vous n'avez pas encore d'enveloppe, vous pouvez ouvrir [l'outil de récupération](recover.html) directement — vous ajouterez les parts à la main au fur et à mesure.
 
-### Ce que les amis reçoivent {#bundle-contents}
+### Ce que les gardiens reçoivent {#bundle-contents}
 
 Chaque enveloppe contient :
 
@@ -157,7 +159,7 @@ Chaque enveloppe contient :
 </div>
 
 <p style="margin-top: 1rem;">
-Chaque enveloppe est personnalisée — la part de votre ami est déjà chargée, et une liste de contacts indique qui d'autre détient une part. Quand les données chiffrées sont assez petites, elles sont également intégrées.
+Chaque enveloppe est personnalisée — la part de votre gardien est déjà chargée, et une liste de contacts indique qui d'autre détient une part. Quand les données chiffrées sont assez petites, elles sont également intégrées.
 </p>
 
 ### Voie A : J'ai le ZIP de l'enveloppe {#recovery-bundle}
@@ -183,16 +185,16 @@ Le chemin le plus simple. Si vous avez le ZIP de l'enveloppe (ou les fichiers qu
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Coordonner avec les autres amis</h4>
-<p>L'outil affiche une liste de contacts avec les noms des autres amis et comment les joindre. Demandez-leur d'envoyer leur <code>README.txt</code>.</p>
+<h4>Coordonner avec les autres gardiens</h4>
+<p>L'outil affiche une liste de contacts avec les noms des autres gardiens et comment les joindre. Demandez-leur d'envoyer leur <code>README.txt</code>.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Ajouter les parts des autres amis</h4>
-<p>Pour chaque part : glissez le <code>README.txt</code> de votre ami sur la page, collez le texte, ou scannez le QR code de son PDF. Une coche apparaît à mesure que chaque part est ajoutée.</p>
+<h4>Ajouter les parts des autres gardiens</h4>
+<p>Pour chaque part : glissez le <code>README.txt</code> de votre gardien sur la page, collez le texte, ou scannez le QR code de son PDF. Une coche apparaît à mesure que chaque part est ajoutée.</p>
 </div>
 </div>
 
@@ -205,7 +207,7 @@ Le chemin le plus simple. Si vous avez le ZIP de l'enveloppe (ou les fichiers qu
 </div>
 
 <div class="tip">
-<strong>Astuce :</strong> Si un ami vous envoie son enveloppe <code>.zip</code> complète, glissez-la sur la page — la part et l'archive sont importées en une seule fois.
+<strong>Astuce :</strong> Si un gardien vous envoie son enveloppe <code>.zip</code> complète, glissez-la sur la page — la part et l'archive sont importées en une seule fois.
 </div>
 
 <figure class="screenshot">
@@ -226,7 +228,7 @@ Chaque PDF imprimé contient votre part sous forme de mots numérotés. Saisisse
 <div class="step-number">1</div>
 <div class="step-content">
 <h4>Ouvrir l'outil de récupération</h4>
-<p>Rendez-vous à l'adresse imprimée sur le PDF, ou ouvrez <code>recover.html</code> depuis l'enveloppe d'un ami.</p>
+<p>Rendez-vous à l'adresse imprimée sur le PDF, ou ouvrez <code>recover.html</code> depuis l'enveloppe d'un gardien.</p>
 </div>
 </div>
 
@@ -252,15 +254,15 @@ Chaque PDF imprimé contient votre part sous forme de mots numérotés. Saisisse
 <div class="step-number">3</div>
 <div class="step-content">
 <h4>Charger l'archive chiffrée</h4>
-<p>Vous aurez peut-être besoin du fichier <code>MANIFEST.age</code> — glissez-le sur la page ou cliquez pour le sélectionner. Si vous ne l'avez pas, n'importe quel ami peut vous envoyer le sien. Toutes les enveloppes contiennent la même copie.</p>
+<p>Vous aurez peut-être besoin du fichier <code>MANIFEST.age</code> — glissez-le sur la page ou cliquez pour le sélectionner. Si vous ne l'avez pas, n'importe quel gardien peut vous envoyer le sien. Toutes les enveloppes contiennent la même copie.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Rassembler les parts des autres amis</h4>
-<p>Contactez les autres amis et demandez-leur leurs parts. Ils peuvent envoyer leur <code>README.txt</code>, vous lire leurs mots par téléphone, ou vous pouvez scanner leur QR code.</p>
+<h4>Rassembler les parts des autres gardiens</h4>
+<p>Contactez les autres gardiens et demandez-leur leurs parts. Ils peuvent envoyer leur <code>README.txt</code>, vous lire leurs mots par téléphone, ou vous pouvez scanner leur QR code.</p>
 </div>
 </div>
 
@@ -273,7 +275,7 @@ Chaque PDF imprimé contient votre part sous forme de mots numérotés. Saisisse
 </div>
 
 <div class="tip">
-<strong>Astuce :</strong> Les mots sont le moyen le plus simple de partager par téléphone. Si un ami ne peut pas envoyer sa part par voie numérique, il peut lire les mots à voix haute pendant que vous les tapez.
+<strong>Astuce :</strong> Les mots sont le moyen le plus simple de partager par téléphone. Si un gardien ne peut pas envoyer sa part par voie numérique, il peut lire les mots à voix haute pendant que vous les tapez.
 </div>
 
 ### Voie C : J'ai un PDF imprimé avec un QR code {#recovery-pdf}
@@ -302,7 +304,7 @@ Si votre appareil a une caméra, scannez le QR code du PDF pour importer votre p
 <div class="step-number">2</div>
 <div class="step-content">
 <h4>Charger l'archive chiffrée</h4>
-<p>Vous aurez peut-être besoin du fichier <code>MANIFEST.age</code> — glissez-le sur la page ou cliquez pour le sélectionner. Si vous ne l'avez pas, n'importe quel ami peut vous envoyer le sien. Toutes les enveloppes contiennent la même copie.</p>
+<p>Vous aurez peut-être besoin du fichier <code>MANIFEST.age</code> — glissez-le sur la page ou cliquez pour le sélectionner. Si vous ne l'avez pas, n'importe quel gardien peut vous envoyer le sien. Toutes les enveloppes contiennent la même copie.</p>
 </div>
 </div>
 
@@ -314,8 +316,8 @@ Si votre appareil a une caméra, scannez le QR code du PDF pour importer votre p
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Rassembler les parts des autres amis</h4>
-<p>Contactez les autres amis et demandez-leur leurs parts. Ils peuvent envoyer leur <code>README.txt</code>, ou vous pouvez scanner leur QR code.</p>
+<h4>Rassembler les parts des autres gardiens</h4>
+<p>Contactez les autres gardiens et demandez-leur leurs parts. Ils peuvent envoyer leur <code>README.txt</code>, ou vous pouvez scanner leur QR code.</p>
 </div>
 </div>
 
@@ -332,13 +334,13 @@ Si votre appareil a une caméra, scannez le QR code du PDF pour importer votre p
 <ul>
 <li>Fonctionne entièrement <span title="Pas besoin d'internet. Les archives avec verrouillage temporel nécessitent une connexion pour vérifier la date de déverrouillage.">hors ligne*</span></li>
 <li>Rien ne quitte le navigateur</li>
-<li>Les amis peuvent être n'importe où — ils ont juste besoin d'envoyer leurs fichiers README.txt</li>
+<li>Les gardiens peuvent être n'importe où — ils ont juste besoin d'envoyer leurs fichiers README.txt</li>
 </ul>
 </div>
 
 ## Bonnes pratiques {#best-practices}
 
-### Choisir ses amis
+### Choisir ses gardiens
 
 - **Durabilité :** Des personnes que vous pourrez joindre dans 5 à 10 ans
 - **Répartition géographique :** Pas tous au même endroit
@@ -359,15 +361,15 @@ Les enveloppes sont petites (moins de 10 Mo) et conçues pour être conservées 
 - **L'e-mail** est un choix étonnamment bon. La plupart des gens gardent la même adresse pendant des décennies, et les enveloppes sont assez légères pour être jointes en pièce attachée. Beaucoup de fournisseurs conservent les messages indéfiniment.
 - **Le stockage en ligne** (Google Drive, Dropbox, iCloud) convient bien comme copie secondaire.
 - **Les clés USB** peuvent convenir, mais gardez à l'esprit que les connecteurs changent (l'USB-A cède déjà la place à l'USB-C) et que la mémoire flash peut se dégrader après des années sans alimentation. Pas idéal comme seule copie.
-- **Le papier** est l'option la plus durable. Imprimer `README.pdf` offre à vos amis une copie qui n'a besoin ni d'adaptateur, ni d'électricité, ni d'appareil fonctionnel.
+- **Le papier** est l'option la plus durable. Imprimer `README.pdf` offre à vos gardiens une copie qui n'a besoin ni d'adaptateur, ni d'électricité, ni d'appareil fonctionnel.
 
 La meilleure approche est la redondance — e-mail et papier, ou cloud et papier. Plus d'une copie, sous plus d'une forme.
 
 ### Garder les enveloppes à jour {#keeping-current}
 
-Programmez un rappel annuel pour prendre des nouvelles de vos amis. Confirmez qu'ils ont toujours leurs enveloppes et mettez à jour les coordonnées si quelque chose a changé.
+Programmez un rappel annuel pour prendre des nouvelles de vos gardiens. Confirmez qu'ils ont toujours leurs enveloppes et mettez à jour les coordonnées si quelque chose a changé.
 
-Quand vos fichiers changent, créez de nouvelles enveloppes et envoyez-les. Les anciennes enveloppes n'ouvriront pas la nouvelle archive, donc aucun risque à ce qu'elles traînent — mais demandez à vos amis de remplacer les leurs par les nouvelles.
+Quand vos fichiers changent, créez de nouvelles enveloppes et envoyez-les. Les anciennes enveloppes n'ouvriront pas la nouvelle archive, donc aucun risque à ce qu'elles traînent — mais demandez à vos gardiens de remplacer les leurs par les nouvelles.
 
 Quand les contacts changent — quelqu'un déménage, change de numéro, ou vous souhaitez ajouter ou retirer quelqu'un — même chose : nouvelles enveloppes, demandez de supprimer les anciennes.
 
@@ -379,11 +381,11 @@ Pensez-y comme la mise à jour de vos contacts d'urgence. Bref, régulier, utile
 
 Personne ne teste son plan de secours. Un exercice de récupération change ça — et il s'avère que c'est essentiellement un escape room.
 
-Créez une enveloppe de test avec un secret anodin (une photo, un message, une recette). Distribuez les parts à vos amis. Ajoutez un [verrouillage temporel](#timelock) si vous voulez un vrai compte à rebours. Puis prenez du recul et laissez-les se débrouiller : se coordonner, rassembler les parts, déverrouiller les fichiers — sans votre aide.
+Créez une enveloppe de test avec un secret anodin (une photo, un message, une recette). Distribuez les parts à vos gardiens. Ajoutez un [verrouillage temporel](#timelock) si vous voulez un vrai compte à rebours. Puis prenez du recul et laissez-les se débrouiller : se coordonner, rassembler les parts, déverrouiller les fichiers — sans votre aide.
 
 Ce que vous apprendrez :
 
-- Vos amis retrouvent-ils leurs enveloppes quand ils en ont besoin ?
+- Vos gardiens retrouvent-ils leurs enveloppes quand ils en ont besoin ?
 - Comprennent-ils les instructions, ou restent-ils bloqués ?
 - Peuvent-ils se contacter entre eux sans que vous coordonniez ?
 
@@ -395,21 +397,21 @@ Une fois qu'une part a été distribuée, elle ne peut pas être révoquée. C'e
 
 Si vous devez changer qui détient des parts :
 
-1. **Créez de nouvelles enveloppes** avec un nouveau groupe d'amis et une nouvelle clé
-1. **Envoyez les nouvelles enveloppes** aux amis en qui vous avez toujours confiance
-1. **Demandez à chaque ami de supprimer son ancienne enveloppe** et de la remplacer par la nouvelle
+1. **Créez de nouvelles enveloppes** avec un nouveau groupe d'gardiens et une nouvelle clé
+1. **Envoyez les nouvelles enveloppes** aux gardiens en qui vous avez toujours confiance
+1. **Demandez à chaque gardien de supprimer son ancienne enveloppe** et de la remplacer par la nouvelle
 
 <div class="warning">
 <strong>Important :</strong> Les anciennes parts fonctionnent toujours avec les anciennes archives. Quand vous envoyez une nouvelle enveloppe, soyez clair : <strong>supprimer l'ancienne</strong>, ne garder que la nouvelle. Pas d'historique de versions, pas de « au cas où. »
 </div>
 
-La même chose s'applique quand les secrets changent. De nouvelles enveloppes signifient une nouvelle clé et de nouvelles parts. Les anciennes parts n'ouvriront pas la nouvelle archive, mais elles fonctionnent toujours avec l'ancienne. Assurez-vous que vos amis ne conservent pas d'anciennes copies.
+La même chose s'applique quand les secrets changent. De nouvelles enveloppes signifient une nouvelle clé et de nouvelles parts. Les anciennes parts n'ouvriront pas la nouvelle archive, mais elles fonctionnent toujours avec l'ancienne. Assurez-vous que vos gardiens ne conservent pas d'anciennes copies.
 
 ### À propos de project.yml {#project-file}
 
 Quand vous créez des enveloppes, votre projet est sauvegardé dans un fichier `project.yml`. Ce fichier contient :
 
-- Les noms et coordonnées des amis
+- Les noms et coordonnées des gardiens
 - Le seuil choisi (par exemple 3 sur 5)
 - Un hash de vérification pour confirmer que les enveloppes correspondent
 - Des sommes de contrôle des parts pour vérifier l'intégrité des enveloppes
@@ -438,16 +440,16 @@ Chaque enveloppe inclut des sommes de contrôle pour que l'outil de récupérati
 
 <div class="bundle-contents">
 <div class="file">
-<span class="file-name">Un ami perd son enveloppe</span>
+<span class="file-name">Un gardien perd son enveloppe</span>
 <span class="file-desc">Pas de problème, tant que suffisamment d'autres gardent la leur. C'est pour cela que vous fixez le seuil en dessous du total.</span>
 </div>
 <div class="file">
-<span class="file-name">Un ami rend sa part publique</span>
+<span class="file-name">Un gardien rend sa part publique</span>
 <span class="file-desc">Une part seule est inutile sans les autres. Il faudrait encore le seuil moins une part supplémentaire pour faire quoi que ce soit.</span>
 </div>
 <div class="file">
-<span class="file-name">Certains amis sont injoignables</span>
-<span class="file-desc">C'est pour cela que le seuil est inférieur au nombre total d'amis. Si vous avez choisi 3 sur 5, n'importe lesquels trois suffisent.</span>
+<span class="file-name">Certains gardiens sont injoignables</span>
+<span class="file-desc">C'est pour cela que le seuil est inférieur au nombre total d'gardiens. Si vous avez choisi 3 sur 5, n'importe lesquels trois suffisent.</span>
 </div>
 <div class="file">
 <span class="file-name">Kaitiaki disparaît dans 10 ans</span>
@@ -459,7 +461,7 @@ Chaque enveloppe inclut des sommes de contrôle pour que l'outil de récupérati
 </div>
 <div class="file">
 <span class="file-name">Vous oubliez comment tout cela fonctionne</span>
-<span class="file-desc">Le README.txt de chaque enveloppe explique tout. Vos amis n'ont rien à retenir — tout est écrit pour eux.</span>
+<span class="file-desc">Le README.txt de chaque enveloppe explique tout. Vos gardiens n'ont rien à retenir — tout est écrit pour eux.</span>
 </div>
 </div>
 
@@ -472,8 +474,8 @@ Pour une évaluation technique détaillée, consultez l'[auto-évaluation de sé
 Kaitiaki n'est pas le premier outil à utiliser le partage de secret de Shamir. Il en existe beaucoup d'autres, des outils en ligne de commande aux applications web. Voici ce qui distingue Kaitiaki :
 
 - **Gère des fichiers, pas seulement du texte.** La plupart des outils Shamir ne divisent que des mots de passe ou du texte court. Kaitiaki chiffre des fichiers et des dossiers entiers.
-- **Outil de récupération autonome.** Chaque ami reçoit `recover.html` — un outil complet qui fonctionne dans n'importe quel navigateur, hors ligne.\* Pas d'installation, pas de ligne de commande.
-- **Coordonnées incluses.** Chaque enveloppe contient une liste des autres amis et comment les joindre, pour que la coordination ne dépende pas de votre disponibilité.
+- **Outil de récupération autonome.** Chaque gardien reçoit `recover.html` — un outil complet qui fonctionne dans n'importe quel navigateur, hors ligne.\* Pas d'installation, pas de ligne de commande.
+- **Coordonnées incluses.** Chaque enveloppe contient une liste des autres gardiens et comment les joindre, pour que la coordination ne dépende pas de votre disponibilité.
 - **Aucune dépendance à un serveur.** Tout s'exécute localement. Pas de service auquel s'inscrire, pas de compte à maintenir, rien qui doive rester en ligne.
 
 Pour une comparaison détaillée avec d'autres outils, consultez le [tableau comparatif sur GitHub]({{GITHUB_REPO}}#other-similar-tools).
@@ -508,9 +510,9 @@ C'est utile quand :
 
 ### Comment l'activer
 
-Dans le [créateur d'enveloppes](maker.html), activez le bouton **Anonyme** dans la section Amis :
+Dans le [créateur d'enveloppes](maker.html), activez le bouton **Anonyme** dans la section Gardiens :
 
-- La liste d'amis est remplacée par un nombre de parts
+- La liste d'gardiens est remplacée par un nombre de parts
 - Définissez le nombre de parts et le seuil
 - Les enveloppes sont nommées `bundle-share-1.zip`, `bundle-share-2.zip`, etc.
 
@@ -528,20 +530,20 @@ Chaque personne peut recevoir son enveloppe dans la langue de son choix. L'outil
 
 ### Comment ça fonctionne
 
-- Chaque entrée d'ami a un menu déroulant **Langue du paquet**
+- Chaque entrée d'gardien a un menu déroulant **Langue du paquet**
 - « Par défaut » utilise la langue actuelle de l'interface
 - Personnalisable par personne pour mélanger les langues
 - recover.html s'ouvre dans la langue choisie
 - Chacun peut changer de langue à tout moment
 
 <figure class="screenshot">
-<img src="screenshots/fr/multilingual-language-dropdown.png" alt="Entrée d'ami montrant le menu déroulant de langue">
-<figcaption>Chaque ami a un menu déroulant pour choisir la langue de son enveloppe</figcaption>
+<img src="screenshots/fr/multilingual-language-dropdown.png" alt="Entrée d'gardien montrant le menu déroulant de langue">
+<figcaption>Chaque gardien a un menu déroulant pour choisir la langue de son enveloppe</figcaption>
 </figure>
 
 <figure class="screenshot">
 <img src="screenshots/demo-pdf-es/page-1.png" alt="recover.pdf ouvert en espagnol">
-<figcaption>L'outil de récupération s'ouvre dans la langue choisie pour l'ami</figcaption>
+<figcaption>L'outil de récupération s'ouvre dans la langue choisie pour l'gardien</figcaption>
 </figure>
 
 <figure class="screenshot">
@@ -551,7 +553,7 @@ Chaque personne peut recevoir son enveloppe dans la langue de son choix. L'outil
 
 ## Avancé : Récupération différée {#timelock}
 
-Vous pouvez définir un délai d'attente lors de la création des enveloppes. Même si vos amis réunissent leurs parts en avance, les fichiers restent verrouillés jusqu'à la date choisie — 30 jours, 6 mois, une date précise.
+Vous pouvez définir un délai d'attente lors de la création des enveloppes. Même si vos gardiens réunissent leurs parts en avance, les fichiers restent verrouillés jusqu'à la date choisie — 30 jours, 6 mois, une date précise.
 
 ### Comment l'activer
 

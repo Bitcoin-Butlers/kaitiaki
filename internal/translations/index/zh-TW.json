@@ -15,7 +15,7 @@
   "how_title": "運作原理",
   "how_subtitle": "你選擇<strong>信任誰</strong>以及<strong>多少人必須同意</strong>。你的檔案會被加密，金鑰被分成多個片段，每個人保管一份。當足夠的人將片段集合起來，檔案就會解鎖。",
   "how_caption": "五位中的任意三位就能復原檔案",
-  "how_fallback": "<strong>你的檔案</strong> → <strong>加密</strong> → <strong>金鑰分成 5 個片段</strong> → <strong>分給朋友</strong><br>↓<br><strong>任意 3 位朋友</strong> → <strong>合併片段</strong> → <strong>解鎖</strong> → <strong>檔案已復原</strong>",
+  "how_fallback": "<strong>你的檔案</strong> → <strong>加密</strong> → <strong>金鑰分成 5 個片段</strong> → <strong>分給守護人</strong><br>↓<br><strong>任意 3 位守護人</strong> → <strong>合併片段</strong> → <strong>解鎖</strong> → <strong>檔案已復原</strong>",
   "bundles_title": "每個人會收到什麼",
   "bundles_desc": "每個人會收到一個<strong>獨立的復原包</strong>——一個 ZIP 檔案，裡面有一個復原工具，可以在<strong>任何瀏覽器離線運作，不需要安裝任何東西</strong>。即使這個專案消失了，復原依然可以進行。",
   "bundles_contacts": "每個復原包都包含其他相關人員的<strong>聯絡方式</strong>，讓他們能夠<strong>在沒有你的情況下互相協調</strong>。",
