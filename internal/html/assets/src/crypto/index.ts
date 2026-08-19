@@ -1,4 +1,4 @@
-// ReMemory Native Crypto Module
+// Kaitiaki Native Crypto Module
 
 export { sha256, hashBytes, verifyHash } from './hash';
 export { combine, recoverPassphrase, base64ToBytes, bytesToBase64 } from './shamir';

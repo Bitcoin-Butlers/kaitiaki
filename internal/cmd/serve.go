@@ -26,7 +26,7 @@ The first visit prompts for an admin password. After that:
 
 Examples:
   kaitiaki serve
-  kaitiaki serve --port 3000 --data /var/lib/rememory
+  kaitiaki serve --port 3000 --data /var/lib/kaitiaki
   kaitiaki serve --max-manifest-size 100MB`,
 	RunE: runServe,
 }
@@ -34,7 +34,7 @@ Examples:
 func init() {
 	serveCmd.Flags().StringP("port", "p", "8080", "Port to listen on")
 	serveCmd.Flags().String("host", "127.0.0.1", "Host to bind to")
-	serveCmd.Flags().StringP("data", "d", "./rememory-data", "Data directory for storing bundles and config")
+	serveCmd.Flags().StringP("data", "d", "./kaitiaki-data", "Data directory for storing bundles and config")
 	serveCmd.Flags().String("max-manifest-size", "50MB", "Maximum MANIFEST.age size (e.g. 50MB, 1GB)")
 	rootCmd.AddCommand(serveCmd)
 }

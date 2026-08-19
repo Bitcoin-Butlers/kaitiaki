@@ -44,7 +44,7 @@
           <button type="button" class="mode-tab" data-mode="anonymous" data-i18n="mode_anonymous">Anonymous</button>
         </div>
       </div>
-      <p class="hint" id="guardians-hint" data-i18n="guardians_hint">Each person here will hold one piece of your recovery key</p>
+      <p class="hint" id="friends-hint" data-i18n="friends_hint">Each person here will hold one piece of your recovery key</p>
 
       <!-- Anonymous mode: shares input -->
       <div id="shares-input" class="shares-input hidden">
@@ -53,11 +53,11 @@
       </div>
 
       <!-- Normal mode: guardians list -->
-      <div id="guardians-section">
-        <div id="guardians-list"></div>
+      <div id="friends-section">
+        <div id="friends-list"></div>
 
-        <div class="guardians-actions">
-          <button id="add-guardian-btn" class="btn btn-secondary" type="button">
+        <div class="friends-actions">
+          <button id="add-friend-btn" class="btn btn-secondary" type="button">
             <span>+</span> <span data-i18n="add_friend">Add Guardian</span>
           </button>
           <label class="custom-language-toggle" id="custom-language-toggle">
@@ -80,7 +80,7 @@
         <button id="import-btn" class="btn btn-secondary" type="button" data-i18n="import_btn">Import Contacts</button>
       </details>
 
-      <div id="guardians-validation" class="validation-error hidden"></div>
+      <div id="friends-validation" class="validation-error hidden"></div>
     </div>
 
     <!-- Step 2: Manifest Files -->

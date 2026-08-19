@@ -20,7 +20,7 @@ type Config struct {
 	BuildDate       string
 }
 
-// Server implements http.Handler for the self-hosted ReMemory web app.
+// Server implements http.Handler for the self-hosted Kaitiaki web app.
 type Server struct {
 	store           *Store
 	maxManifestSize int

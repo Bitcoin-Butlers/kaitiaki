@@ -1,6 +1,6 @@
-# Contributing to ReMemory
+# Contributing to Kaitiaki
 
-ReMemory is a project where quality matters more than usual. A recovery bundle might sit in a drawer for ten years, then be opened by someone who just lost a loved one. The code, the copy, the design — it all has to hold up. Contributions should reflect that care.
+Kaitiaki is a project where quality matters more than usual. A recovery bundle might sit in a drawer for ten years, then be opened by someone who just lost a loved one. The code, the copy, the design — it all has to hold up. Contributions should reflect that care.
 
 We welcome contributions. Here's how to make them count.
 

@@ -1,4 +1,4 @@
-// ReMemory Type Definitions
+// Kaitiaki Type Definitions
 // Shared types for recovery (native JS) and creation (WASM)
 
 // ============================================

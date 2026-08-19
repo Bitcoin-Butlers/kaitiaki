@@ -1,5 +1,5 @@
 /**
- * ReMemory Data Flow Animation
+ * Kaitiaki Data Flow Animation
  *
  * Educational visualization showing how Shamir's Secret Sharing works:
  * - A file is encrypted and split into 5 shares
