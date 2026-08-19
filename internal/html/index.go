@@ -31,7 +31,7 @@ func GenerateIndexHTML(selfhosted bool) string {
   <meta name="twitter:image" content="{{GITHUB_PAGES}}/screenshots/recovery-1.png">`,
 		PageStyles: indexCSS,
 		Content:    content,
-		FooterContent: `<p style="font-size: 0.8125rem; color: #8A8480;" data-i18n-html="footer_timelock">* <a href="docs.html#timelock" style="color: #8A8480;">Time-locked</a> archives need a brief internet connection at recovery time.</p>
+		FooterContent: `<p style="font-size: 0.8125rem; color: var(--text-muted);" data-i18n-html="footer_timelock">* <a href="docs.html#timelock" style="color: var(--text-muted);">Time-locked</a> archives need a brief internet connection at recovery time.</p>
     <p>
       <a href="{{GITHUB_REPO}}" target="_blank" data-i18n="footer_source">Source Code</a> &#xB7;
       <a href="{{GITHUB_URL}}" target="_blank" data-i18n="footer_download">Download</a> &#xB7;

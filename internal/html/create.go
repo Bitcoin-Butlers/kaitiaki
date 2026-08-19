@@ -22,11 +22,11 @@ const tlockPanelHTML = `<!-- Advanced: time lock (shown when Advanced tab is act
           <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin: 0;">
             <input type="checkbox" id="timelock-checkbox">
             <span data-i18n="timelock_label">Add a time lock</span>
-            <span style="font-size: 0.75rem; color: #8A8480; background: #f0f0ee; padding: 0.125rem 0.5rem; border-radius: 3px;" data-i18n="timelock_experimental">experimental</span>
+            <span style="font-size: 0.75rem; color: var(--text-secondary); background: var(--sand); padding: 0.125rem 0.5rem; border-radius: 3px;" data-i18n="timelock_experimental">experimental</span>
           </label>
           <div id="timelock-options" class="hidden" style="display: flex; align-items: center; gap: 0.5rem;">
-            <input type="number" id="timelock-value" min="1" value="30" style="width: 5rem; padding: 0.375rem; border: 1px solid #ddd; border-radius: 4px;">
-            <select id="timelock-unit" style="padding: 0.375rem; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="number" id="timelock-value" min="1" value="30" style="width: 5rem; padding: 0.375rem; border: 1px solid var(--border); border-radius: 4px;">
+            <select id="timelock-unit" style="padding: 0.375rem; border: 1px solid var(--border); border-radius: 4px;">
               <option value="min" data-i18n="timelock_minutes">minutes</option>
               <option value="h" data-i18n="timelock_hours">hours</option>
               <option value="d" selected data-i18n="timelock_days">days</option>
@@ -37,9 +37,9 @@ const tlockPanelHTML = `<!-- Advanced: time lock (shown when Advanced tab is act
           </div>
         </div>
         <div id="timelock-details" class="hidden" style="margin-top: 0.5rem;">
-          <p id="timelock-date-preview" style="margin: 0; font-size: 0.875rem; color: #6B6560;"></p>
-          <p style="margin: 0.25rem 0 0; font-size: 0.8125rem; color: #8A8480;"><span data-i18n="timelock_hint">Even with enough pieces, the files stay locked until this date.</span> <a href="{{GITHUB_PAGES}}/docs#timelock" target="_blank" style="color: #7A8FA6;" data-i18n="timelock_learn_more">How does this work?</a></p>
-          <p style="margin: 0.25rem 0 0; font-size: 0.8125rem; color: #8A8480;" data-i18n="timelock_network_hint">Recovery will need a brief internet connection to verify the time lock.</p>
+          <p id="timelock-date-preview" style="margin: 0; font-size: 0.875rem; color: var(--text-secondary);"></p>
+          <p style="margin: 0.25rem 0 0; font-size: 0.8125rem; color: var(--text-muted);"><span data-i18n="timelock_hint">Even with enough pieces, the files stay locked until this date.</span> <a href="{{GITHUB_PAGES}}/docs#timelock" target="_blank" style="color: var(--dusty-blue);" data-i18n="timelock_learn_more">How does this work?</a></p>
+          <p style="margin: 0.25rem 0 0; font-size: 0.8125rem; color: var(--text-muted);" data-i18n="timelock_network_hint">Recovery will need a brief internet connection to verify the time lock.</p>
         </div>
       </div>`
 
