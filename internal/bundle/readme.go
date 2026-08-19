@@ -70,8 +70,14 @@ func GenerateReadme(data ReadmeData) string {
 	sb.WriteString(fmt.Sprintf("%s\n", t("what_is_this")))
 	sb.WriteString("--------------------------------------------------------------------------------\n")
 	sb.WriteString(fmt.Sprintf("%s\n", t("what_bundle_for", data.ProjectName)))
-	sb.WriteString(fmt.Sprintf("%s\n", t("what_one_of", data.Total)))
-	sb.WriteString(fmt.Sprintf("%s\n\n", t("what_threshold", data.Threshold)))
+	// Hide-quorum mode (Threshold == 0): do not disclose k/N.
+	if data.Total > 0 {
+		sb.WriteString(fmt.Sprintf("%s\n", t("what_one_of", data.Total)))
+	}
+	if data.Threshold > 0 {
+		sb.WriteString(fmt.Sprintf("%s\n", t("what_threshold", data.Threshold)))
+	}
+	sb.WriteString("\n")
 
 	// Warning
 	sb.WriteString(fmt.Sprintf("!!  %s\n", t("warning_title")))
@@ -124,7 +130,9 @@ func GenerateReadme(data ReadmeData) string {
 		sb.WriteString(fmt.Sprintf("%s\n", t("recover_anon_step3")))
 		sb.WriteString(fmt.Sprintf("   %s\n", t("recover_anon_step3_drag")))
 		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_anon_step3_paste")))
-		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_anon_step4_auto", data.Threshold)))
+		if data.Threshold > 0 {
+			sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_anon_step4_auto", data.Threshold)))
+		}
 		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_anon_step5")))
 	} else {
 		sb.WriteString(fmt.Sprintf("%s\n", t("recover_step3_contact")))
@@ -133,7 +141,9 @@ func GenerateReadme(data ReadmeData) string {
 		sb.WriteString(fmt.Sprintf("   %s\n", t("recover_step4_drag")))
 		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step4_paste")))
 		sb.WriteString(fmt.Sprintf("%s\n", t("recover_step5_checkmarks")))
-		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step5_auto", data.Threshold)))
+		if data.Threshold > 0 {
+			sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step5_auto", data.Threshold)))
+		}
 		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_step6")))
 	}
 	if data.TlockEnabled {
@@ -190,8 +200,12 @@ func GenerateReadme(data ReadmeData) string {
 	sb.WriteString(fmt.Sprintf("rememory-version: %s\n", data.Version))
 	sb.WriteString(fmt.Sprintf("created: %s\n", data.Created.Format(time.RFC3339)))
 	sb.WriteString(fmt.Sprintf("project: %s\n", data.ProjectName))
-	sb.WriteString(fmt.Sprintf("threshold: %d\n", data.Threshold))
-	sb.WriteString(fmt.Sprintf("total: %d\n", data.Total))
+	if data.Threshold > 0 {
+		sb.WriteString(fmt.Sprintf("threshold: %d\n", data.Threshold))
+	}
+	if data.Total > 0 {
+		sb.WriteString(fmt.Sprintf("total: %d\n", data.Total))
+	}
 	sb.WriteString(fmt.Sprintf("github-release: %s\n", data.GitHubReleaseURL))
 	sb.WriteString(fmt.Sprintf("checksum-manifest: %s\n", data.ManifestChecksum))
 	sb.WriteString(fmt.Sprintf("checksum-recover-html: %s\n", data.RecoverChecksum))

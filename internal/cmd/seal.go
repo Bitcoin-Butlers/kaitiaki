@@ -221,7 +221,12 @@ func sealProject(p *project.Project, recoveryURL string, noEmbedManifest bool, t
 	shareInfos := make([]project.ShareInfo, len(shares))
 	for i, shareData := range shares {
 		friend := p.Friends[i]
-		share := core.NewShare(2, i+1, len(p.Friends), p.Threshold, friend.Name, shareData)
+		shareTotal, shareThreshold := len(p.Friends), p.Threshold
+		if p.HideQuorum {
+			// Do not disclose the quorum in share headers.
+			shareTotal, shareThreshold = 0, 0
+		}
+		share := core.NewShare(2, i+1, shareTotal, shareThreshold, friend.Name, shareData)
 
 		filename := share.Filename()
 		sharePath := filepath.Join(sharesDir, filename)

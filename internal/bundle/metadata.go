@@ -18,14 +18,15 @@ const MetadataFilename = "METADATA.yaml"
 // what the bundle contains and how to recover without this project's
 // code.
 type MetadataFile struct {
-	SchemeVersion int                `yaml:"scheme_version"`
-	Created       string             `yaml:"created"` // RFC3339
-	Threshold     int                `yaml:"threshold"`
-	TotalShares   int                `yaml:"total_shares"`
-	ShareIndex    int                `yaml:"share_index"`
-	Holder        string             `yaml:"holder"`
-	Payload       []PayloadFileEntry `yaml:"payload"`
-	Recovery      RecoveryInfo       `yaml:"recovery"`
+	SchemeVersion int    `yaml:"scheme_version"`
+	Created       string `yaml:"created"` // RFC3339
+	// Threshold and TotalShares are omitted in hide-quorum mode.
+	Threshold   int                `yaml:"threshold,omitempty"`
+	TotalShares int                `yaml:"total_shares,omitempty"`
+	ShareIndex  int                `yaml:"share_index"`
+	Holder      string             `yaml:"holder"`
+	Payload     []PayloadFileEntry `yaml:"payload"`
+	Recovery    RecoveryInfo       `yaml:"recovery"`
 }
 
 // PayloadFileEntry describes one file in the bundle ZIP.

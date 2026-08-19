@@ -145,7 +145,10 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	p.CellFormat(0, 6, t("what_is_this"), "", 1, "L", false, 0, "")
 	p.Ln(1)
 	addBody(p, t("what_bundle_for", data.ProjectName))
-	addBody(p, t("what_one_of", data.Total))
+	// Hide-quorum mode (Total == 0): do not disclose k/N.
+	if data.Total > 0 {
+		addBody(p, t("what_one_of", data.Total))
+	}
 	p.Ln(5)
 
 	// ── Warning stamp — soft, centered, calm ──
@@ -163,21 +166,24 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	p.Ln(8)
 
 	// ── Recovery rule — prominent standalone box ──
-	p.SetFillColor(242, 242, 248)
-	p.SetDrawColor(140, 140, 160)
-	p.SetLineWidth(0.5)
-	ruleBoxY := p.GetY()
-	ruleBoxH := 20.0
-	p.Rect(leftMargin, ruleBoxY, contentWidth, ruleBoxH, "FD")
-	p.SetFont(fontSans, "", 9)
-	p.SetXY(leftMargin, ruleBoxY+2)
-	p.CellFormat(contentWidth, 5, t("recovery_rule"), "", 1, "C", false, 0, "")
-	p.SetFont(fontSans, "B", 18)
-	p.SetXY(leftMargin, ruleBoxY+8)
-	p.CellFormat(contentWidth, 10, t("recovery_rule_count", data.Threshold, data.Total), "", 1, "C", false, 0, "")
-	p.SetY(ruleBoxY + ruleBoxH + 8)
-	p.SetDrawColor(0, 0, 0)
-	p.SetLineWidth(0.2)
+	// Skipped in hide-quorum mode: the box only states k of N.
+	if data.Threshold > 0 {
+		p.SetFillColor(242, 242, 248)
+		p.SetDrawColor(140, 140, 160)
+		p.SetLineWidth(0.5)
+		ruleBoxY := p.GetY()
+		ruleBoxH := 20.0
+		p.Rect(leftMargin, ruleBoxY, contentWidth, ruleBoxH, "FD")
+		p.SetFont(fontSans, "", 9)
+		p.SetXY(leftMargin, ruleBoxY+2)
+		p.CellFormat(contentWidth, 5, t("recovery_rule"), "", 1, "C", false, 0, "")
+		p.SetFont(fontSans, "B", 18)
+		p.SetXY(leftMargin, ruleBoxY+8)
+		p.CellFormat(contentWidth, 10, t("recovery_rule_count", data.Threshold, data.Total), "", 1, "C", false, 0, "")
+		p.SetY(ruleBoxY + ruleBoxH + 8)
+		p.SetDrawColor(0, 0, 0)
+		p.SetLineWidth(0.2)
+	}
 
 	// ── Other share holders — contact card layout ──
 	if !data.Anonymous {
@@ -338,7 +344,9 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 		addBody(p, "   "+t("recover_anon_step3_drag"))
 		addBody(p, "   "+t("recover_anon_step3_paste"))
 		p.Ln(2)
-		addBody(p, t("recover_anon_step4_auto", data.Threshold))
+		if data.Threshold > 0 {
+			addBody(p, t("recover_anon_step4_auto", data.Threshold))
+		}
 		p.Ln(2)
 		addBody(p, t("recover_anon_step5"))
 	} else {
@@ -350,7 +358,9 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 		addBody(p, "   "+t("recover_step4_paste"))
 		p.Ln(2)
 		addBody(p, t("recover_step5_checkmarks"))
-		addBody(p, "   "+t("recover_step5_auto", data.Threshold))
+		if data.Threshold > 0 {
+			addBody(p, "   "+t("recover_step5_auto", data.Threshold))
+		}
 		p.Ln(2)
 		addBody(p, t("recover_step6"))
 	}
@@ -400,8 +410,12 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	addMeta(p, "rememory-version", data.Version)
 	addMeta(p, "created", data.Created.Format(time.RFC3339))
 	addMeta(p, "project", data.ProjectName)
-	addMeta(p, "threshold", fmt.Sprintf("%d", data.Threshold))
-	addMeta(p, "total", fmt.Sprintf("%d", data.Total))
+	if data.Threshold > 0 {
+		addMeta(p, "threshold", fmt.Sprintf("%d", data.Threshold))
+	}
+	if data.Total > 0 {
+		addMeta(p, "total", fmt.Sprintf("%d", data.Total))
+	}
 	addMeta(p, "github-release", data.GitHubReleaseURL)
 	addMeta(p, "checksum-manifest", data.ManifestChecksum)
 	addMeta(p, "checksum-recover-html", data.RecoverChecksum)
