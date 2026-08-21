@@ -104,5 +104,11 @@
   "verification_threshold": "You need at least {0} pieces to recover.",
   "verification_manifest_ok": "Encrypted archive is included.",
   "verification_manifest_missing": "You'll need to add the encrypted archive when it's time to recover.",
-  "verification_keep_safe": "Keep this bundle somewhere safe. When the time comes, you and the others will combine your pieces to recover."
+  "verification_keep_safe": "Keep this bundle somewhere safe. When the time comes, you and the others will combine your pieces to recover.",
+  "owner_summary": "I am the owner and have my owner key",
+  "owner_explain": "If your bundles were made with an owner key, you can recover alone, without the other pieces. Drop any one bundle above, then paste your secret owner key here.",
+  "owner_loaded": "OWNER.age found in the bundle. Paste your owner key to recover.",
+  "owner_missing": "This bundle has no OWNER.age. It was made without an owner key, so recovery needs the guardian pieces.",
+  "owner_bad_key": "This owner key does not open OWNER.age. Check for typos and make sure it belongs to this backup.",
+  "recovering_owner": "Opening OWNER.age with the owner key..."
 }

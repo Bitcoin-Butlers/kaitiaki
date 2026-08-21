@@ -54,6 +54,7 @@ type CreateBundlesFromArchiveConfig struct {
 	DefaultLanguage string
 	TlockRound      uint64
 	TlockUnlock     string // RFC 3339 timestamp
+	OwnerRecipient  string // optional age X25519 recipient; adds OWNER.age
 }
 
 // bundleGenConfig holds shared parameters for bundle generation from an
@@ -66,38 +67,48 @@ type bundleGenConfig struct {
 	Anonymous       bool
 	DefaultLanguage string
 	TlockEnabled    bool
+	OwnerFile       []byte // optional OWNER.age content for every bundle
 }
 
 // createBundlesFromArchive creates bundles from pre-built archive data.
 // The archiveData may already be tlock-encrypted by JS. This function
 // age-encrypts it (outer layer), optionally prepends the metadata envelope,
 // splits the passphrase, and packages bundles.
-func createBundlesFromArchive(config CreateBundlesFromArchiveConfig) ([]BundleOutput, []byte, error) {
+func createBundlesFromArchive(config CreateBundlesFromArchiveConfig) ([]BundleOutput, []byte, []byte, error) {
 	if config.ProjectName == "" {
-		return nil, nil, fmt.Errorf("project name is required")
+		return nil, nil, nil, fmt.Errorf("project name is required")
 	}
 	if len(config.Friends) < 2 {
-		return nil, nil, fmt.Errorf("need at least 2 friends, got %d", len(config.Friends))
+		return nil, nil, nil, fmt.Errorf("need at least 2 friends, got %d", len(config.Friends))
 	}
 	if config.Threshold < 2 {
-		return nil, nil, fmt.Errorf("threshold must be at least 2, got %d", config.Threshold)
+		return nil, nil, nil, fmt.Errorf("threshold must be at least 2, got %d", config.Threshold)
 	}
 	if config.Threshold > len(config.Friends) {
-		return nil, nil, fmt.Errorf("threshold (%d) cannot exceed number of friends (%d)", config.Threshold, len(config.Friends))
+		return nil, nil, nil, fmt.Errorf("threshold (%d) cannot exceed number of friends (%d)", config.Threshold, len(config.Friends))
 	}
 	if len(config.ArchiveData) == 0 {
-		return nil, nil, fmt.Errorf("no archive data provided")
+		return nil, nil, nil, fmt.Errorf("no archive data provided")
 	}
 	for i, f := range config.Friends {
 		if f.Name == "" {
-			return nil, nil, fmt.Errorf("friend %d: name is required", i+1)
+			return nil, nil, nil, fmt.Errorf("friend %d: name is required", i+1)
 		}
 	}
 
 	// Generate random passphrase
 	raw, passphrase, err := crypto.GenerateRawPassphrase(crypto.DefaultPassphraseBytes)
 	if err != nil {
-		return nil, nil, fmt.Errorf("generating passphrase: %w", err)
+		return nil, nil, nil, fmt.Errorf("generating passphrase: %w", err)
+	}
+
+	// Optionally wrap the passphrase for the owner (OWNER.age).
+	var ownerFile []byte
+	if config.OwnerRecipient != "" {
+		ownerFile, err = core.EncryptPassphraseToOwner(passphrase, config.OwnerRecipient)
+		if err != nil {
+			return nil, nil, nil, err
+		}
 	}
 
 	// If tlock metadata provided, wrap tlock-encrypted archive in a container ZIP
@@ -113,7 +124,7 @@ func createBundlesFromArchive(config CreateBundlesFromArchiveConfig) ([]BundleOu
 		}
 		container, err := core.BuildTlockContainer(meta, config.ArchiveData)
 		if err != nil {
-			return nil, nil, fmt.Errorf("building tlock container: %w", err)
+			return nil, nil, nil, fmt.Errorf("building tlock container: %w", err)
 		}
 		dataToEncrypt = container
 	}
@@ -121,7 +132,7 @@ func createBundlesFromArchive(config CreateBundlesFromArchiveConfig) ([]BundleOu
 	// Encrypt with age (outer layer) — always a plain age file
 	var encryptedBuf bytes.Buffer
 	if err := core.Encrypt(&encryptedBuf, bytes.NewReader(dataToEncrypt), passphrase); err != nil {
-		return nil, nil, fmt.Errorf("encrypting archive: %w", err)
+		return nil, nil, nil, fmt.Errorf("encrypting archive: %w", err)
 	}
 
 	manifestData := encryptedBuf.Bytes()
@@ -134,12 +145,13 @@ func createBundlesFromArchive(config CreateBundlesFromArchiveConfig) ([]BundleOu
 		Anonymous:       config.Anonymous,
 		DefaultLanguage: config.DefaultLanguage,
 		TlockEnabled:    tlockEnabled,
+		OwnerFile:       ownerFile,
 	})
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
-	return bundles, manifestData, nil
+	return bundles, manifestData, ownerFile, nil
 }
 
 // bundleFromManifest generates bundles for all friends given the final
@@ -280,6 +292,9 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 		}
 		if !manifestEmbedded {
 			zipFiles = append(zipFiles, bundle.ZipFile{Name: "MANIFEST.age", Content: manifestData, ModTime: now})
+		}
+		if len(config.OwnerFile) > 0 {
+			zipFiles = append(zipFiles, bundle.ZipFile{Name: "OWNER.age", Content: config.OwnerFile, ModTime: now})
 		}
 
 		zipData, err := createZipInMemory(zipFiles)
@@ -511,6 +526,9 @@ func createBundlesFromArchiveJS(this js.Value, args []js.Value) any {
 	if tlockUnlock := configJS.Get("tlockUnlock"); !tlockUnlock.IsUndefined() && !tlockUnlock.IsNull() {
 		config.TlockUnlock = tlockUnlock.String()
 	}
+	if ownerRecipient := configJS.Get("ownerRecipient"); !ownerRecipient.IsUndefined() && !ownerRecipient.IsNull() {
+		config.OwnerRecipient = ownerRecipient.String()
+	}
 	// Parse friends array
 	friendsJS := configJS.Get("friends")
 	friendsLen := friendsJS.Length()
@@ -528,7 +546,7 @@ func createBundlesFromArchiveJS(this js.Value, args []js.Value) any {
 		}
 	}
 
-	bundles, manifestData, err := createBundlesFromArchive(config)
+	bundles, manifestData, ownerFile, err := createBundlesFromArchive(config)
 	if err != nil {
 		return errorResult(err.Error())
 	}
@@ -547,11 +565,17 @@ func createBundlesFromArchiveJS(this js.Value, args []js.Value) any {
 	jsManifest := js.Global().Get("Uint8Array").New(len(manifestData))
 	js.CopyBytesToJS(jsManifest, manifestData)
 
-	return js.ValueOf(map[string]any{
+	result := map[string]any{
 		"bundles":  jsBundles,
 		"manifest": jsManifest,
 		"error":    nil,
-	})
+	}
+	if len(ownerFile) > 0 {
+		jsOwner := js.Global().Get("Uint8Array").New(len(ownerFile))
+		js.CopyBytesToJS(jsOwner, ownerFile)
+		result["ownerFile"] = jsOwner
+	}
+	return js.ValueOf(result)
 }
 
 // Functions are registered in main.go

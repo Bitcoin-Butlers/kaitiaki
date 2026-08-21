@@ -23,6 +23,7 @@ import {
   encodeCompact,
   combine,
   recoverPassphrase,
+  decryptOwnerAge,
   base64ToBytes,
   bytesToBase64,
   decrypt,
@@ -86,7 +87,8 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     threshold: 0,
     total: 0,
     recovering: false,
-    recoveryComplete: false
+    recoveryComplete: false,
+    ownerAge: null
   };
 
   // Tlock container bytes (saved after age-decrypt for failsafe download if tlock fails)
@@ -98,6 +100,9 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     shareFileInput: HTMLInputElement | null;
     sharesList: HTMLElement | null;
     thresholdInfo: HTMLElement | null;
+    ownerIdentity: HTMLInputElement | null;
+    ownerStatus: HTMLElement | null;
+    ownerStatusText: HTMLElement | null;
     manifestDropZone: HTMLElement | null;
     manifestFileInput: HTMLInputElement | null;
     manifestStatus: HTMLElement | null;
@@ -131,6 +136,9 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     shareFileInput: document.getElementById('share-file-input') as HTMLInputElement | null,
     sharesList: document.getElementById('shares-list'),
     thresholdInfo: document.getElementById('threshold-info'),
+    ownerIdentity: document.getElementById('owner-identity') as HTMLInputElement | null,
+    ownerStatus: document.getElementById('owner-status'),
+    ownerStatusText: document.getElementById('owner-status-text'),
     manifestDropZone: document.getElementById('manifest-drop-zone'),
     manifestFileInput: document.getElementById('manifest-file-input') as HTMLInputElement | null,
     manifestStatus: document.getElementById('manifest-status'),
@@ -616,6 +624,15 @@ type UIShare = ParsedShare & { isHolder?: boolean };
         return;
       }
 
+      // OWNER.age - owner key file, not a manifest
+      if ((name.split('/').pop() || name) === 'owner.age') {
+        const buffer = await readFileAsArrayBuffer(file);
+        state.ownerAge = new Uint8Array(buffer);
+        updateOwnerUI();
+        checkRecoverReady();
+        return;
+      }
+
       // .age file - manifest only
       if (name.endsWith('.age')) {
         const buffer = await readFileAsArrayBuffer(file);
@@ -665,6 +682,11 @@ type UIShare = ParsedShare & { isHolder?: boolean };
         state.manifest = bundle.manifest;
         showManifestLoaded('MANIFEST.age', state.manifest.length, 'bundle');
         addedManifest = true;
+      }
+
+      if (bundle.ownerAge) {
+        state.ownerAge = bundle.ownerAge;
+        updateOwnerUI();
       }
 
       highlightAddedSections(addedShare, addedManifest);
@@ -1206,11 +1228,30 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     elements.downloadAllBtn?.addEventListener('click', downloadAll);
   }
 
-  function checkRecoverReady(): void {
-    const ready = state.manifest !== null && (
-      (state.threshold > 0 && state.shares.length >= state.threshold) ||
-      (state.threshold === 0 && state.shares.length >= 2)
+  function ownerIdentityValue(): string {
+    return elements.ownerIdentity?.value.trim().toUpperCase() || '';
+  }
+
+  function ownerReady(): boolean {
+    return (
+      state.ownerAge !== null &&
+      /^AGE-SECRET-KEY-1[02-9AC-HJ-NP-Z]{58}$/.test(ownerIdentityValue())
     );
+  }
+
+  function updateOwnerUI(): void {
+    if (!elements.ownerStatus || !elements.ownerStatusText) return;
+    if (state.ownerAge) {
+      elements.ownerStatusText.textContent = t('owner_loaded');
+      elements.ownerStatus.classList.remove('hidden');
+    }
+  }
+
+  function checkRecoverReady(): void {
+    const sharesReady =
+      (state.threshold > 0 && state.shares.length >= state.threshold) ||
+      (state.threshold === 0 && state.shares.length >= 2);
+    const ready = state.manifest !== null && (sharesReady || ownerReady());
 
     if (elements.recoverBtn) {
       elements.recoverBtn.disabled = !ready;
@@ -1268,13 +1309,28 @@ type UIShare = ParsedShare & { isHolder?: boolean };
 
     try {
       setProgress(10);
-      setStatus(t('combining'));
 
-      // Convert shares to raw bytes and combine
-      const shareBytes = state.shares.map(s => base64ToBytes(s.dataB64));
-      const recovered = await combine(shareBytes);
-      const version = state.shares[0].version;
-      const passphrase = recoverPassphrase(recovered, version);
+      const sharesReady =
+        (state.threshold > 0 && state.shares.length >= state.threshold) ||
+        (state.threshold === 0 && state.shares.length >= 2);
+
+      let passphrase: string;
+      if (sharesReady) {
+        setStatus(t('combining'));
+        // Convert shares to raw bytes and combine
+        const shareBytes = state.shares.map(s => base64ToBytes(s.dataB64));
+        const recovered = await combine(shareBytes);
+        const version = state.shares[0].version;
+        passphrase = recoverPassphrase(recovered, version);
+      } else {
+        // Owner path: OWNER.age + owner identity, no shares needed
+        setStatus(t('recovering_owner'));
+        try {
+          passphrase = await decryptOwnerAge(state.ownerAge!, ownerIdentityValue());
+        } catch {
+          throw new Error(t('owner_bad_key'));
+        }
+      }
 
       setProgress(30);
 
@@ -1568,6 +1624,8 @@ type UIShare = ParsedShare & { isHolder?: boolean };
 
   document.addEventListener('DOMContentLoaded', async () => {
     await init();
+
+    elements.ownerIdentity?.addEventListener('input', () => checkRecoverReady());
 
     // Auto-fetch manifest if a URL is configured (server or static pages)
     const manifestConfig = window.SELFHOSTED_CONFIG;

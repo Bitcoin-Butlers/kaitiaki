@@ -20,6 +20,7 @@ export interface BundleCreateResult {
   error?: string;
   bundles?: GeneratedBundle[];
   manifest?: Uint8Array;
+  ownerFile?: Uint8Array;
 }
 
 export interface ArchiveCreateResult {
@@ -37,6 +38,7 @@ export interface BundleFromArchiveConfig {
   defaultLanguage?: string;
   tlockRound?: number;
   tlockUnlock?: string;
+  ownerRecipient?: string;
 }
 
 // ============================================
@@ -107,6 +109,7 @@ export interface RecoveryState {
   total: number;
   recovering: boolean;
   recoveryComplete: boolean;
+  ownerAge: Uint8Array | null;
   decryptedArchive?: Uint8Array;
 }
 

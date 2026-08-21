@@ -18,3 +18,4 @@ export {
   type Lang,
 } from './wordlist';
 export { extractBundle, extractPersonalizationFromHTML, type BundleContents } from './zip';
+export { decryptOwnerAge, dearmor } from './age';

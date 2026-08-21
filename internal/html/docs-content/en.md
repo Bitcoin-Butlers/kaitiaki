@@ -153,6 +153,10 @@ Each bundle contains:
 <span class="file-desc">Your encrypted files. Included as a separate file for larger archives.</span>
 </div>
 <div class="file">
+<span class="file-name">OWNER.age</span>
+<span class="file-desc">Only present when the bundles were made with an owner key. Lets the owner recover alone. Useless to anyone without the owner's secret key.</span>
+</div>
+<div class="file">
 <span class="file-name">recover.html</span>
 <span class="file-desc">Recovery tool (~300 KB), runs in any browser</span>
 </div>
@@ -523,6 +527,37 @@ Recovery works the same way, but without the contact list. Holders see generic l
 <div class="warning">
 <strong>Important:</strong> Without a built-in contact list, make sure holders know how to reach each other when recovery is needed.
 </div>
+
+## Advanced: Owner Key {#owner-key}
+
+By default, only a group of guardians can decrypt your backup. That is the right shape for an estate, but it means you cannot open your own backup without convening them.
+
+The owner key is an optional second path. You give the bundle maker an [age](https://github.com/FiloSottile/age) public key (it starts with `age1`). Every bundle then also contains `OWNER.age`: the recovery passphrase locked to that key. With the matching secret key you can recover alone, any time. Guardians see no difference, and bundles made without an owner key are exactly as before.
+
+### How to Enable
+
+1. Create an age keypair with any age tool, for example `age-keygen -o owner-key.txt`. The file shows your public key (`age1...`) and holds your secret key (`AGE-SECRET-KEY-1...`).
+1. In the bundle maker, open **Owner key (optional)** in step 3 and paste the *public* key.
+1. After generating, store `owner-key.txt` somewhere safe and separate from your bundles, for example printed on paper with your other vital documents. You can also save `OWNER.age` on its own; every bundle already contains a copy.
+
+**Never paste seed words or other secrets into the owner key field.** It takes an age public key only.
+
+### How to Recover With It
+
+In the recovery tool: drop any one bundle, open **I am the owner and have my owner key**, and paste your secret key (`AGE-SECRET-KEY-1...`). Recovery runs immediately, no other pieces needed.
+
+Without the tool, any age CLI works:
+
+```
+age -d -i owner-key.txt OWNER.age   # prints the recovery passphrase
+age -d MANIFEST.age > archive       # enter that passphrase when asked
+```
+
+### The Tradeoff, Plainly
+
+The owner key is a single key that opens the whole backup. Anyone who holds the secret key can read everything in it, alone, with no guardian involved. Store it with the same care as the things it protects. If you lose it, nothing is lost: the guardian path still works, and you can regenerate bundles with a new owner key at any time.
+
+If you derive the owner key from another secret you already guard (rather than generating a random one), understand that the two are then linked: whoever controls that secret controls this backup too.
 
 ## Advanced: Time-Delayed Recovery {#timelock}
 
