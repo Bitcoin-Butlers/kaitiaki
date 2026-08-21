@@ -33,6 +33,7 @@ type ReadmeData struct {
 	RecoveryURL      string // Base URL for QR code (e.g. "https://example.com/recover.html")
 	Language         string // Bundle language (e.g. "en", "es"); defaults to "en"
 	ManifestEmbedded bool   // true when manifest is embedded in recover.html
+	OwnerKeyPresent  bool   // true when the bundle contains OWNER.age
 	TlockEnabled     bool   // true when manifest uses time-lock encryption
 }
 
@@ -337,6 +338,9 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 		addBody(p, t("recover_step2"))
 		addBody(p, "   "+t("recover_step2_drag"))
 		addBody(p, "   "+t("recover_step2_click"))
+	}
+	if data.OwnerKeyPresent {
+		addBody(p, t("owner_note"))
 	}
 	p.Ln(2)
 	if data.Anonymous {

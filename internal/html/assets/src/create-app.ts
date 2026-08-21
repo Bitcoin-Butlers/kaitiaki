@@ -995,11 +995,10 @@ declare const __SELFHOSTED__: boolean;
       setStatus(t('splitting'));
       await sleep(100);
 
+      // Owner recipient validation is Go's ValidateOwnerRecipient (one
+      // source of truth); an invalid value fails bundle creation loudly.
       const ownerInput = document.getElementById('owner-recipient') as HTMLInputElement | null;
       const ownerRecipient = ownerInput?.value.trim() || undefined;
-      if (ownerRecipient && !/^age1[0-9a-z]{58}$/.test(ownerRecipient)) {
-        throw new Error(t('owner_invalid'));
-      }
 
       const result = window.rememoryCreateBundlesFromArchive({
         projectName: state.projectName,

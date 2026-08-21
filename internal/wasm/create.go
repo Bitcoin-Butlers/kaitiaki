@@ -240,11 +240,15 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 		if manifestEmbedded {
 			personalization.ManifestB64 = base64.StdEncoding.EncodeToString(manifestData)
 		}
+		if len(config.OwnerFile) > 0 {
+			personalization.OwnerB64 = base64.StdEncoding.EncodeToString(config.OwnerFile)
+		}
 
 		recoverHTML := html.GenerateRecoverHTML(personalization)
 		recoverChecksum := core.HashString(recoverHTML)
 
 		readmeData := bundle.ReadmeData{
+			OwnerKeyPresent:  len(config.OwnerFile) > 0,
 			ProjectName:      config.ProjectName,
 			Holder:           friend.Name,
 			Share:            share,
@@ -263,6 +267,7 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 		readmeContent := bundle.GenerateReadme(readmeData)
 
 		pdfData := pdf.ReadmeData{
+			OwnerKeyPresent:  len(config.OwnerFile) > 0,
 			ProjectName:      config.ProjectName,
 			Holder:           friend.Name,
 			Share:            share,

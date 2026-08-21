@@ -80,6 +80,7 @@ export interface PersonalizationData {
   total: number;
   language?: string;
   manifestB64?: string; // Base64-encoded MANIFEST.age (when small enough to embed)
+  ownerB64?: string; // Base64-encoded OWNER.age (always small)
   tlockEnabled?: boolean; // Signals tlock-js is included for time-lock decryption
 }
 

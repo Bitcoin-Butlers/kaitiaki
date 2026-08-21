@@ -29,6 +29,9 @@ export function dearmor(data: Uint8Array): Uint8Array {
   const text = new TextDecoder().decode(data).trim();
   if (!text.startsWith(ARMOR_BEGIN)) return data;
   const lines = text.split(/\r?\n/);
+  if (lines[lines.length - 1] !== '-----END AGE ENCRYPTED FILE-----') {
+    throw new Error('malformed armor: missing END marker');
+  }
   const b64 = lines.slice(1, lines.length - 1).join('');
   const binary = atob(b64);
   const bytes = new Uint8Array(binary.length);

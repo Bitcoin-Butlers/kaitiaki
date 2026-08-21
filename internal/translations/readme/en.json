@@ -65,5 +65,6 @@
   "qr_caption": "Scan with your phone camera to import your piece",
   "recovery_rule": "RECOVERY RULE",
   "recovery_rule_count": "{0} of {1} required",
-  "readme_filename": "README"
+  "readme_filename": "README",
+  "owner_note": "This bundle may also contain a file named OWNER.age. It belongs to the person who made this backup, who holds a separate key for it. You do not need it, and it is useless without that key."
 }

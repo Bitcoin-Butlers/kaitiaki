@@ -4,6 +4,12 @@ All notable changes to ReMemory are documented here.
 
 ## Unreleased
 
+- Owner key (optional): give the bundle maker an age public key and every
+  bundle also carries `OWNER.age` — the recovery passphrase locked to that
+  key. The owner can recover alone in `recover.html` (or with the age CLI);
+  guardians and the bundle format are unchanged. Guardian READMEs explain
+  the extra file. Docs: "Advanced: Owner Key", `docs/owner-key-vector.md`.
+
 ## v0.0.21 — 2026-04-13
 
 - Minor improvements to arm64 support in the Docker image.

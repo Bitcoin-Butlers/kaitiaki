@@ -354,6 +354,22 @@ type UIShare = ParsedShare & { isHolder?: boolean };
       }
     }
 
+    // Load embedded OWNER.age if the bundles were made with an owner key
+    if (personalization.ownerB64) {
+      try {
+        const binary = atob(personalization.ownerB64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        state.ownerAge = bytes;
+        updateOwnerUI();
+      } catch {
+        // A corrupt embedded OWNER.age never blocks guardian recovery;
+        // the standalone OWNER.age file in the bundle still works.
+      }
+    }
+
     // Load embedded manifest if available (included when MANIFEST.age is small enough)
     if (personalization.manifestB64) {
       try {
@@ -1228,6 +1244,13 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     elements.downloadAllBtn?.addEventListener('click', downloadAll);
   }
 
+  function sharesReady(): boolean {
+    return (
+      (state.threshold > 0 && state.shares.length >= state.threshold) ||
+      (state.threshold === 0 && state.shares.length >= 2)
+    );
+  }
+
   function ownerIdentityValue(): string {
     return elements.ownerIdentity?.value.trim().toUpperCase() || '';
   }
@@ -1248,10 +1271,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   }
 
   function checkRecoverReady(): void {
-    const sharesReady =
-      (state.threshold > 0 && state.shares.length >= state.threshold) ||
-      (state.threshold === 0 && state.shares.length >= 2);
-    const ready = state.manifest !== null && (sharesReady || ownerReady());
+    const ready = state.manifest !== null && (sharesReady() || ownerReady());
 
     if (elements.recoverBtn) {
       elements.recoverBtn.disabled = !ready;
@@ -1310,33 +1330,38 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     try {
       setProgress(10);
 
-      const sharesReady =
-        (state.threshold > 0 && state.shares.length >= state.threshold) ||
-        (state.threshold === 0 && state.shares.length >= 2);
-
-      let passphrase: string;
-      if (sharesReady) {
+      // Shares are preferred when the threshold is met; the owner path
+      // covers zero shares AND rescues a failed share combination (e.g.
+      // too few pieces of an unknown-threshold scheme).
+      let archive: Uint8Array | null = null;
+      if (sharesReady()) {
         setStatus(t('combining'));
         // Convert shares to raw bytes and combine
         const shareBytes = state.shares.map(s => base64ToBytes(s.dataB64));
         const recovered = await combine(shareBytes);
         const version = state.shares[0].version;
-        passphrase = recoverPassphrase(recovered, version);
-      } else {
-        // Owner path: OWNER.age + owner identity, no shares needed
+        const passphrase = recoverPassphrase(recovered, version);
+        setProgress(30);
+        setStatus(t('decrypting'));
+        try {
+          archive = await decrypt(state.manifest!, passphrase);
+        } catch (err) {
+          if (!ownerReady()) throw err;
+          archive = null; // fall through to the owner path
+        }
+      }
+      if (archive === null) {
         setStatus(t('recovering_owner'));
+        let passphrase: string;
         try {
           passphrase = await decryptOwnerAge(state.ownerAge!, ownerIdentityValue());
         } catch {
           throw new Error(t('owner_bad_key'));
         }
+        setProgress(30);
+        setStatus(t('decrypting'));
+        archive = await decrypt(state.manifest!, passphrase);
       }
-
-      setProgress(30);
-
-      // age-decrypt (always a plain age file now)
-      setStatus(t('decrypting'));
-      let archive = await decrypt(state.manifest!, passphrase);
 
       setProgress(50);
 

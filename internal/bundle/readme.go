@@ -28,6 +28,7 @@ type ReadmeData struct {
 	Anonymous        bool
 	Language         string // Bundle language (e.g. "en", "es"); defaults to "en"
 	ManifestEmbedded bool   // true when manifest is embedded in recover.html
+	OwnerKeyPresent  bool   // true when the bundle contains OWNER.age
 	TlockEnabled     bool   // true when manifest uses time-lock encryption
 }
 
@@ -125,6 +126,9 @@ func GenerateReadme(data ReadmeData) string {
 		sb.WriteString(fmt.Sprintf("%s\n", t("recover_step2")))
 		sb.WriteString(fmt.Sprintf("   %s\n", t("recover_step2_drag")))
 		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step2_click")))
+	}
+	if data.OwnerKeyPresent {
+		sb.WriteString(fmt.Sprintf("%s\n\n", t("owner_note")))
 	}
 	if data.Anonymous {
 		sb.WriteString(fmt.Sprintf("%s\n", t("recover_anon_step3")))
