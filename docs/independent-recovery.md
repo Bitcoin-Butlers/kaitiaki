@@ -62,6 +62,20 @@ known passphrase, step 2 decrypted, and step 3 printed `MATCH`. The
 recovered `manifest/secret.txt` reads
 `The secret passphrase is: correct-horse-battery-staple`.
 
+## The owner-key path (when OWNER.age is present)
+
+Bundles made with an owner key also contain `OWNER.age`: the same
+passphrase, encrypted to the owner's age X25519 recipient and
+ASCII-armored. With the owner's secret key, no shares are needed:
+
+```
+age -d -i owner-key.txt OWNER.age   # prints the passphrase
+age -d MANIFEST.age > archive       # enter it when asked
+```
+
+The age CLI detects the armor automatically. Vector and derivation
+details: [`owner-key-vector.md`](owner-key-vector.md).
+
 ## Fewer shares than the threshold
 
 If you combine fewer than k shares, interpolation still produces

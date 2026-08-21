@@ -38,6 +38,18 @@
       </div>
 
       <div id="threshold-info" class="threshold-info hidden"></div>
+
+      <details class="owner-key-section" id="owner-section">
+        <summary data-i18n="owner_summary">I am the owner and have my owner key</summary>
+        <div class="details-content">
+          <p data-i18n="owner_explain">If your bundles were made with an owner key, you can recover alone, without the other pieces. Drop any one bundle above, then paste your secret owner key here.</p>
+          <input type="password" id="owner-identity" placeholder="AGE-SECRET-KEY-1..." autocomplete="off" spellcheck="false">
+          <div id="owner-status" class="manifest-status hidden">
+            <span class="icon">&#128273;</span>
+            <div id="owner-status-text"></div>
+          </div>
+        </div>
+      </details>
     </div>
 
     <!-- Step 2: Load Manifest -->

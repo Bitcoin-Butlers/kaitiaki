@@ -115,6 +115,16 @@
 
       {{TLOCK_PANEL_HTML}}
 
+      <details class="owner-key-section">
+        <summary data-i18n="owner_summary">Owner key (optional)</summary>
+        <div class="details-content">
+          <p data-i18n="owner_explain">Paste an age public key (starts with "age1"). Each bundle then also holds OWNER.age: the recovery passphrase locked to that key. With the matching secret identity you can open your backup alone, without your guardians. Guardians see no difference.</p>
+          <label for="owner-recipient" data-i18n="owner_label">Owner public key:</label>
+          <input type="text" id="owner-recipient" autocomplete="off" spellcheck="false" placeholder="age1...">
+          <small data-i18n="owner_hint">Never paste seed words here. Use an age public key only.</small>
+        </div>
+      </details>
+
       <div class="generate-row">
         <button id="generate-btn" class="btn btn-secondary" disabled>
           <span data-i18n="generate_btn">Generate Bundles</span>
@@ -139,6 +149,6 @@
         <button id="download-all-btn" class="btn btn-success">
           <span data-i18n="download_all_btn">Download All Bundles</span>
         </button>
-        <p class="next-steps-hint"><a href="{{GITHUB_PAGES}}/docs.html#distributing" target="_blank" data-i18n="next_steps_link">What to do next</a> &#xB7; <a href="#" id="download-yaml-btn" data-i18n="download_yaml_btn">Save project.yml</a></p>
+        <p class="next-steps-hint"><a href="{{GITHUB_PAGES}}/docs.html#distributing" target="_blank" data-i18n="next_steps_link">What to do next</a> &#xB7; <a href="#" id="download-yaml-btn" data-i18n="download_yaml_btn">Save project.yml</a> <span id="owner-download-sep" class="hidden">&#xB7;</span> <a href="#" id="download-owner-btn" class="hidden" data-i18n="download_owner_btn">Save OWNER.age</a></p>
       </div>
     </div>

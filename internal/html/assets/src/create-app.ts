@@ -995,6 +995,11 @@ declare const __SELFHOSTED__: boolean;
       setStatus(t('splitting'));
       await sleep(100);
 
+      // Owner recipient validation is Go's ValidateOwnerRecipient (one
+      // source of truth); an invalid value fails bundle creation loudly.
+      const ownerInput = document.getElementById('owner-recipient') as HTMLInputElement | null;
+      const ownerRecipient = ownerInput?.value.trim() || undefined;
+
       const result = window.rememoryCreateBundlesFromArchive({
         projectName: state.projectName,
         threshold: state.threshold,
@@ -1005,6 +1010,7 @@ declare const __SELFHOSTED__: boolean;
         defaultLanguage: currentLang || 'en',
         tlockRound: tlockRound,
         tlockUnlock: tlockUnlock,
+        ownerRecipient: ownerRecipient,
       });
 
       if (result.error || !result.bundles) {
@@ -1029,6 +1035,24 @@ declare const __SELFHOSTED__: boolean;
 
       elements.bundlesList?.classList.remove('hidden');
       elements.downloadAllSection?.classList.remove('hidden');
+
+      const ownerBtn = document.getElementById('download-owner-btn');
+      const ownerSep = document.getElementById('owner-download-sep');
+      if (result.ownerFile && ownerBtn && ownerSep) {
+        const ownerData = result.ownerFile;
+        ownerBtn.classList.remove('hidden');
+        ownerSep.classList.remove('hidden');
+        ownerBtn.onclick = (e) => {
+          e.preventDefault();
+          const blob = new Blob([ownerData], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'OWNER.age';
+          a.click();
+          URL.revokeObjectURL(url);
+        };
+      }
 
       if (__SELFHOSTED__) {
         // Upload manifest to server (shares are never sent)

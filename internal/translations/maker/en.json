@@ -89,5 +89,10 @@
   "update_nudge_action": "Check for updates",
   "saved_to_server": "Saved to server.",
   "save_to_server_error": "Could not save to server: {0}",
-  "go_to_home": "Go to home page"
+  "go_to_home": "Go to home page",
+  "owner_summary": "Owner key (optional)",
+  "owner_explain": "Paste an age public key (starts with \"age1\"). Each bundle then also holds OWNER.age: the recovery passphrase locked to that key. With the matching secret identity you can open your backup alone, without your guardians. Guardians see no difference.",
+  "owner_label": "Owner public key:",
+  "owner_hint": "Never paste seed words here. Use an age public key only.",
+  "download_owner_btn": "Save OWNER.age"
 }

@@ -15,6 +15,7 @@ export interface BundleContents {
   holderShare?: string; // PEM-encoded share from personalization
   holder?: string; // Holder name from personalization
   index?: number; // Share index
+  ownerAge?: Uint8Array;
 }
 
 /**
@@ -72,6 +73,7 @@ export function extractBundle(data: Uint8Array): BundleContents {
   let readmeContent: string | undefined;
   let manifestData: Uint8Array | undefined;
   let recoverHtmlData: Uint8Array | undefined;
+  let ownerAgeData: Uint8Array | undefined;
 
   for (const [name, fileData] of Object.entries(files)) {
     const basename = name.split('/').pop() || name;
@@ -91,6 +93,10 @@ export function extractBundle(data: Uint8Array): BundleContents {
 
     if (upperBase === 'RECOVER.HTML') {
       recoverHtmlData = fileData;
+    }
+
+    if (upperBase === 'OWNER.AGE') {
+      ownerAgeData = fileData;
     }
   }
 
@@ -116,6 +122,7 @@ export function extractBundle(data: Uint8Array): BundleContents {
   return {
     share: readmeContent,
     manifest: manifestData,
+    ownerAge: ownerAgeData,
   };
 }
 

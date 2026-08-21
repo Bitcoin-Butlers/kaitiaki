@@ -23,6 +23,7 @@ import {
   encodeCompact,
   combine,
   recoverPassphrase,
+  decryptOwnerAge,
   base64ToBytes,
   bytesToBase64,
   decrypt,
@@ -86,7 +87,8 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     threshold: 0,
     total: 0,
     recovering: false,
-    recoveryComplete: false
+    recoveryComplete: false,
+    ownerAge: null
   };
 
   // Tlock container bytes (saved after age-decrypt for failsafe download if tlock fails)
@@ -98,6 +100,9 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     shareFileInput: HTMLInputElement | null;
     sharesList: HTMLElement | null;
     thresholdInfo: HTMLElement | null;
+    ownerIdentity: HTMLInputElement | null;
+    ownerStatus: HTMLElement | null;
+    ownerStatusText: HTMLElement | null;
     manifestDropZone: HTMLElement | null;
     manifestFileInput: HTMLInputElement | null;
     manifestStatus: HTMLElement | null;
@@ -131,6 +136,9 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     shareFileInput: document.getElementById('share-file-input') as HTMLInputElement | null,
     sharesList: document.getElementById('shares-list'),
     thresholdInfo: document.getElementById('threshold-info'),
+    ownerIdentity: document.getElementById('owner-identity') as HTMLInputElement | null,
+    ownerStatus: document.getElementById('owner-status'),
+    ownerStatusText: document.getElementById('owner-status-text'),
     manifestDropZone: document.getElementById('manifest-drop-zone'),
     manifestFileInput: document.getElementById('manifest-file-input') as HTMLInputElement | null,
     manifestStatus: document.getElementById('manifest-status'),
@@ -343,6 +351,22 @@ type UIShare = ParsedShare & { isHolder?: boolean };
             guidance: t('error_preloaded_share_guidance'),
           }
         );
+      }
+    }
+
+    // Load embedded OWNER.age if the bundles were made with an owner key
+    if (personalization.ownerB64) {
+      try {
+        const binary = atob(personalization.ownerB64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        state.ownerAge = bytes;
+        updateOwnerUI();
+      } catch {
+        // A corrupt embedded OWNER.age never blocks guardian recovery;
+        // the standalone OWNER.age file in the bundle still works.
       }
     }
 
@@ -616,6 +640,15 @@ type UIShare = ParsedShare & { isHolder?: boolean };
         return;
       }
 
+      // OWNER.age - owner key file, not a manifest
+      if ((name.split('/').pop() || name) === 'owner.age') {
+        const buffer = await readFileAsArrayBuffer(file);
+        state.ownerAge = new Uint8Array(buffer);
+        updateOwnerUI();
+        checkRecoverReady();
+        return;
+      }
+
       // .age file - manifest only
       if (name.endsWith('.age')) {
         const buffer = await readFileAsArrayBuffer(file);
@@ -665,6 +698,11 @@ type UIShare = ParsedShare & { isHolder?: boolean };
         state.manifest = bundle.manifest;
         showManifestLoaded('MANIFEST.age', state.manifest.length, 'bundle');
         addedManifest = true;
+      }
+
+      if (bundle.ownerAge) {
+        state.ownerAge = bundle.ownerAge;
+        updateOwnerUI();
       }
 
       highlightAddedSections(addedShare, addedManifest);
@@ -1206,11 +1244,34 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     elements.downloadAllBtn?.addEventListener('click', downloadAll);
   }
 
-  function checkRecoverReady(): void {
-    const ready = state.manifest !== null && (
+  function sharesReady(): boolean {
+    return (
       (state.threshold > 0 && state.shares.length >= state.threshold) ||
       (state.threshold === 0 && state.shares.length >= 2)
     );
+  }
+
+  function ownerIdentityValue(): string {
+    return elements.ownerIdentity?.value.trim().toUpperCase() || '';
+  }
+
+  function ownerReady(): boolean {
+    return (
+      state.ownerAge !== null &&
+      /^AGE-SECRET-KEY-1[02-9AC-HJ-NP-Z]{58}$/.test(ownerIdentityValue())
+    );
+  }
+
+  function updateOwnerUI(): void {
+    if (!elements.ownerStatus || !elements.ownerStatusText) return;
+    if (state.ownerAge) {
+      elements.ownerStatusText.textContent = t('owner_loaded');
+      elements.ownerStatus.classList.remove('hidden');
+    }
+  }
+
+  function checkRecoverReady(): void {
+    const ready = state.manifest !== null && (sharesReady() || ownerReady());
 
     if (elements.recoverBtn) {
       elements.recoverBtn.disabled = !ready;
@@ -1268,19 +1329,39 @@ type UIShare = ParsedShare & { isHolder?: boolean };
 
     try {
       setProgress(10);
-      setStatus(t('combining'));
 
-      // Convert shares to raw bytes and combine
-      const shareBytes = state.shares.map(s => base64ToBytes(s.dataB64));
-      const recovered = await combine(shareBytes);
-      const version = state.shares[0].version;
-      const passphrase = recoverPassphrase(recovered, version);
-
-      setProgress(30);
-
-      // age-decrypt (always a plain age file now)
-      setStatus(t('decrypting'));
-      let archive = await decrypt(state.manifest!, passphrase);
+      // Shares are preferred when the threshold is met; the owner path
+      // covers zero shares AND rescues a failed share combination (e.g.
+      // too few pieces of an unknown-threshold scheme).
+      let archive: Uint8Array | null = null;
+      if (sharesReady()) {
+        setStatus(t('combining'));
+        // Convert shares to raw bytes and combine
+        const shareBytes = state.shares.map(s => base64ToBytes(s.dataB64));
+        const recovered = await combine(shareBytes);
+        const version = state.shares[0].version;
+        const passphrase = recoverPassphrase(recovered, version);
+        setProgress(30);
+        setStatus(t('decrypting'));
+        try {
+          archive = await decrypt(state.manifest!, passphrase);
+        } catch (err) {
+          if (!ownerReady()) throw err;
+          archive = null; // fall through to the owner path
+        }
+      }
+      if (archive === null) {
+        setStatus(t('recovering_owner'));
+        let passphrase: string;
+        try {
+          passphrase = await decryptOwnerAge(state.ownerAge!, ownerIdentityValue());
+        } catch {
+          throw new Error(t('owner_bad_key'));
+        }
+        setProgress(30);
+        setStatus(t('decrypting'));
+        archive = await decrypt(state.manifest!, passphrase);
+      }
 
       setProgress(50);
 
@@ -1568,6 +1649,8 @@ type UIShare = ParsedShare & { isHolder?: boolean };
 
   document.addEventListener('DOMContentLoaded', async () => {
     await init();
+
+    elements.ownerIdentity?.addEventListener('input', () => checkRecoverReady());
 
     // Auto-fetch manifest if a URL is configured (server or static pages)
     const manifestConfig = window.SELFHOSTED_CONFIG;

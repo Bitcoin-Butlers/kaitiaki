@@ -31,6 +31,7 @@ type PersonalizationData struct {
 	Total        int          `json:"total"`                  // Total shares (N)
 	Language     string       `json:"language,omitempty"`     // Default UI language for this friend
 	ManifestB64  string       `json:"manifestB64,omitempty"`  // Base64-encoded MANIFEST.age (when <= MaxEmbeddedManifestSize)
+	OwnerB64     string       `json:"ownerB64,omitempty"`     // Base64-encoded OWNER.age (always small)
 	TlockEnabled bool         `json:"tlockEnabled,omitempty"` // Signals tlock-js should be included
 }
 

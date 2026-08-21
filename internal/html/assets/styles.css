@@ -1262,3 +1262,38 @@ input, textarea, select {
     text-align: center;
   }
 }
+
+/* Owner key section (maker step 3 and recover step 1) */
+.owner-key-section {
+  margin-top: 1rem;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  background: var(--card-bg, #fafaf8);
+}
+.owner-key-section summary {
+  cursor: pointer;
+  font-weight: 500;
+}
+.owner-key-section .details-content {
+  padding: 0.8rem 0.2rem 0.4rem;
+}
+.owner-key-section .details-content p {
+  margin: 0 0 0.6rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.owner-key-section input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border, #ccc);
+  border-radius: 6px;
+  font-family: var(--mono, monospace);
+  font-size: 0.9rem;
+}
+.owner-key-section small {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--muted, #777);
+}

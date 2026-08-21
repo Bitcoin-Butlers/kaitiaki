@@ -20,6 +20,7 @@ export interface BundleCreateResult {
   error?: string;
   bundles?: GeneratedBundle[];
   manifest?: Uint8Array;
+  ownerFile?: Uint8Array;
 }
 
 export interface ArchiveCreateResult {
@@ -37,6 +38,7 @@ export interface BundleFromArchiveConfig {
   defaultLanguage?: string;
   tlockRound?: number;
   tlockUnlock?: string;
+  ownerRecipient?: string;
 }
 
 // ============================================
@@ -78,6 +80,7 @@ export interface PersonalizationData {
   total: number;
   language?: string;
   manifestB64?: string; // Base64-encoded MANIFEST.age (when small enough to embed)
+  ownerB64?: string; // Base64-encoded OWNER.age (always small)
   tlockEnabled?: boolean; // Signals tlock-js is included for time-lock decryption
 }
 
@@ -107,6 +110,7 @@ export interface RecoveryState {
   total: number;
   recovering: boolean;
   recoveryComplete: boolean;
+  ownerAge: Uint8Array | null;
   decryptedArchive?: Uint8Array;
 }
 
