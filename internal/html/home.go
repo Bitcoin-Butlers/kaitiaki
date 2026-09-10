@@ -3,7 +3,6 @@ package html
 import (
 	"encoding/json"
 	"strings"
-
 )
 
 // GenerateHomeHTML creates the selfhosted home page with bundle data.
@@ -16,7 +15,7 @@ func GenerateHomeHTML(bundlesJSON string) string {
 	// Build scripts: i18n first, then home logic
 	var scripts strings.Builder
 	scripts.WriteString(i18nScript(I18nScriptOptions{
-		Component:         "home",
+		Component: "home",
 	}))
 	scripts.WriteString("\n  <script>" + strings.Replace(homeJS, "{{BUNDLES_JSON}}", bundlesJSON, 1) + "</script>")
 

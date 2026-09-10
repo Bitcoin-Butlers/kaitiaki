@@ -1044,7 +1044,7 @@ declare const __SELFHOSTED__: boolean;
         ownerSep.classList.remove('hidden');
         ownerBtn.onclick = (e) => {
           e.preventDefault();
-          const blob = new Blob([ownerData], { type: 'text/plain' });
+          const blob = new Blob([ownerData as BlobPart], { type: 'text/plain' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;

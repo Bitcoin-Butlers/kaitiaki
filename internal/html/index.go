@@ -32,8 +32,8 @@ func GenerateIndexHTML(selfhosted bool) string {
 		Scripts: `<script>document.querySelector('#nav-links-main a[href="about.html"]')?.remove();</script>
 
   <script>` + dataflowJS + `</script>` + i18nScript(I18nScriptOptions{
-			Component:         "index",
-			SetLanguageExtra:  i18nIndexSetlangJS,
+			Component:        "index",
+			SetLanguageExtra: i18nIndexSetlangJS,
 		}),
 	})
 

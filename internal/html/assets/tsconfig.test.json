@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": [
+      "ES2023",
+      "DOM"
+    ],
+    "types": [
+      "node"
+    ],
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "noUnusedLocals": false
+  },
+  "include": [
+    "src/**/*.test.ts",
+    "src/crypto/descriptor.ts",
+    "src/crypto/bip138.ts"
+  ]
+}

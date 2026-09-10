@@ -107,8 +107,8 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 
 	// Translations (docs link rewriting + rememoryUpdateUI are handled by core i18n.js)
 	scripts.WriteString(i18nScript(I18nScriptOptions{
-		Component:         "maker",
-		UseNonce:          true,
+		Component: "maker",
+		UseNonce:  true,
 	}))
 
 	// WASM runtime
