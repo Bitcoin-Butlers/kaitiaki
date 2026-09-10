@@ -3,17 +3,17 @@
         <h1><span data-i18n="heading">Kaitiaki</span></h1>
       </div>
       <p class="summary opening-line" data-i18n="opening">
-        Kaitiaki started with a question I couldn't stop thinking about: what happens to my digital life if something happens to me?
+        A digital safe with more than one key, held by people you trust.
       </p>
       <p class="summary" data-i18n-html="summary_1">
-        It encrypts your files and divides the key among people you trust, using
+        Kaitiaki encrypts your files and splits the key among people you choose, with
         <a href="https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing" target="_blank">Shamir's Secret Sharing</a>.
-        You decide how many must come together to recover them: three of five, two of two, whatever fits.
-        No single person can access anything alone.
+        You set how many of them must come together to recover the files. Two of three, three of five, whatever fits.
+        <strong>No single guardian can open anything alone.</strong>
       </p>
       <p class="summary" data-i18n-html="summary_2">
-        Each person gets a bundle with everything they need to recover.
-        It works in any browser, <span title="No internet needed. Time-locked archives need a connection to verify the unlock date.">offline*</span>, with no accounts or servers. If this website disappears, recovery still works.
+        Each guardian gets a bundle with everything they need to recover.
+        Recovery is opening a file in a browser, <strong><span title="No internet needed. Time-locked archives need a connection to verify the unlock date.">offline*</span></strong>, with no accounts and no servers. If this website disappears, <strong>recovery still works</strong>.
       </p>
       <div class="links">
         <a href="docs.html" data-i18n="link_guide">Read the guide</a>
@@ -23,15 +23,15 @@
     </section>
 
     <section class="background card-muted">
-      <h2 data-i18n="bg_title">Why I built this</h2>
+      <h2 data-i18n="bg_title">Kaitiaki and Bitcoin Butlers</h2>
       <p data-i18n-html="bg_2">
-        When I watched <a href="https://www.youtube.com/watch?v=k_P7Y0-wgos" target="_blank">a documentary about Clive Wearing</a>, a man who has lived with severe amnesia since 1985, it changed how I thought about my own digital life. Memory is more fragile than we like to believe.
+        Kaitiaki is the Bitcoin Butlers fork of <a href="https://github.com/eljojo/rememory" target="_blank">Rememory</a> by eljojo. Kaitiaki is the te reo Māori word for a guardian. We use the tool for the records a multisig wallet needs beside its seeds. Those records are the wallet descriptor, the cosigner public keys and the instructions your family will need one day.
       </p>
       <p data-i18n-html="bg_3">
-        I've had several concussions from cycling accidents. Each time, I've been lucky to recover fully, but the reminders add up.
+        The tool is free, forever, and it runs on your own computer. The service is the practice. A Butler guides your placement session over video, and an annual drill rehearses the recovery with your guardians. We see screens, never bytes, and we never hold a bundle.
       </p>
       <p data-i18n-html="bg_4">
-        Kaitiaki came out of that: a way to make sure the people I trust can access what matters, without putting all of that weight on any one of them.
+        Seed words never go in a bundle. Seeds belong on steel or in a codex32 kit. <a href="https://www.bitcoinbutlers.com/concierge/kaitiaki">Read about the placement session</a>.
       </p>
     </section>
 
@@ -55,16 +55,20 @@
     </section>
 
     <section class="bundles">
-      <h2 data-i18n="bundles_title">What each person gets</h2>
+      <h2 data-i18n="bundles_title">What each guardian gets</h2>
       <p data-i18n-html="bundles_desc">
-        Each person receives a self-contained bundle: a ZIP file with a recovery tool that works in any browser, offline, with no installation. If this project disappears, recovery still works.
+        Each guardian receives a <strong>self-contained bundle</strong>. It is a ZIP file with a recovery tool that works in <strong>any browser, offline, with no installation</strong>. If this project disappears, recovery still works.
       </p>
       <p data-i18n-html="bundles_contacts">
-        Every bundle includes contact details for the other people involved, so they can coordinate without you.
+        Every bundle includes <strong>contact details</strong> for the other guardians, so they can <strong>coordinate without you</strong>.
       </p>
-      <figure class="screenshot">
-        <img src="screenshots/demo-pdf/page-1.png" alt="Example PDF from a bundle: recovery words, contact list, and instructions">
-      </figure>
+      <ul class="bundle-files">
+        <li><code>README.txt</code> and <code>README.pdf</code>. Instructions, their own piece of the key, and the contact list.</li>
+        <li><code>recover.html</code>. The recovery tool. For small archives the encrypted files are embedded in it.</li>
+        <li><code>MANIFEST.age</code>. Your encrypted files, as a separate file when the archive is large.</li>
+        <li><code>METADATA.yaml</code>. What the bundle is, in plain text, with the scheme version.</li>
+        <li><code>OWNER.age</code>. Optional. The recovery passphrase locked to your own key, so you can recover alone.</li>
+      </ul>
     </section>
 
     <section class="trust card-muted">
@@ -82,23 +86,12 @@
     <section class="try-it">
       <h2 data-i18n="try_title">See how it works</h2>
       <ol>
-        <li data-i18n-html="try_step_1"><a href="{{GITHUB_REPO}}/releases/latest/download/demo-bundles.zip">Download the demo bundles</a></li>
-        <li data-i18n-html="try_step_2">Open <code>bundle-alice/recover.html</code> in your browser</li>
-        <li data-i18n="try_step_3">Drag Bob's and Camila's README files onto the page</li>
-        <li data-i18n="try_step_4">When enough pieces are added, the files unlock</li>
+        <li data-i18n-html="try_step_1">Open <a href="maker.html">Create bundles</a> and add two or three guardians with made-up names.</li>
+        <li data-i18n="try_step_2">Add one harmless file, then generate and download the bundles.</li>
+        <li data-i18n="try_step_3">Unzip one bundle and open its recover.html in your browser.</li>
+        <li data-i18n="try_step_4">Drag the README.txt files from the other bundles onto the page. When enough pieces are in, the file unlocks.</li>
       </ol>
-      <p class="note" data-i18n="try_note">This is the closest thing to what a real recovery feels like.</p>
-      <details class="docker-aside">
-        <summary data-i18n-html="try_docker_summary">Self-hosting? <span class="docker-whale">&#128051;</span></summary>
-        <div class="docker-content">
-          <pre><code>docker run -d \
-  --name rememory \
-  -p 8080:8080 \
-  -v rememory-data:/data \
-  ghcr.io/eljojo/rememory:latest</code></pre>
-          <p data-i18n-html="try_docker_link">See the <a href="https://github.com/eljojo/rememory/blob/main/docs/selfhosted.md" target="_blank">self-hosting guide</a> for details.</p>
-        </div>
-      </details>
+      <p class="note" data-i18n="try_note">This is what a real recovery feels like. Do it once with a test file before you trust the tool with anything important.</p>
     </section>
 
     <section class="what-is">
@@ -107,19 +100,19 @@
         <div class="what-is-col is-col">
           <h3 data-i18n="whatis_is">It is:</h3>
           <ul>
-            <li data-i18n-html="whatis_is_1">A tool that runs in your browser, <span title="No internet needed. Time-locked archives need a connection to verify the unlock date.">offline*</span></li>
-            <li data-i18n="whatis_is_2">A way to split a secret key among people you trust</li>
-            <li data-i18n="whatis_is_3">Open source (Apache-2.0)</li>
+            <li data-i18n-html="whatis_is_1">A free tool that runs in your browser, <span title="No internet needed. Time-locked archives need a connection to verify the unlock date.">offline*</span></li>
+            <li data-i18n="whatis_is_2">A way to split the key to your backup among people you trust</li>
+            <li data-i18n="whatis_is_3">Open source (Apache-2.0), built on Rememory</li>
             <li data-i18n="whatis_is_4">Self-contained. Recovery works without this website</li>
           </ul>
         </div>
         <div class="what-is-col isnt-col">
           <h3 data-i18n="whatis_isnt">It isn't:</h3>
           <ul>
-            <li data-i18n="whatis_isnt_1">A service or a company</li>
-            <li data-i18n="whatis_isnt_2">An account system or cloud product</li>
-            <li data-i18n="whatis_isnt_3">Something that stores your data anywhere</li>
-            <li data-i18n="whatis_isnt_4">A backup solution by itself</li>
+            <li data-i18n="whatis_isnt_1">A custodian. We never hold a bundle, a share or your files</li>
+            <li data-i18n="whatis_isnt_2">An account or a cloud product</li>
+            <li data-i18n="whatis_isnt_3">A place for seed words</li>
+            <li data-i18n="whatis_isnt_4">A backup on its own. Media rots and people move. Drill it every year</li>
           </ul>
         </div>
       </div>

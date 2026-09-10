@@ -411,7 +411,7 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	p.CellFormat(0, 5, "METADATA", "", 1, "L", false, 0, "")
 	p.SetFont(fontMono, "", smallMono)
 	p.SetFillColor(245, 245, 245)
-	addMeta(p, "rememory-version", data.Version)
+	addMeta(p, "kaitiaki-version", data.Version)
 	addMeta(p, "created", data.Created.Format(time.RFC3339))
 	addMeta(p, "project", data.ProjectName)
 	if data.Threshold > 0 {

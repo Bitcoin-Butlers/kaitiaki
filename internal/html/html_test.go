@@ -115,7 +115,7 @@ func TestStaticHTMLNoUnexpectedURLs(t *testing.T) {
 
 		// docs: linked in user-facing documentation and index.html
 		"https://github.com/FiloSottile/age", // age encryption library
-		"https://www.youtube.com",            // index.html "Why I built this" documentary
+		"https://www.bitcoinbutlers.com", // every page links back to the Bitcoin Butlers site
 		"https://www.cloudflare.com",         // docs: League of Entropy (tlock section)
 		"https://cryptomator.org",            // docs: recommended encrypted vault tool
 		"https://veracrypt.fr",               // docs: recommended encrypted vault tool

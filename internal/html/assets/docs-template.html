@@ -25,9 +25,8 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.4);
       display: flex;
       align-items: center;
-      justify-content: space-between;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 1.5rem;
       max-width: 1200px;
       margin: 0 auto 0;
     }
@@ -45,12 +44,16 @@
     }
 
     .docs-nav .nav-links a {
-      color: var(--dusty-blue);
+      color: var(--text-secondary);
       text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
     }
 
-    .docs-nav .nav-links a:hover {
-      text-decoration: underline;
+    .docs-nav .nav-links a:hover,
+    .docs-nav .nav-links a[aria-current="page"] {
+      color: var(--sage);
+      text-decoration: none;
     }
 
     /* Sidebar + main layout */
@@ -380,16 +383,28 @@
         margin: 0 1rem;
       }
     }
+    @media (max-width: 600px) {
+      .docs-nav .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem 1rem;
+      }
+      .docs-nav .nav-links a {
+        white-space: nowrap;
+      }
+    }
   </style>
 </head>
 <body>
   <nav class="docs-nav">
     <a href="{{LOGO_HREF}}" class="logo">{{NAV_HOME}}</a>
     <div class="nav-links">
-      <a href="{{LOGO_HREF}}">{{NAV_HOME_LINK}}</a>
+      <a href="about.html">About</a>
+      <a href="docs.html" aria-current="page">Guide</a>
       <a href="maker.html">{{NAV_CREATE}}</a>
       <a href="recover.html">{{NAV_RECOVER}}</a>
       <a href="{{GITHUB_REPO}}" target="_blank">GitHub</a>
+      <a href="{{BUTLERS_URL}}" class="nav-butlers">Bitcoin Butlers</a>
     </div>
   </nav>
 
@@ -418,7 +433,6 @@
       <p>Kaitiaki {{VERSION}}</p>
       <p>
         <a href="{{GITHUB_REPO}}" target="_blank">{{FOOTER_SOURCE}}</a> ·
-        <a href="{{GITHUB_URL}}" target="_blank">{{FOOTER_DOWNLOAD}}</a> ·
         <a href="{{LOGO_HREF}}">{{FOOTER_HOME}}</a>
       </p>
     </footer>
