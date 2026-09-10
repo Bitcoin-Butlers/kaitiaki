@@ -28,6 +28,16 @@ test.describe('Landing Page', () => {
     await expect(page.locator('.background')).toBeVisible();
   });
 
+  test('landing shows the shared nav with a link back to Bitcoin Butlers', async ({ page }) => {
+    await page.goto('file://' + indexPath);
+
+    const nav = page.locator('.site-nav');
+    await expect(nav).toBeVisible();
+    await expect(nav.locator('a', { hasText: 'Bitcoin Butlers' })).toHaveAttribute('href', /bitcoinbutlers\.com/);
+    // The landing page is the About page, so the About link is dropped.
+    await expect(nav.locator('.nav-links a[href="about.html"]')).toHaveCount(0);
+  });
+
   test('no language picker is present', async ({ page }) => {
     await page.goto('file://' + indexPath);
     await expect(page.locator('#lang-select')).toHaveCount(0);

@@ -357,7 +357,7 @@ func TestIndexHasExpectedKeys(t *testing.T) {
 		"try_title", "try_step_1",
 		"trust_title", "trust_1",
 		"bg_title", "bg_1",
-		"footer_source", "footer_download", "footer_docs",
+		"footer_source", "footer_docs",
 	}
 
 	keys, err := GetComponentKeys("index")
@@ -380,14 +380,14 @@ func TestIndexHasExpectedKeys(t *testing.T) {
 func TestReadmeTranslation(t *testing.T) {
 	// Test English
 	got := T("readme", "en", "title")
-	if got != "REMEMORY RECOVERY BUNDLE" {
-		t.Errorf("readme/en/title = %q, want %q", got, "REMEMORY RECOVERY BUNDLE")
+	if got != "KAITIAKI GUARDIAN BUNDLE" {
+		t.Errorf("readme/en/title = %q, want %q", got, "KAITIAKI GUARDIAN BUNDLE")
 	}
 
 	// Unknown languages fall back to English
 	got = T("readme", "mi", "title")
-	if got != "REMEMORY RECOVERY BUNDLE" {
-		t.Errorf("readme/mi/title = %q, want %q", got, "REMEMORY RECOVERY BUNDLE")
+	if got != "KAITIAKI GUARDIAN BUNDLE" {
+		t.Errorf("readme/mi/title = %q, want %q", got, "KAITIAKI GUARDIAN BUNDLE")
 	}
 
 	// Test parameter substitution
@@ -398,7 +398,7 @@ func TestReadmeTranslation(t *testing.T) {
 
 	// Test fallback to English for unknown language
 	got = T("readme", "xx", "title")
-	if got != "REMEMORY RECOVERY BUNDLE" {
+	if got != "KAITIAKI GUARDIAN BUNDLE" {
 		t.Errorf("readme/xx/title should fall back to English, got %q", got)
 	}
 }

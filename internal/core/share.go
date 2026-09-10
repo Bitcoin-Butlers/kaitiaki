@@ -18,8 +18,8 @@ const (
 	ShareEnd   = "-----END REMEMORY SHARE-----"
 
 	// DefaultRecoveryURL is the default base URL for QR codes in PDFs.
-	// Points to the recover.html hosted on GitHub Pages.
-	DefaultRecoveryURL = "https://eljojo.github.io/rememory/recover.html"
+	// Points to the recover.html hosted on bitcoinbutlers.com.
+	DefaultRecoveryURL = "https://www.bitcoinbutlers.com/tools/kaitiaki/recover.html"
 )
 
 // Share represents a single Shamir share with metadata.

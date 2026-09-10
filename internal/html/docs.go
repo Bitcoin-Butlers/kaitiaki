@@ -96,6 +96,7 @@ func GenerateDocsHTML(lang string, selfhosted bool) string {
 	// Replace version and GitHub URLs
 	result = strings.Replace(result, "{{VERSION}}", pkgVersion, -1)
 	result = strings.Replace(result, "{{GITHUB_REPO}}", core.GitHubRepo, -1)
+	result = strings.Replace(result, "{{BUTLERS_URL}}", butlersSiteURL, -1)
 	result = strings.Replace(result, "%7B%7BGITHUB_REPO%7D%7D", core.GitHubRepo, -1)
 	result = strings.Replace(result, "{{GITHUB_PAGES}}", core.GitHubPages, -1)
 	result = strings.Replace(result, "%7B%7BGITHUB_PAGES%7D%7D", core.GitHubPages, -1)

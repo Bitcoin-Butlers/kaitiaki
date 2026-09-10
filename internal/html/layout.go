@@ -48,6 +48,7 @@ func applyLayout(opts LayoutOptions) string {
 	html = strings.Replace(html, "{{GITHUB_REPO}}", core.GitHubRepo, -1)
 	html = strings.Replace(html, "{{GITHUB_PAGES}}", core.GitHubPages, -1)
 	html = strings.Replace(html, "{{GITHUB_URL}}", githubURL(), -1)
+	html = strings.Replace(html, "{{BUTLERS_URL}}", butlersSiteURL, -1)
 
 	return html
 }

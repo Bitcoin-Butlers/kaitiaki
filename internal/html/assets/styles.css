@@ -63,6 +63,15 @@ body {
   min-height: 100vh;
 }
 
+/* Links default to the brand gold on the dark theme. Components with their own
+   colour (nav, buttons, footer) override this rule. */
+a {
+  color: var(--dusty-blue);
+}
+a:hover {
+  color: var(--dusty-blue-dark);
+}
+
 .container {
   max-width: 800px;
   margin: 0 auto;
@@ -1261,15 +1270,30 @@ input, textarea, select {
     flex-direction: column;
     text-align: center;
   }
+  .site-nav .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+  }
+  .site-nav .nav-links a {
+    white-space: nowrap;
+  }
+  .paste-section {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
 }
 
 /* Owner key section (maker step 3 and recover step 1) */
 .owner-key-section {
   margin-top: 1rem;
-  border: 1px solid var(--border, #ddd);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0.6rem 0.9rem;
-  background: var(--card-bg, #fafaf8);
+  background: var(--sand);
+  color: var(--text);
 }
 .owner-key-section summary {
   cursor: pointer;
@@ -1287,13 +1311,15 @@ input, textarea, select {
   width: 100%;
   box-sizing: border-box;
   padding: 0.55rem 0.7rem;
-  border: 1px solid var(--border, #ccc);
+  border: 1px solid var(--border);
   border-radius: 6px;
+  background: var(--paper);
+  color: var(--text);
   font-family: var(--mono, monospace);
   font-size: 0.9rem;
 }
 .owner-key-section small {
   display: block;
   margin-top: 0.4rem;
-  color: var(--muted, #777);
+  color: var(--text-muted);
 }
