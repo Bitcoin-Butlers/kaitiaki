@@ -264,12 +264,17 @@ test('the on-chain size of both formats is measured, not guessed', () => {
     decoySecrets: [1, 2].map(() => crypto.getRandomValues(new Uint8Array(32))),
   }).backup.length;
 
-  // Pinned so a format change shows up as a failing test rather than as a
-  // transaction that will not relay. The relay research verified 600 data
-  // bytes as the size a client can rely on today.
+  // Pinned so a format change is visible, and so the fee it costs a client is
+  // a number we state rather than guess.
+  //
+  // There is no size cap to fear here. Measured on Bitcoin Core v31.1 with
+  // default policy (2026-09-10): maxdatacarriersize is 100,000 bytes, and
+  // OP_RETURN payloads of 345, 591, 655, 1,000, 10,000, 40,000 and 99,000
+  // bytes were all accepted as standard. The only cliff is at 83 bytes, which
+  // is where Bitcoin Knots and Core 29 and older stop relaying, and every size
+  // here is already past it. So size is a fee question, not a relay question:
+  // about 2 sat per extra byte at 2 sat/vB.
   assert.equal(kOfN, 345, 'k-of-n 2-of-3 payload');
   assert.equal(lean, 591, 'BIP-138 2-of-3 with no decoy secrets');
   assert.equal(padded, 655, 'BIP-138 2-of-3 padded to the five-secret bucket the draft suggests');
-  assert.ok(lean <= 600, 'the lean BIP-138 backup must still fit the verified relay budget');
-  assert.ok(padded > 600, 'decoys push it past the verified budget, which is a decision to make');
 });
