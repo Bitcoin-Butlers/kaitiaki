@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Kaitiaki is now Bitcoin Inheritance. Pages, guide, README, the PDF bundle
+  title, and every translation say the new name; short labels such as the page
+  logo say Inheritance. The CLI binary is now `inheritance` (`inheritance init`,
+  `inheritance seal`, `inheritance recover`), the bundle metadata key is
+  `inheritance-version`, and the printed recovery URL moved to
+  bitcoinbutlers.com/tools/inheritance/recover.html, which the site redirects
+  to permanently from the old path. Only the repository name keeps the old word.
+
 All notable changes to ReMemory are documented here.
 
 ## Unreleased

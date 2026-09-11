@@ -1,4 +1,4 @@
-// Kaitiaki Bundle Creator - Browser-based bundle creation using Go WASM
+// Bitcoin Inheritance Bundle Creator - Browser-based bundle creation using Go WASM
 // Tlock encryption is inline and offline — it uses the embedded drand chain
 // config to encrypt for a future round without any HTTP calls.
 

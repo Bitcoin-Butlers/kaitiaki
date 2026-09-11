@@ -112,7 +112,7 @@ export function getDescriptorHtml(): string {
 
 // Get absolute path to rememory binary
 export function getRememoryBin(): string {
-  const binEnv = process.env.REMEMORY_BIN || './kaitiaki';
+  const binEnv = process.env.REMEMORY_BIN || './inheritance';
   return path.resolve(binEnv);
 }
 

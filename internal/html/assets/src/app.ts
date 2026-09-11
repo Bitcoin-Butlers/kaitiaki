@@ -1,4 +1,4 @@
-// Kaitiaki Recovery Tool - Browser-based recovery using native JavaScript crypto
+// Bitcoin Inheritance Recovery Tool - Browser-based recovery using native JavaScript crypto
 //
 // Built with esbuild --define:__TLOCK__=true|false to produce two variants:
 //   app.js       (__TLOCK__=false) — offline recovery, no tlock/drand code

@@ -10,7 +10,7 @@
   "bg_1": "Two things led me to build Bitcoin Inheritance.",
   "bg_2": "Bitcoin Inheritance is the Bitcoin Butlers fork of <a href=\"https://github.com/eljojo/rememory\" target=\"_blank\">Rememory</a> by eljojo. Bitcoin Inheritance is the te reo Māori word for a guardian. We use the tool for the records a multisig wallet needs beside its seeds. Those records are the wallet descriptor, the cosigner public keys and the instructions your family will need one day.",
   "bg_3": "The tool is free, forever, and it runs on your own computer. The service is the practice. A Butler guides your placement session over video, and an annual drill rehearses the recovery with your guardians. We see screens, never bytes, and we never hold a bundle.",
-  "bg_4": "Seed words never go in a bundle. Seeds belong on steel or in a codex32 kit. <a href=\"https://www.bitcoinbutlers.com/concierge/kaitiaki\">Read about the placement session</a>.",
+  "bg_4": "Seed words never go in a bundle. Seeds belong on steel or in a codex32 kit. <a href=\"https://www.bitcoinbutlers.com/concierge/inheritance\">Read about the placement session</a>.",
   "bg_changelog": "Bitcoin Inheritance keeps growing. Check the <a href=\"{{GITHUB_REPO}}/blob/main/CHANGELOG.md\" target=\"_blank\">changelog</a> to see what's new.",
   "how_title": "How it works",
   "how_subtitle": "You choose <strong>who to trust</strong> and <strong>how many must agree</strong>. Your files are encrypted, the key is split into pieces, and each person keeps one. When enough of them come together, the files are unlocked.",

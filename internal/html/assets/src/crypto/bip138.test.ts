@@ -27,7 +27,7 @@ import {
   encodeDerivationPaths,
   encodeIndividualSecrets,
   encryptDescriptor,
-  KAITIAKI_SECRET_ENTRIES,
+  INHERITANCE_SECRET_ENTRIES,
   decodeBackup as decodeBip138,
   hexToBytes,
   normalizeKeys,
@@ -214,7 +214,7 @@ test('the tagged hash matches BIP-340', () => {
 });
 
 // --------------------------------------------------------------------------
-// The descriptor path, which is what Kaitiaki actually offers a client.
+// The descriptor path, which is what Bitcoin Inheritance actually offers a client.
 // --------------------------------------------------------------------------
 
 test('a real descriptor round-trips, and any one key opens it', () => {
@@ -256,10 +256,10 @@ test('common account paths are dropped, uncommon ones are kept', () => {
   assert.deepEqual(dropCommonDerivationPaths([common, personal]), [personal]);
 });
 
-test('a Kaitiaki backup always writes seven secret entries', () => {
+test('a Bitcoin Inheritance backup always writes seven secret entries', () => {
   const { backup } = encryptDescriptor(descriptorVector.descriptor);
   const decoded = decodeBip138(backup);
-  assert.equal(KAITIAKI_SECRET_ENTRIES, 7);
+  assert.equal(INHERITANCE_SECRET_ENTRIES, 7);
   assert.equal(decoded.individualSecrets.length, 7, 'three real keys, four decoys');
 
   // The decoys must not cost anyone their recovery.
@@ -304,5 +304,5 @@ test('the on-chain size of both formats is measured, not guessed', () => {
   // about 2 sat per extra byte at 2 sat/vB.
   assert.equal(kOfN, 345, 'k-of-n 2-of-3 payload');
   assert.equal(bare, 591, 'BIP-138 2-of-3 with no decoys');
-  assert.equal(shipped, 719, 'BIP-138 2-of-3 as Kaitiaki ships it, padded to seven entries');
+  assert.equal(shipped, 719, 'BIP-138 2-of-3 as Bitcoin Inheritance ships it, padded to seven entries');
 });

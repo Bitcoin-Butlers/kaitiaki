@@ -18,7 +18,7 @@ var bundleCmd = &cobra.Command{
   - Lost the original bundle files
   - Want to update bundles with a newer version of recover.html
 
-Note: 'kaitiaki seal' automatically generates bundles, so you typically
+Note: 'inheritance seal' automatically generates bundles, so you typically
 don't need to run this command separately.
 
 Each bundle contains:
@@ -45,7 +45,7 @@ func runBundle(cmd *cobra.Command, args []string) error {
 
 	projectDir, err := project.FindProjectDir(cwd)
 	if err != nil {
-		return fmt.Errorf("no kaitiaki project found (run 'kaitiaki init' first)")
+		return fmt.Errorf("no inheritance project found (run 'inheritance init' first)")
 	}
 
 	// Load project
@@ -56,7 +56,7 @@ func runBundle(cmd *cobra.Command, args []string) error {
 
 	// Check if sealed
 	if p.Sealed == nil {
-		return fmt.Errorf("project must be sealed before generating bundles (run 'kaitiaki seal' first)")
+		return fmt.Errorf("project must be sealed before generating bundles (run 'inheritance seal' first)")
 	}
 
 	// Generate bundles

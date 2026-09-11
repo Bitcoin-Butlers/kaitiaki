@@ -1,4 +1,4 @@
-// Kaitiaki Type Definitions
+// Bitcoin Inheritance Type Definitions
 // Shared types for recovery (native JS) and creation (WASM)
 
 // ============================================

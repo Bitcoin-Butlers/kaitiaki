@@ -1,7 +1,7 @@
 /**
  * BIP-138, the compact encryption scheme for non-seed wallet data.
  *
- * This is the second of the two on-chain backup formats Kaitiaki offers. It
+ * This is the second of the two on-chain backup formats Bitcoin Inheritance offers. It
  * differs from the k-of-n scheme in `descriptor.ts` in one way that matters to
  * a client: ANY ONE of the wallet's extended public keys opens a BIP-138
  * backup, where the other scheme needs k of them. Say that out loud in the
@@ -315,7 +315,7 @@ export interface EncodeOptions {
   /**
    * Pad the entry list with random decoys up to this many entries.
    *
-   * The draft suggests buckets of 5, 10, 20. Kaitiaki uses 7, decided by Ben
+   * The draft suggests buckets of 5, 10, 20. Bitcoin Inheritance uses 7, decided by Ben
    * on 2026-09-10: it covers every wallet up to seven cosigners without
    * jumping to ten, and the 128 extra bytes cost about 128 sat. An unusual
    * bucket would normally make our backups stand out, which does not apply
@@ -376,8 +376,8 @@ function padWithDecoys(secrets: Uint8Array[], target?: number): Uint8Array[] {
   return padded;
 }
 
-/** How many individual-secret entries a Kaitiaki backup writes. */
-export const KAITIAKI_SECRET_ENTRIES = 7;
+/** How many individual-secret entries a Bitcoin Inheritance backup writes. */
+export const INHERITANCE_SECRET_ENTRIES = 7;
 
 /** A 12-byte nonce that is never all zero, as the draft requires. */
 function randomNonce(): Uint8Array {
@@ -498,7 +498,7 @@ export function encryptDescriptor(
 ): { backup: Uint8Array; text: string; excluded: string[] } {
   const { pubkeys, excluded } = descriptorPubkeys(descriptor);
   const backup = encodeBackup({
-    padSecretsTo: KAITIAKI_SECRET_ENTRIES,
+    padSecretsTo: INHERITANCE_SECRET_ENTRIES,
     ...options,
     pubkeys,
     items: [{ bip: BIP380, content: utf8.encode(descriptor) }],

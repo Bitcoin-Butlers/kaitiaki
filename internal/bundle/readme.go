@@ -201,7 +201,7 @@ func GenerateReadme(data ReadmeData) string {
 	sb.WriteString("================================================================================\n")
 	sb.WriteString("METADATA FOOTER (machine-parseable)\n")
 	sb.WriteString("================================================================================\n")
-	sb.WriteString(fmt.Sprintf("kaitiaki-version: %s\n", data.Version))
+	sb.WriteString(fmt.Sprintf("inheritance-version: %s\n", data.Version))
 	sb.WriteString(fmt.Sprintf("created: %s\n", data.Created.Format(time.RFC3339)))
 	sb.WriteString(fmt.Sprintf("project: %s\n", data.ProjectName))
 	if data.Threshold > 0 {

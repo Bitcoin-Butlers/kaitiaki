@@ -17,7 +17,7 @@ age-keygen -o owner-key.txt
 
 Derivation: BIP39 mnemonic (+ optional passphrase) -> 64-byte BIP39
 seed (PBKDF2-HMAC-SHA512, 2048 rounds, salt "mnemonic"+passphrase) ->
-SLIP-21 node m/"kaitiaki" -> the node's key (bytes 32..64) is the
+SLIP-21 node m/"inheritance" -> the node's key (bytes 32..64) is the
 X25519 scalar of the age identity.
 
 SLIP-21 (https://github.com/satoshilabs/slips/blob/master/slip-0021.md):
@@ -33,7 +33,7 @@ key(node)     = node[32:64]
 ```
 mnemonic   = "all all all all all all all all all all all all"
 passphrase = ""
-label      = "kaitiaki"
+label      = "inheritance"
 
 identity   = AGE-SECRET-KEY-1E3PUXA5R3R9Y3R9DPTF57F8HD4YXL7DNWWGUJMRMTFWNARP3KQFSJ2M754
 recipient  = age17pv0xledcth6mtfpgmtaxc3gahxdkt5ad79cxwxtgj966kqxq9fs3m8ced

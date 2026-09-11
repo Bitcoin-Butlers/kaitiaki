@@ -604,7 +604,7 @@ You can set a waiting period when creating bundles. Even if your guardians combi
 
 In the [bundle creator](maker.html), switch to **Advanced** mode and check **Add a time lock**. Choose how long the files should stay locked, up to two years.
 
-The two-year limit is deliberate. Time locks depend on the League of Entropy continuing to operate, and we don't think it's responsible to lock your files behind a longer bet on external infrastructure. If you need a longer duration and understand the trade-off, the CLI has no cap: `kaitiaki seal --timelock 5y`.
+The two-year limit is deliberate. Time locks depend on the League of Entropy continuing to operate, and we don't think it's responsible to lock your files behind a longer bet on external infrastructure. If you need a longer duration and understand the trade-off, the CLI has no cap: `inheritance seal --timelock 5y`.
 
 <figure class="screenshot">
 <img src="screenshots/en/tlock-setup.png" alt="Time lock setup in Advanced mode">
@@ -636,6 +636,6 @@ For a deeper look at the cryptography behind this, see the [drand timelock encry
 
 ## Self-Hosting {#selfhosted}
 
-Bitcoin Inheritance can also run as a web app on your own server using `kaitiaki serve`. The server provides the same creation and recovery tools through a browser. Guardians only need their share. The encrypted archive is served automatically.
+Bitcoin Inheritance can also run as a web app on your own server using `inheritance serve`. The server provides the same creation and recovery tools through a browser. Guardians only need their share. The encrypted archive is served automatically.
 
 This is an advanced option for people who already run a homelab or want a shared web UI. The offline bundles remain the primary way to use Bitcoin Inheritance and work without any server. See the [self-hosting guide](https://github.com/eljojo/rememory/blob/main/docs/selfhosted.md) on GitHub for details.

@@ -9,8 +9,8 @@ session. This page contains no secrets: it is the map to the map.*
 
 Our important Bitcoin paperwork (wallet descriptors and instructions , 
 NOT the keys themselves) is protected by a guardianship scheme called
-Kaitiaki. It was set up on ______ with Bitcoin Butlers
-(bitcoinbutlers.com/tools/kaitiaki, the tool is free and works
+Bitcoin Inheritance. It was set up on ______ with Bitcoin Butlers
+(bitcoinbutlers.com/tools/inheritance, the tool is free and works
 without them).
 
 **___ of the ___ guardians below, together, can recover everything.**
@@ -41,7 +41,7 @@ blockchain, encrypted. It cannot be deleted and it cannot be lost.
 | Written on | ____________  Opens with | ______________ |
 
 **To read it:** open
-bitcoinbutlers.com/tools/kaitiaki/descriptor.html, choose Recover, and
+bitcoinbutlers.com/tools/inheritance/descriptor.html, choose Recover, and
 enter the transaction id above. Then enter the wallet's public keys, which
 any of the signing devices can produce. The page rebuilds the descriptor.
 

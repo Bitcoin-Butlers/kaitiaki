@@ -42,7 +42,7 @@
   "recover_offline_tlock": "Recovery needs a brief internet connection.",
   "recover_cli": "HOW TO RECOVER (FALLBACK, COMMAND LINE)",
   "recover_cli_hint": "If recover.html does not work, a technical person can build the command-line tool from the source at:",
-  "recover_cli_usage": "Usage: kaitiaki recover share1.txt share2.txt ... --manifest recover.html",
+  "recover_cli_usage": "Usage: inheritance recover share1.txt share2.txt ... --manifest recover.html",
   "your_share": "YOUR PIECE",
   "recovery_words_title": "YOUR {0} RECOVERY WORDS:",
   "recovery_words_title_lang": "YOUR {0} RECOVERY WORDS ({1}):",

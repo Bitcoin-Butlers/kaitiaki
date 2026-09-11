@@ -1,6 +1,6 @@
-# Kaitiaki User Guide
+# Bitcoin Inheritance User Guide
 
-This guide walks you through using Kaitiaki to create encrypted recovery bundles for your trusted friends.
+This guide walks you through using Bitcoin Inheritance to create encrypted recovery bundles for your trusted friends.
 
 > **Prefer a browser?** This guide focuses on the CLI tool. If you'd rather create bundles in your browser without installing anything, see the [web-based guide](https://eljojo.github.io/rememory/docs.html).
 
@@ -26,7 +26,7 @@ This guide walks you through using Kaitiaki to create encrypted recovery bundles
 
 ## Overview
 
-Kaitiaki is a digital safe with multiple keys. It protects your files and divides the key among people you trust. You choose how many must come together to open it.
+Bitcoin Inheritance is a digital safe with multiple keys. It protects your files and divides the key among people you trust. You choose how many must come together to open it.
 
 Under the hood:
 
@@ -34,7 +34,7 @@ Under the hood:
 2. The key is split using [Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing)
 3. Each person gets a self-contained bundle for recovery
 
-Recovery works **entirely offline in a browser** — no servers, no need for Kaitiaki to exist when recovery happens.*
+Recovery works **entirely offline in a browser** — no servers, no need for Bitcoin Inheritance to exist when recovery happens.*
 
 <sub>* [Time-locked](https://eljojo.github.io/rememory/docs#timelock) archives need a brief internet connection at recovery time.</sub>
 
@@ -184,7 +184,7 @@ cp ~/passwords/*.txt manifest/accounts/
 
 ### What to Include
 
-Good candidates for Kaitiaki:
+Good candidates for Bitcoin Inheritance:
 - Password manager recovery codes
 - Cryptocurrency seeds/keys
 - Important account credentials
@@ -194,7 +194,7 @@ Good candidates for Kaitiaki:
 
 ### What NOT to Include
 
-- Files that change frequently (use Kaitiaki for static secrets)
+- Files that change frequently (use Bitcoin Inheritance for static secrets)
 - Extremely large files (bundles become unwieldy)
 - Anything already backed up elsewhere with good recovery options
 
@@ -498,7 +498,7 @@ rememory <command> --help
 
 ## Advanced: Anonymous Mode
 
-For situations where you don't want shareholders to know each other's identities, Kaitiaki offers an **anonymous mode**. In this mode:
+For situations where you don't want shareholders to know each other's identities, Bitcoin Inheritance offers an **anonymous mode**. In this mode:
 
 - Friends are labeled generically as "Share 1", "Share 2", etc.
 - No contact information is collected or stored
@@ -552,7 +552,7 @@ Since there's no built-in contact list, make sure share holders know how to reac
 
 ## Advanced: Multilingual Bundles
 
-Each friend can receive their bundle (README.txt, README.pdf, and recover.html) in their preferred language. Kaitiaki supports 5 languages: English (en), Spanish (es), German (de), French (fr), and Slovenian (sl).
+Each friend can receive their bundle (README.txt, README.pdf, and recover.html) in their preferred language. Bitcoin Inheritance supports 5 languages: English (en), Spanish (es), German (de), French (fr), and Slovenian (sl).
 
 ### CLI Usage
 

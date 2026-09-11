@@ -2,9 +2,9 @@
 
 This file provides guidance for contributors and coding agents in this repository.
 
-## What is Kaitiaki
+## What is Bitcoin Inheritance
 
-Kaitiaki encrypts files with [age](https://github.com/FiloSottile/age), splits the decryption key among trusted friends using Shamir's Secret Sharing (via HashiCorp Vault's implementation), and gives each friend a self-contained offline recovery tool (`recover.html`) that works in any browser without servers or internet.
+Bitcoin Inheritance encrypts files with [age](https://github.com/FiloSottile/age), splits the decryption key among trusted friends using Shamir's Secret Sharing (via HashiCorp Vault's implementation), and gives each friend a self-contained offline recovery tool (`recover.html`) that works in any browser without servers or internet.
 
 ## Ownership Mindset
 
@@ -237,7 +237,7 @@ See `CONTRIBUTING.md` for the full contribution guidelines, including the AI usa
 
 ### Changelog
 
-`CHANGELOG.md` entries should focus on **what changed for the person using Kaitiaki**, not on implementation details. Lead with the user-facing outcome, then explain just enough context for it to make sense.
+`CHANGELOG.md` entries should focus on **what changed for the person using Bitcoin Inheritance**, not on implementation details. Lead with the user-facing outcome, then explain just enough context for it to make sense.
 
 - **Good:** "Encrypted archives up to 10 MB are now embedded directly in `recover.html`. More people will be able to recover by just opening the HTML file."
 - **Bad:** "Raised `MaxEmbeddedManifestSize` from 5 MB to 10 MB."

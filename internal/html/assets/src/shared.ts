@@ -1,4 +1,4 @@
-// Kaitiaki Shared Utilities
+// Bitcoin Inheritance Shared Utilities
 // Common functionality used by both recovery (app.ts) and creation (create-app.ts)
 
 import type { ToastManager, ToastOptions, ToastAction, ToastType } from './types';

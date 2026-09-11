@@ -13,14 +13,14 @@ var version = "dev"
 var buildDate = ""
 
 var rootCmd = &cobra.Command{
-	Use:   "kaitiaki",
+	Use:   "inheritance",
 	Short: "A digital safe with multiple keys, held by people you trust",
-	Long: `Kaitiaki is a digital safe with multiple keys. It encrypts your files with age,
+	Long: `Bitcoin Inheritance is a digital safe with multiple keys. It encrypts your files with age,
 splits the key using Shamir's Secret Sharing, and creates recovery bundles for each person.
 
-Create a project:    kaitiaki init my-recovery
-Seal the manifest:   kaitiaki seal
-Recover from shares: kaitiaki recover bundle-alice.zip bundle-bob.zip`,
+Create a project:    inheritance init my-recovery
+Seal the manifest:   inheritance seal
+Recover from shares: inheritance recover bundle-alice.zip bundle-bob.zip`,
 }
 
 func Execute(v, bd string) error {

@@ -511,10 +511,10 @@ test.describe('Docs step screenshots', () => {
     // A QR code on warm paper, as a short looping video the fake camera plays.
     // The code carries our recovery URL and nothing else, so a reader who
     // scans the documentation image lands on the tool.
-    const work = fs.mkdtempSync(path.join(os.tmpdir(), 'kaitiaki-qr-'));
+    const work = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-qr-'));
     const qrPng = path.join(work, 'qr.png');
     const feed = path.join(work, 'qr.y4m');
-    execFileSync('qrencode', ['-o', qrPng, '-s', '10', '-m', '2', 'https://www.bitcoinbutlers.com/tools/kaitiaki/recover.html']);
+    execFileSync('qrencode', ['-o', qrPng, '-s', '10', '-m', '2', 'https://www.bitcoinbutlers.com/tools/inheritance/recover.html']);
     // Portrait, like a phone camera; the code sized to sit inside the 250px frame.
     execFileSync('ffmpeg', [
       '-y', '-loglevel', 'error',

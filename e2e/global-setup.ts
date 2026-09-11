@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 
 function getRememoryBin(): string {
-  const binEnv = process.env.REMEMORY_BIN || './kaitiaki';
+  const binEnv = process.env.REMEMORY_BIN || './inheritance';
   return path.resolve(binEnv);
 }
 

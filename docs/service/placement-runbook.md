@@ -1,4 +1,4 @@
-# Kaitiaki Placement Session, Butler runbook
+# Bitcoin Inheritance Placement Session, Butler runbook
 
 **Remote-first, offered globally. USD 495 (bundled free into the
 multisig concierge package). One session, 2–3 hours, over video with
@@ -19,7 +19,7 @@ placed. Nothing about this session is technical from the client's side.
 
 - [ ] Client intake: what the payload is (descriptor, cosigner xpubs,
       wallet exports, estate letter). Confirm NO seed words in payload , 
-      seeds are steel/codex32-kit territory; refuse them into Kaitiaki.
+      seeds are steel/codex32-kit territory; refuse them into Bitcoin Inheritance.
 - [ ] Quorum worksheet done with the client in advance: guardians named,
       k-of-n chosen. Defaults that work: couple + lawyer = 2-of-3;
       whānau trust = 3-of-5. One guardian should be outside the household
@@ -31,7 +31,7 @@ placed. Nothing about this session is technical from the client's side.
       descriptor, and tell them Butlers pay the chain fee for putting it
       on Bitcoin. They need no node, no wallet software and no sats.
 - [ ] Client prep sheet sent ahead: install/download checklist
-      (kaitiaki binary or the web maker page saved locally), 3–5 blank
+      (inheritance binary or the web maker page saved locally), 3–5 blank
       USB sticks or microSD cards purchased by the client, printer for
       the estate insert. Remote rule: everything runs on the CLIENT's
       machine; the Butler never receives a file.
@@ -41,15 +41,15 @@ placed. Nothing about this session is technical from the client's side.
 1. **Assemble the payload together.** Client drags files into
    manifest/. Read the manifest back aloud, what is here, what is
    deliberately not (no seeds).
-2. **Seal.** `kaitiaki init` (k, n, guardian names) → `seal`. Show the
+2. **Seal.** `inheritance init` (k, n, guardian names) → `seal`. Show the
    client the bundles appearing; open one METADATA.yaml and read it , 
    this is the transparency moment.
 3. **Live test recovery, before anything is placed.** Recover with k
-   bundles on the spot (`kaitiaki recover` or one recover.html). The
+   bundles on the spot (`inheritance recover` or one recover.html). The
    client watches their own files come back. Never skip this; it is the
    product.
 4. **Put the wallet's descriptor on the chain.** Only for a client with a
-   multisig wallet. Open bitcoinbutlers.com/tools/kaitiaki/descriptor.html
+   multisig wallet. Open bitcoinbutlers.com/tools/inheritance/descriptor.html
    with the client. Paste their descriptor, and read back what the page
    says it is (2 of 3, and the derivation path) before going on. Let the
    client choose who can open it: their wallet's own threshold, or any one

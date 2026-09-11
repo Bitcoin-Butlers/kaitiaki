@@ -7,7 +7,7 @@ import (
 	"github.com/eljojo/rememory/internal/core"
 )
 
-// pkgVersion is the kaitiaki version string, set once at startup via SetVersion.
+// pkgVersion is the inheritance version string, set once at startup via SetVersion.
 var pkgVersion string
 
 // pkgBuildDate is the build date (YYYY-MM-DD), set once at startup via SetBuildDate.
