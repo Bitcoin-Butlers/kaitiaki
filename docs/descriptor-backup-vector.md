@@ -56,6 +56,22 @@ secret, `0102030405060708090a0b0c0d0e0f10`, so that it is reproducible. In real 
 the secret is fresh entropy, so two runs of the same descriptor produce
 different text. Both open with the same keys.
 
+### It is on the chain
+
+This exact text was published on Bitcoin mainnet on 2026-09-10, so the
+whole path can be checked by anyone with no software from us:
+
+| | |
+|---|---|
+| Transaction | `4801ea9c10e14a5ea5c0e5e68bfe08fd2422005ea0a3a9631fead29ce910a4df` |
+| Published through | opreturnbot.com, Private flag set |
+| Payload | 545 bytes in one OP_RETURN output |
+| Transaction size | 671 vB, 3,355 sat at 5 sat/vB |
+
+Read the transaction on any explorer, take the OP_RETURN bytes as text,
+and decrypt them with any two of the three keys above. You get the
+descriptor above.
+
 ### Verify it independently
 
 1. Open [multisigbackup.com](https://multisigbackup.com).
