@@ -118,15 +118,19 @@
         </div>
       </div>
 
-      <div class="card hidden" id="confirm-card">
+      <div class="card" id="confirm-card">
         <h2><span class="step-number">4</span> Prove it landed</h2>
         <p class="note">
           Paste the transaction id from whoever published it. This page reads
           the bytes back off the chain and opens them with the keys already in
-          your descriptor, so you have to type nothing else.
+          your descriptor, so you have to type nothing else. Come back any
+          time: leave, return with the transaction id, put your descriptor
+          back in step 1, and this still works.
         </p>
         <label for="confirm-txid">Transaction id</label>
         <input type="text" id="confirm-txid" spellcheck="false" placeholder="64 hexadecimal characters">
+        <label for="confirm-explorer">Explorer (optional)</label>
+        <input type="text" id="confirm-explorer" spellcheck="false" placeholder="Leave empty for mempool.space, or point at your own node">
         <button type="button" class="btn btn-primary" id="confirm-btn">Check it on the chain</button>
         <div id="confirm-error" class="alert-error hidden"></div>
         <div id="confirm-result" class="hidden">

@@ -127,19 +127,18 @@ test.describe('Descriptor Backup page', () => {
 
   const TXID = '4801ea9c10e14a5ea5c0e5e68bfe08fd2422005ea0a3a9631fead29ce910a4df';
 
-  test('step 4 verifies the real bytes and writes the estate block', async ({ page }) => {
+  test('step 4 verifies the backup and writes the estate block', async ({ page }) => {
     await page.fill('#descriptor-input', vector.descriptor);
     await page.click('#protect-btn');
     const text = await page.locator('#protect-output').inputValue();
 
-    await expect(page.locator('#confirm-card')).toBeVisible();
     await mockChain(page, text);
     await page.fill('#confirm-txid', TXID);
     await page.click('#confirm-btn');
 
     const detail = page.locator('#confirm-detail');
-    await expect(detail).toContainText('match the text this page produced');
-    await expect(detail).toContainText('give it back exactly');
+    await expect(detail).toContainText('gives it back exactly');
+    await expect(detail).toContainText('exact bytes this page produced');
     await expect(detail).toContainText('block 966450');
 
     // The reader typed no keys. The descriptor they pasted carried them.
@@ -149,16 +148,68 @@ test.describe('Descriptor Backup page', () => {
     expect(estate).toContain('the same number of keys it takes to spend');
   });
 
-  test('step 4 refuses when the chain carries different bytes', async ({ page }) => {
+  test('step 4 works after a reload, with nothing left in memory', async ({ page }) => {
+    // The page tells people to come back later with a transaction id. Before
+    // the review this was impossible: verification compared against session
+    // state, and re-encrypting drew fresh entropy, so a good backup was
+    // reported as the wrong bytes.
     await page.fill('#descriptor-input', vector.descriptor);
     await page.click('#protect-btn');
+    const text = await page.locator('#protect-output').inputValue();
 
-    await mockChain(page, 'wsh(sortedmulti(2,[48h/0h/0h/2h]<0;1>/*))SOMETHINGELSE');
+    await page.reload();
+    await expect(page.locator('#confirm-card')).toBeVisible();
+
+    await mockChain(page, text);
+    await page.fill('#descriptor-input', vector.descriptor);
     await page.fill('#confirm-txid', TXID);
     await page.click('#confirm-btn');
 
-    await expect(page.locator('#confirm-error')).toContainText('different bytes');
+    await expect(page.locator('#confirm-detail')).toContainText('gives it back exactly');
+    // We cannot claim these are our bytes when we never made them this visit.
+    await expect(page.locator('#confirm-detail')).not.toContainText('exact bytes');
+  });
+
+  test('step 4 accepts a descriptor that carries a checksum', async ({ page }) => {
+    // Sparrow exports with #checksum and the page tells people to use
+    // Sparrow. Encryption drops the checksum, so a raw string comparison
+    // condemned a perfectly good backup.
+    const withChecksum = `${vector.descriptor}#abcdefgh`;
+    await page.fill('#descriptor-input', withChecksum);
+    await page.click('#protect-btn');
+    const text = await page.locator('#protect-output').inputValue();
+
+    await mockChain(page, text);
+    await page.fill('#confirm-txid', TXID);
+    await page.click('#confirm-btn');
+
+    await expect(page.locator('#confirm-error')).toBeHidden();
+    await expect(page.locator('#confirm-detail')).toContainText('gives it back exactly');
+  });
+
+  test('step 4 refuses when the chain holds a different wallet', async ({ page }) => {
+    // Publish one wallet's backup, then ask the page to check it against a
+    // different wallet. It must refuse rather than wave it through.
+    await page.fill('#descriptor-input', vector.descriptor);
+    await page.click('#protect-btn');
+    const text = await page.locator('#protect-output').inputValue();
+
+    await mockChain(page, text);
+    const otherWallet = `wsh(sortedmulti(2,[${vector.xfps[0]}/48h/0h/0h/2h]${vector.xpubs[0]}/<0;1>/*,[${vector.xfps[1]}/48h/0h/0h/2h]${vector.xpubs[1]}/<0;1>/*))`;
+    await page.fill('#descriptor-input', otherWallet);
+    await page.fill('#confirm-txid', TXID);
+    await page.click('#confirm-btn');
+
+    await expect(page.locator('#confirm-error')).toContainText('did not give back the descriptor');
     await expect(page.locator('#confirm-result')).toBeHidden();
+  });
+
+  test('a half-copied backup gets a readable error, not a DOM exception', async ({ page }) => {
+    await page.click('.mode-tab[data-panel="recover"]');
+    await page.fill('#recover-input', 'wsh(sortedmulti(2,[48h/0h/0h/2h]<0;1>/*))NOTBASE64!!');
+    await page.fill('#xpubs-input', vector.xpubs[0]);
+    await page.click('#recover-btn');
+    await expect(page.locator('#recover-error')).toContainText('missing');
   });
 
   test('step 4 says so when the transaction is still unconfirmed', async ({ page }) => {
@@ -173,6 +224,20 @@ test.describe('Descriptor Backup page', () => {
 
     await expect(page.locator('#confirm-detail')).toContainText('Still in the mempool');
     await expect(page.locator('#estate-block')).toHaveValue(/any one of the wallet keys/);
+  });
+
+  test('a descriptor with two multisig groups is refused outright', async ({ page }) => {
+    // The fallback tool cannot open such a backup, so publishing one would
+    // be permanent and useless.
+    const a = vector.xpubs[0];
+    const b = vector.xpubs[1];
+    await page.fill(
+      '#descriptor-input',
+      `wsh(or_d(sortedmulti(2,${a}/<0;1>/*,${b}/<0;1>/*),and_v(v:older(65535),sortedmulti(2,${a}/<2;3>/*,${b}/<2;3>/*))))`
+    );
+    await page.click('#protect-btn');
+    await expect(page.locator('#protect-error')).toContainText('more than one multisig group');
+    await expect(page.locator('#protect-result')).toBeHidden();
   });
 
   test('a stranger key opens nothing', async ({ page }) => {

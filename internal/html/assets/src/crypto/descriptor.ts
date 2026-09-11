@@ -94,7 +94,16 @@ function bytesToBase64Unpadded(bytes: Uint8Array): string {
 }
 
 function base64ToBytes(text: string): Uint8Array {
-  const binary = atob(text);
+  let binary: string;
+  try {
+    binary = atob(text);
+  } catch {
+    // atob throws a raw DOM exception, which is no use to a person holding
+    // a half-copied backup. Say what is actually wrong.
+    throw new Error(
+      'The text after the policy is not valid base64. It looks like part of the backup is missing.'
+    );
+  }
   const out = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i);
   return out;
@@ -203,10 +212,12 @@ export function parseEncryptedDescriptor(encryptedText: string) {
       all.slice(j * shareBytes, (j + 1) * shareBytes)
     );
 
-    // Kept as upstream has it: the offset restarts per group rather than
-    // accumulating. It only differs for a descriptor with more than one
-    // multisig group, which this tool does not produce.
-    at = shareBytes * numXpubs;
+    // Accumulate. Upstream assigns here instead, which reads the second and
+    // later groups from the wrong offset and makes a multi-group backup
+    // impossible to open. For a single group, the only shape either tool
+    // will encrypt, the two are identical because `at` starts at zero, so
+    // this costs no compatibility and lets us read a blob upstream cannot.
+    at += shareBytes * numXpubs;
     groupedEncryptedShares.push({ encryptedShares, requiredSigs });
   }
 
@@ -250,6 +261,17 @@ export async function encryptDescriptor(
   secret?: Uint8Array
 ): Promise<EncryptResult> {
   const { multisigs } = parseDescriptor(descriptor);
+
+  // A descriptor with more than one multisig group cannot be promised.
+  // multisigbackup.com, the tool a client falls back to, reads the second
+  // and later groups from the wrong offset and cannot open such a backup at
+  // all. Refusing here is the only honest answer: the alternative is a
+  // permanent, public, unopenable backup, which is worse than no backup.
+  if (multisigs.length > 1) {
+    throw new Error(
+      'This descriptor has more than one multisig group, and this format cannot back it up safely. Back up the wallet another way.'
+    );
+  }
 
   const entropy = secret ?? crypto.getRandomValues(new Uint8Array(SECRET_BYTES));
   if (entropy.length !== SECRET_BYTES) {

@@ -32,10 +32,30 @@ const TX_OVERHEAD_VBYTES = 137;
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
 /**
- * What the protect step produced, so the confirm step can check the chain
- * against it. Held in memory only; nothing is stored or sent anywhere.
+ * What the protect step produced this session, if it ran. Step 4 does not
+ * depend on it: the page tells people to come back later with a transaction
+ * id, and after a reload there is nothing in memory. It is used only to add
+ * "these are the exact bytes this page made" when we happen to know.
  */
-let produced: { descriptor: string; text: string; scheme: Scheme } | null = null;
+let produced: { text: string } | null = null;
+
+/** A descriptor is the same descriptor with or without its checksum. */
+function withoutChecksum(descriptor: string): string {
+  return descriptor.split('#')[0].trim();
+}
+
+/** Testnet keys need a testnet explorer, or every lookup 404s. */
+function isTestnetDescriptor(descriptor: string): boolean {
+  return /[tuvUV]pub[a-zA-Z0-9]{107}/.test(descriptor);
+}
+
+function explorerFor(descriptor: string): string {
+  const chosen = $<HTMLInputElement>('confirm-explorer').value.trim();
+  if (chosen) return chosen;
+  return isTestnetDescriptor(descriptor)
+    ? 'https://mempool.space/testnet4/api'
+    : 'https://mempool.space/api';
+}
 
 function show(el: HTMLElement, visible: boolean) {
   el.classList.toggle('hidden', !visible);
@@ -171,8 +191,11 @@ async function protect() {
     let text: string;
     let opens: string;
 
+    let missingXfps = false;
     if (scheme === 'threshold') {
-      text = (await encryptThreshold(descriptor)).encryptedText;
+      const out = await encryptThreshold(descriptor);
+      text = out.encryptedText;
+      missingXfps = out.missingXfps;
       const shape = describe(descriptor);
       opens = `Any ${shape.threshold} of your ${shape.keys} keys can open this.`;
     } else {
@@ -182,6 +205,11 @@ async function protect() {
       if (excluded.length > 0) {
         opens += ` ${excluded.length} key expression could not be used, so that cosigner cannot open it.`;
       }
+    }
+
+    if (scheme === 'threshold' && missingXfps) {
+      opens +=
+        ' Your descriptor omits some master fingerprints, so this backup carries no search tags. It can only be found again by its transaction id, so keep that safe.';
     }
 
     const bytes = new TextEncoder().encode(text).length;
@@ -199,9 +227,8 @@ async function protect() {
 
     $<HTMLTextAreaElement>('protect-output').value = text;
     $('core-command').textContent = coreCommand(text);
-    produced = { descriptor, text, scheme };
+    produced = { text };
     show(result, true);
-    show($('confirm-card'), true);
     show($('confirm-result'), false);
     show($('confirm-error'), false);
   } catch (error) {
@@ -220,47 +247,68 @@ async function confirmOnChain() {
   show(errorBox, false);
   show(result, false);
 
-  if (!produced) {
-    fail(errorBox, new Error('Encrypt a descriptor first.'));
+  const descriptor = $<HTMLTextAreaElement>('descriptor-input').value.trim();
+  if (!descriptor) {
+    fail(errorBox, new Error('Paste your descriptor in step 1 first, so this page knows what to check against.'));
     return;
   }
 
   const txid = $<HTMLInputElement>('confirm-txid').value.trim().toLowerCase();
+  const base = explorerFor(descriptor);
   try {
-    const onChain = await fetchFromChain(txid, 'https://mempool.space/api');
-    if (onChain !== produced.text) {
+    const onChain = await fetchFromChain(txid, base);
+
+    // The proof is that the thing on the chain gives back this descriptor.
+    // Byte equality with what we made this session is a nice extra when we
+    // have it, and no kind of failure when we do not: a backup published on
+    // an earlier visit is just as valid.
+    const keys = keysIn(descriptor);
+    let recovered: string | undefined;
+    if (looksLikeBip138(onChain)) {
+      for (const key of keys) {
+        try {
+          recovered = decryptAnyKey(onChain, key);
+          break;
+        } catch {
+          // Some key expressions are not eligible for this format. Next.
+        }
+      }
+    } else {
+      recovered = (await decryptThreshold(onChain, keys)).descriptor;
+    }
+
+    // The encrypted form drops the checksum, so the rebuilt descriptor never
+    // carries one. Sparrow exports with a checksum, and comparing raw text
+    // would condemn a perfectly good backup.
+    if (!recovered || withoutChecksum(recovered) !== withoutChecksum(descriptor)) {
       throw new Error(
-        'That transaction carries different bytes from the text above. Check the transaction id, and check that the whole text was pasted.'
+        'That transaction did not give back the descriptor in step 1. Check the transaction id, and check the descriptor is the same one you backed up.'
       );
     }
 
-    const keys = keysIn(produced.descriptor);
-    let recovered: string | undefined;
-    if (produced.scheme === 'threshold') {
-      recovered = (await decryptThreshold(onChain, keys)).descriptor;
-    } else {
-      recovered = decryptAnyKey(onChain, keys[0]);
-    }
-    if (recovered !== produced.descriptor) {
-      throw new Error('The backup on the chain did not give back your descriptor. Do not rely on it.');
-    }
-
-    const status = await fetchStatus(txid);
+    const status = await fetchStatus(txid, base);
     const detail = $('confirm-detail');
     detail.innerHTML = '';
-    for (const line of [
-      'The bytes on the chain match the text this page produced.',
-      'They decrypt with the keys in your own descriptor, and give it back exactly.',
+    const lines = [
+      'The backup on the chain opens with the keys in your own descriptor, and gives it back exactly.',
       status.confirmed
         ? `Confirmed in block ${status.block_height}.`
         : 'Still in the mempool. It is readable now and will confirm shortly.',
-    ]) {
+    ];
+    if (produced && produced.text === onChain) {
+      lines.unshift('These are the exact bytes this page produced.');
+    }
+    for (const line of lines) {
       const p = document.createElement('p');
       p.textContent = line;
       detail.appendChild(p);
     }
 
-    $<HTMLTextAreaElement>('estate-block').value = estateBlock(txid, status, produced.scheme);
+    $<HTMLTextAreaElement>('estate-block').value = estateBlock(
+      txid,
+      status,
+      looksLikeBip138(onChain) ? 'any' : 'threshold'
+    );
     show(result, true);
   } catch (error) {
     fail(errorBox, error);
@@ -273,8 +321,8 @@ interface TxStatus {
   block_hash?: string;
 }
 
-async function fetchStatus(txid: string): Promise<TxStatus> {
-  const response = await fetch(`https://mempool.space/api/tx/${txid}/status`);
+async function fetchStatus(txid: string, base: string): Promise<TxStatus> {
+  const response = await fetch(`${base.replace(/\/$/, '')}/tx/${txid}/status`);
   if (!response.ok) return { confirmed: false };
   return (await response.json()) as TxStatus;
 }

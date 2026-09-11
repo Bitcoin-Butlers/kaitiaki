@@ -179,6 +179,30 @@ test('taproot descriptors are refused, the same as upstream', () => {
   );
 });
 
+test('a descriptor with two multisig groups is refused, not silently broken', async () => {
+  // The fallback tool reads the second group from the wrong offset and can
+  // never open such a backup. Publishing one would be permanent and useless,
+  // so it is refused before anything is written.
+  const a = vector.xpubs[0];
+  const b = vector.xpubs[1];
+  const twoGroups = `wsh(or_d(sortedmulti(2,${a}/<0;1>/*,${b}/<0;1>/*),and_v(v:older(65535),sortedmulti(2,${a}/<2;3>/*,${b}/<2;3>/*))))`;
+  await assert.rejects(() => encryptDescriptor(twoGroups), /more than one multisig group/);
+});
+
+test('the parser accumulates its offset across groups', () => {
+  // For one group the accumulating and assigning forms are identical, which
+  // is what keeps us byte-compatible. This pins that equivalence so the fix
+  // cannot drift into a compatibility break.
+  const parsed = parseEncryptedDescriptor(vector.encryptedText);
+  assert.equal(parsed.groupedEncryptedShares.length, 1);
+  assert.equal(parsed.encryptedData.length, 4 * 3 + 74 * 3);
+});
+
+test('a half-copied backup says so, instead of leaking a DOM exception', () => {
+  const truncated = vector.encryptedText.slice(0, vector.encryptedText.length - 3) + '!!!';
+  assert.throws(() => parseEncryptedDescriptor(truncated), /not valid base64|missing/);
+});
+
 test('text that is not an encrypted descriptor is refused', () => {
   assert.throws(() => parseEncryptedDescriptor('hello world'), /not an encrypted descriptor/);
 });

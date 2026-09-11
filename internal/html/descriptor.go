@@ -9,10 +9,11 @@ package html
 // on this particular page. The encrypt half never touches the network, and the
 // page says which half does.
 func GenerateDescriptorHTML(selfhosted bool) string {
-	return applyLayout(LayoutOptions{
+	page := applyLayout(LayoutOptions{
 		Title:      "Kaitiaki - Descriptor Backup",
 		Selfhosted: selfhosted,
-		HeadMeta: `<meta name="generator" content="Kaitiaki {{VERSION}}">
+		HeadMeta: `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-{{CSP_NONCE}}'; style-src 'unsafe-inline'; img-src data:; connect-src https:; form-action 'none'; frame-ancestors 'none';">
+  <meta name="generator" content="Kaitiaki {{VERSION}}">
   <meta name="description" content="Encrypt a multisig descriptor so that the wallet's own keys unlock it, then keep it on Bitcoin. Runs in your browser.">
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -27,8 +28,12 @@ func GenerateDescriptorHTML(selfhosted bool) string {
 		PageStyles:    descriptorCSS,
 		Content:       descriptorHTMLTemplate,
 		FooterContent: descriptorFooter,
-		Scripts:       "<script>" + descriptorAppJS + "</script>",
+		Scripts:       `<script nonce="{{CSP_NONCE}}">` + descriptorAppJS + "</script>",
 	})
+	// connect-src stays https: rather than one host, because the reader can
+	// point the explorer field at their own node or a Tor mirror. Every other
+	// directive is closed.
+	return applyCSPNonce(page)
 }
 
 const descriptorFooter = `<p>Kaitiaki {{VERSION}}</p>
