@@ -1142,7 +1142,7 @@ declare const __SELFHOSTED__: boolean;
   }
 
   function downloadProjectYaml(): void {
-    let yaml = `# Kaitiaki Project Configuration\n`;
+    let yaml = `# Bitcoin Inheritance Project Configuration\n`;
     yaml += `# Generated: ${new Date().toISOString()}\n`;
     yaml += `# Import this file to quickly restore your friend list\n\n`;
     yaml += `name: ${state.projectName}\n`;

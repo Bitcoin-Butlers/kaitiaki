@@ -546,7 +546,7 @@ func verifyBundle(t *testing.T, bundlePath string, friend project.Friend, allFri
 	}
 
 	// Verify recover.html contains expected elements
-	if !strings.Contains(recoverContent, "Kaitiaki") {
+	if !strings.Contains(recoverContent, "Inheritance") {
 		t.Error("recover.html missing title")
 	}
 	if !strings.Contains(recoverContent, "v1.0.0-test") {

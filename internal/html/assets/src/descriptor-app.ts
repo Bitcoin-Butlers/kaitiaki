@@ -342,7 +342,7 @@ function estateBlock(txid: string, status: TxStatus, scheme: Scheme): string {
     `Written on:     ${new Date().toISOString().slice(0, 10)}`,
     `Opens with:     ${opens}`,
     '',
-    'To read it: open bitcoinbutlers.com/tools/kaitiaki/descriptor.html,',
+    'To read it: open bitcoinbutlers.com/tools/inheritance/descriptor.html,',
     'choose Recover, enter the transaction id, then enter the wallet keys.',
     'If that page is gone, any block explorer shows the same text, and the',
     'format is public, so any technical person can rebuild the descriptor.',

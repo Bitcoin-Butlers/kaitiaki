@@ -380,14 +380,14 @@ func TestIndexHasExpectedKeys(t *testing.T) {
 func TestReadmeTranslation(t *testing.T) {
 	// Test English
 	got := T("readme", "en", "title")
-	if got != "KAITIAKI GUARDIAN BUNDLE" {
-		t.Errorf("readme/en/title = %q, want %q", got, "KAITIAKI GUARDIAN BUNDLE")
+	if got != "BITCOIN INHERITANCE GUARDIAN BUNDLE" {
+		t.Errorf("readme/en/title = %q, want %q", got, "BITCOIN INHERITANCE GUARDIAN BUNDLE")
 	}
 
 	// Unknown languages fall back to English
 	got = T("readme", "mi", "title")
-	if got != "KAITIAKI GUARDIAN BUNDLE" {
-		t.Errorf("readme/mi/title = %q, want %q", got, "KAITIAKI GUARDIAN BUNDLE")
+	if got != "BITCOIN INHERITANCE GUARDIAN BUNDLE" {
+		t.Errorf("readme/mi/title = %q, want %q", got, "BITCOIN INHERITANCE GUARDIAN BUNDLE")
 	}
 
 	// Test parameter substitution
@@ -398,7 +398,7 @@ func TestReadmeTranslation(t *testing.T) {
 
 	// Test fallback to English for unknown language
 	got = T("readme", "xx", "title")
-	if got != "KAITIAKI GUARDIAN BUNDLE" {
+	if got != "BITCOIN INHERITANCE GUARDIAN BUNDLE" {
 		t.Errorf("readme/xx/title should fall back to English, got %q", got)
 	}
 }

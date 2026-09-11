@@ -1,8 +1,8 @@
 ---
-title: "Kaitiaki Guide"
+title: "Bitcoin Inheritance Guide"
 subtitle: "How to create bundles and recover files"
 cli_guide_note: 'There is also a <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">CLI guide</a>.'
-nav_home: "Kaitiaki"
+nav_home: "Inheritance"
 nav_home_link: "Home"
 nav_create: "Create Bundles"
 nav_recover: "Recover"
@@ -14,7 +14,7 @@ footer_home: "Home"
 
 ## Overview {#overview}
 
-Kaitiaki is a digital safe with multiple keys. You choose who holds them and how many must come together to open it.
+Bitcoin Inheritance is a digital safe with multiple keys. You choose who holds them and how many must come together to open it.
 
 Under the hood, it encrypts your files with [age](https://github.com/FiloSottile/age), splits the key among people you trust, and gives each person a self-contained bundle for recovery.
 
@@ -26,7 +26,7 @@ Recovery is opening a file in a browser.\* No servers, no need for this website 
 <strong>Tip:</strong> No one person can access your data. They need to bring together enough pieces, for example 3 of 5.
 </div>
 
-## Why Kaitiaki {#why-rememory}
+## Why Bitcoin Inheritance {#why-bitcoin-inheritance}
 
 You probably have digital secrets that matter: password manager recovery codes, important documents, instructions for loved ones. What happens to these if you're suddenly unavailable?
 
@@ -39,7 +39,7 @@ Traditional approaches have weaknesses:
 - **Use a password manager's emergency access**: similar to "give one person everything", also relies on the company existing
 - **Write it in a will**: becomes public record, slow legal process
 
-Kaitiaki takes a different approach:
+Bitcoin Inheritance takes a different approach:
 
 - **No single point of failure**: requires multiple people to cooperate
 - **No trust in any one person**: even your most trusted guardian cannot access your secrets alone
@@ -89,7 +89,7 @@ Drag and drop the files or folder you want to protect.
 - Safe combinations
 
 <div class="warning">
-<strong>Not for Bitcoin seeds or private keys.</strong> Never put seed words or private keys in a bundle. Those belong on a steel backup or a codex32 split, kept offline. Use Kaitiaki for the instructions around them, such as where the steel plates are and who to call.
+<strong>Not for Bitcoin seeds or private keys.</strong> Never put seed words or private keys in a bundle. Those belong on a steel backup or a codex32 split, kept offline. Use Bitcoin Inheritance for the instructions around them, such as where the steel plates are and who to call.
 </div>
 
 <div class="warning">
@@ -426,7 +426,7 @@ With `project.yml`, you can regenerate bundles, verify existing ones, and check 
 
 ## Understanding the Security {#security}
 
-Kaitiaki composes well-established cryptographic tools rather than inventing its own. Here's what that means in practice.
+Bitcoin Inheritance composes well-established cryptographic tools rather than inventing its own. Here's what that means in practice.
 
 ### What Protects Your Data {#cryptography}
 
@@ -456,7 +456,7 @@ Each bundle includes checksums so the recovery tool can verify nothing was corru
 <span class="file-desc">That is why you set the threshold below the total number of guardians. If you chose 3-of-5, any three will do.</span>
 </div>
 <div class="file">
-<span class="file-name">Kaitiaki disappears in 10 years</span>
+<span class="file-name">Bitcoin Inheritance disappears in 10 years</span>
 <span class="file-desc"><code>recover.html</code> still works because it is self-contained. No servers, no downloads, no dependencies on this project.</span>
 </div>
 <div class="file">
@@ -475,9 +475,9 @@ For a detailed technical evaluation, see the [security self-review]({{GITHUB_REP
 
 ## How It Compares {#comparison}
 
-Kaitiaki isn't the first tool to use Shamir's Secret Sharing. There are many others, from command-line tools to web apps. Here's what sets Kaitiaki apart:
+Bitcoin Inheritance isn't the first tool to use Shamir's Secret Sharing. There are many others, from command-line tools to web apps. Here's what sets Bitcoin Inheritance apart:
 
-- **Handles files, not just text.** Most Shamir tools only split passwords or short text. Kaitiaki encrypts entire files and folders.
+- **Handles files, not just text.** Most Shamir tools only split passwords or short text. Bitcoin Inheritance encrypts entire files and folders.
 - **Self-contained recovery tool.** Each guardian receives `recover.html`, a complete recovery tool that runs in any browser, offline.\* No installation, no CLI needed.
 - **Contact details included.** Each bundle includes a list of other guardians and how to reach them, so coordination doesn't depend on you being available.
 - **No server dependency.** Everything runs locally. There's no service to sign up for, no account to maintain, nothing that needs to stay online.
@@ -561,7 +561,7 @@ If you derive the owner key from another secret you already guard (rather than g
 
 ## Advanced: Descriptor Backup on Bitcoin {#descriptor-backup}
 
-This one is for multisig wallets, and it solves a different problem from the rest of Kaitiaki.
+This one is for multisig wallets, and it solves a different problem from the rest of Bitcoin Inheritance.
 
 A multisig wallet needs two things to spend: enough keys, and the **descriptor** that says how those keys fit together. People protect the keys carefully and then lose the descriptor, and the keys alone will not open the wallet. A 2 of 3 should mean two keys is enough. Without the descriptor, it is not.
 
@@ -636,6 +636,6 @@ For a deeper look at the cryptography behind this, see the [drand timelock encry
 
 ## Self-Hosting {#selfhosted}
 
-Kaitiaki can also run as a web app on your own server using `kaitiaki serve`. The server provides the same creation and recovery tools through a browser. Guardians only need their share. The encrypted archive is served automatically.
+Bitcoin Inheritance can also run as a web app on your own server using `kaitiaki serve`. The server provides the same creation and recovery tools through a browser. Guardians only need their share. The encrypted archive is served automatically.
 
-This is an advanced option for people who already run a homelab or want a shared web UI. The offline bundles remain the primary way to use Kaitiaki and work without any server. See the [self-hosting guide](https://github.com/eljojo/rememory/blob/main/docs/selfhosted.md) on GitHub for details.
+This is an advanced option for people who already run a homelab or want a shared web UI. The offline bundles remain the primary way to use Bitcoin Inheritance and work without any server. See the [self-hosting guide](https://github.com/eljojo/rememory/blob/main/docs/selfhosted.md) on GitHub for details.

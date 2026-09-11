@@ -183,7 +183,7 @@ func TestGenerateDocsHTMLEnglish(t *testing.T) {
 	}
 
 	// Key content should be present
-	if !strings.Contains(html, "Kaitiaki Guide") {
+	if !strings.Contains(html, "Bitcoin Inheritance Guide") {
 		t.Error("should contain page title")
 	}
 	if !strings.Contains(html, `id="overview"`) {
@@ -201,7 +201,7 @@ func TestGenerateDocsHTMLFallback(t *testing.T) {
 	if !strings.Contains(html, `<html lang="en">`) {
 		t.Error("should fall back to lang=en for unknown language")
 	}
-	if !strings.Contains(html, "Kaitiaki Guide") {
+	if !strings.Contains(html, "Bitcoin Inheritance Guide") {
 		t.Error("should contain English title after fallback")
 	}
 }
