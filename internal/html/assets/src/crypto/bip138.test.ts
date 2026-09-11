@@ -27,6 +27,8 @@ import {
   encodeDerivationPaths,
   encodeIndividualSecrets,
   encryptDescriptor,
+  KAITIAKI_SECRET_ENTRIES,
+  decodeBackup as decodeBip138,
   hexToBytes,
   normalizeKeys,
   parseDerivationPath,
@@ -254,15 +256,41 @@ test('common account paths are dropped, uncommon ones are kept', () => {
   assert.deepEqual(dropCommonDerivationPaths([common, personal]), [personal]);
 });
 
+test('a Kaitiaki backup always writes seven secret entries', () => {
+  const { backup } = encryptDescriptor(descriptorVector.descriptor);
+  const decoded = decodeBip138(backup);
+  assert.equal(KAITIAKI_SECRET_ENTRIES, 7);
+  assert.equal(decoded.individualSecrets.length, 7, 'three real keys, four decoys');
+
+  // The decoys must not cost anyone their recovery.
+  for (const xpub of descriptorVector.xpubs) {
+    assert.equal(decryptDescriptor(backup, xpub), descriptorVector.descriptor);
+  }
+
+  // Entries are sorted by their own bytes, so the real ones are not grouped
+  // at the front where a reader could pick them out.
+  const asHex = decoded.individualSecrets.map(bytesToHex);
+  assert.deepEqual(asHex, [...asHex].sort(), 'entries are written in sorted order');
+  assert.equal(new Set(asHex).size, 7, 'no entry repeats');
+});
+
+test('two backups of the same wallet share no decoy', () => {
+  const a = decodeBip138(encryptDescriptor(descriptorVector.descriptor).backup);
+  const b = decodeBip138(encryptDescriptor(descriptorVector.descriptor).backup);
+  const inA = new Set(a.individualSecrets.map(bytesToHex));
+  const shared = b.individualSecrets.map(bytesToHex).filter((x) => inA.has(x));
+  // The three real entries repeat, because they are derived from the keys.
+  // Anything beyond that would mean the decoys were not random.
+  assert.equal(shared.length, 3, 'only the real entries repeat across backups');
+});
+
 test('the on-chain size of both formats is measured, not guessed', () => {
   const kOfN = Buffer.from(
     descriptorVector.encryptedText.slice(descriptorVector.encryptedText.lastIndexOf(')') + 1),
     'base64'
   ).length;
-  const lean = encryptDescriptor(descriptorVector.descriptor).backup.length;
-  const padded = encryptDescriptor(descriptorVector.descriptor, {
-    decoySecrets: [1, 2].map(() => crypto.getRandomValues(new Uint8Array(32))),
-  }).backup.length;
+  const bare = encryptDescriptor(descriptorVector.descriptor, { padSecretsTo: 0 }).backup.length;
+  const shipped = encryptDescriptor(descriptorVector.descriptor).backup.length;
 
   // Pinned so a format change is visible, and so the fee it costs a client is
   // a number we state rather than guess.
@@ -275,6 +303,6 @@ test('the on-chain size of both formats is measured, not guessed', () => {
   // here is already past it. So size is a fee question, not a relay question:
   // about 2 sat per extra byte at 2 sat/vB.
   assert.equal(kOfN, 345, 'k-of-n 2-of-3 payload');
-  assert.equal(lean, 591, 'BIP-138 2-of-3 with no decoy secrets');
-  assert.equal(padded, 655, 'BIP-138 2-of-3 padded to the five-secret bucket the draft suggests');
+  assert.equal(bare, 591, 'BIP-138 2-of-3 with no decoys');
+  assert.equal(shipped, 719, 'BIP-138 2-of-3 as Kaitiaki ships it, padded to seven entries');
 });

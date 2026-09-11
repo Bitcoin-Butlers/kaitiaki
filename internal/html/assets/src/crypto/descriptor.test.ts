@@ -131,6 +131,30 @@ test('the encrypted text carries the promised byte layout', () => {
   assert.deepEqual(parsed.bip32Paths, ["48h/0h/0h/2h", "48h/0h/0h/2h", "48h/0h/0h/2h"]);
 });
 
+test('the lookup tags let a scanner find this backup from two fingerprints', async () => {
+  // This is the breadcrumb an heir uses when the written transaction id is
+  // lost, so it is worth proving rather than assuming. A scanner knows two of
+  // the wallet's fingerprints, hashes them the same way, and looks for the
+  // first four bytes in the payload.
+  const { sha256 } = await import('@noble/hashes/sha2');
+  const bytesOf = (h: string) => Uint8Array.from((h.match(/.{2}/g) as string[]).map((b) => parseInt(b, 16)));
+  const parsed = parseEncryptedDescriptor(vector.encryptedText);
+  const tags = hex(parsed.xfpPairHashes);
+
+  for (let i = 0; i < vector.xfps.length; i++) {
+    for (let j = i + 1; j < vector.xfps.length; j++) {
+      const a = bytesOf(vector.xfps[i]);
+      const b = bytesOf(vector.xfps[j]);
+      const [first, second] = String(a) < String(b) ? [a, b] : [b, a];
+      const joined = new Uint8Array(8);
+      joined.set(first, 0);
+      joined.set(second, 4);
+      const tag = hex(sha256(joined).slice(0, 4));
+      assert.ok(tags.includes(tag), `a scanner should find the tag for fingerprints ${i} and ${j}`);
+    }
+  }
+});
+
 test('the stripped descriptor keeps the policy and drops the keys', () => {
   const stripped = vector.encryptedText.slice(0, vector.encryptedText.lastIndexOf(')') + 1);
   assert.match(stripped, /^wsh\(sortedmulti\(2,/, 'the threshold and script type stay readable');

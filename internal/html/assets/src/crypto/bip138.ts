@@ -312,6 +312,16 @@ export interface EncodeOptions {
   items: ContentItem[];
   /** Extra 32-byte entries that hide how many keys are real. */
   decoySecrets?: Uint8Array[];
+  /**
+   * Pad the entry list with random decoys up to this many entries.
+   *
+   * The draft suggests buckets of 5, 10, 20. Kaitiaki uses 7, decided by Ben
+   * on 2026-09-10: it covers every wallet up to seven cosigners without
+   * jumping to ten, and the 128 extra bytes cost about 128 sat. An unusual
+   * bucket would normally make our backups stand out, which does not apply
+   * here because a BIP-138 backup already begins with the ASCII text BIP138.
+   */
+  padSecretsTo?: number;
   derivationPaths?: number[][];
   /** 12 bytes, never all zero. Supply it only to reproduce a vector. */
   nonce?: Uint8Array;
@@ -327,17 +337,47 @@ export function encodeBackup(options: EncodeOptions): Uint8Array {
   const payload = encodePayload(options.items);
   const ciphertext = chacha20poly1305(secret, nonce).encrypt(payload);
 
+  const entries = padWithDecoys(
+    [...individualSecrets, ...(options.decoySecrets ?? [])],
+    options.padSecretsTo
+  );
+
   return concat(
     MAGIC,
     Uint8Array.from([VERSION]),
     encodeDerivationPaths(dropCommonDerivationPaths(options.derivationPaths ?? [])),
-    encodeIndividualSecrets([...individualSecrets, ...(options.decoySecrets ?? [])]),
+    encodeIndividualSecrets(entries),
     Uint8Array.from([ENCRYPTION_CHACHA20_POLY1305]),
     nonce,
     encodeCompactSize(ciphertext.length),
     ciphertext
   );
 }
+
+/**
+ * Adds random 32-byte entries until the list holds `target` distinct ones.
+ *
+ * A decoy that collided with a real secret would be dropped by the encoder's
+ * de-duplication and would quietly shrink the count back, so this checks.
+ */
+function padWithDecoys(secrets: Uint8Array[], target?: number): Uint8Array[] {
+  if (!target || target <= secrets.length) return secrets;
+  if (target > 255) throw new Error('A backup carries at most 255 individual secrets');
+
+  const seen = new Set(secrets.map(bytesToHex));
+  const padded = [...secrets];
+  while (padded.length < target) {
+    const decoy = crypto.getRandomValues(new Uint8Array(32));
+    const key = bytesToHex(decoy);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    padded.push(decoy);
+  }
+  return padded;
+}
+
+/** How many individual-secret entries a Kaitiaki backup writes. */
+export const KAITIAKI_SECRET_ENTRIES = 7;
 
 /** A 12-byte nonce that is never all zero, as the draft requires. */
 function randomNonce(): Uint8Array {
@@ -458,6 +498,7 @@ export function encryptDescriptor(
 ): { backup: Uint8Array; text: string; excluded: string[] } {
   const { pubkeys, excluded } = descriptorPubkeys(descriptor);
   const backup = encodeBackup({
+    padSecretsTo: KAITIAKI_SECRET_ENTRIES,
     ...options,
     pubkeys,
     items: [{ bip: BIP380, content: utf8.encode(descriptor) }],
