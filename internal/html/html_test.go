@@ -14,10 +14,11 @@ func init() {
 func staticPages() map[string]string {
 	wasmStub := []byte{0x00, 0x61, 0x73, 0x6d} // WASM magic bytes
 	return map[string]string{
-		"maker.html":   GenerateMakerHTML(wasmStub, MakerHTMLOptions{}),
-		"recover.html": GenerateRecoverHTML(nil),
-		"about.html":   GenerateIndexHTML(false),
-		"docs.html":    GenerateDocsHTML("en", false),
+		"maker.html":      GenerateMakerHTML(wasmStub, MakerHTMLOptions{}),
+		"recover.html":    GenerateRecoverHTML(nil),
+		"about.html":      GenerateIndexHTML(false),
+		"docs.html":       GenerateDocsHTML("en", false),
+		"descriptor.html": GenerateDescriptorHTML(false),
 	}
 }
 
@@ -116,6 +117,9 @@ func TestStaticHTMLNoUnexpectedURLs(t *testing.T) {
 		// docs: linked in user-facing documentation and index.html
 		"https://github.com/FiloSottile/age", // age encryption library
 		"https://www.bitcoinbutlers.com",     // every page links back to the Bitcoin Butlers site
+		"https://multisigbackup.com",         // descriptor backup: the fallback that proves recovery does not need us
+		"https://opreturnbot.com",            // descriptor backup: the publishing service Butlers pay
+		"https://mempool.space",              // descriptor backup: default explorer for the one fetch-by-txid call, and the reader can change it
 		"https://www.cloudflare.com",         // docs: League of Entropy (tlock section)
 		"https://cryptomator.org",            // docs: recommended encrypted vault tool
 		"https://veracrypt.fr",               // docs: recommended encrypted vault tool

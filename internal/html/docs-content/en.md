@@ -559,6 +559,43 @@ The owner key is a single key that opens the whole backup. Anyone who holds the 
 
 If you derive the owner key from another secret you already guard (rather than generating a random one), understand that the two are then linked: whoever controls that secret controls this backup too.
 
+## Advanced: Descriptor Backup on Bitcoin {#descriptor-backup}
+
+This one is for multisig wallets, and it solves a different problem from the rest of Kaitiaki.
+
+A multisig wallet needs two things to spend: enough keys, and the **descriptor** that says how those keys fit together. People protect the keys carefully and then lose the descriptor, and the keys alone will not open the wallet. A 2 of 3 should mean two keys is enough. Without the descriptor, it is not.
+
+The [descriptor backup page](descriptor.html) encrypts the descriptor so that your own keys unlock it, and gives you one line of text to write onto the Bitcoin blockchain. After that, your keys really are enough. The chain cannot lose it and nobody can delete it.
+
+### Who Can Open It
+
+You choose, and the choice matters:
+
+- **Your wallet's threshold.** The same number of keys it takes to spend. A 2 of 3 wallet needs two keys to open the backup. This matches your wallet exactly, so the backup is never harder to open than the money is to spend.
+- **Any one of your keys.** One key opens it. Easier to recover, and easier for anyone who gets hold of a single key. This follows the draft BIP-138 format, which other wallets are beginning to read.
+
+### What Is Public
+
+Everything you put on the chain is public and permanent. Anyone can see that a wallet backup exists, and can read your script type, your threshold and your derivation paths. Nobody can read your keys without the keys.
+
+That is the trade, and it is deliberate. A backup that only you can find is a backup that dies with you. This one survives you, survives us, and survives the guardians.
+
+### How to Recover It
+
+Open the page, choose **Recover**, and give it either the text or the transaction id. Then paste the wallet's extended public keys, which any of your signing devices can produce from your seeds. The page rebuilds the descriptor.
+
+Keep the transaction id on your estate insert. It is the fastest way in. If it is lost, a threshold backup can still be found by searching the chain for a short tag built from any two of your wallet's fingerprints.
+
+### Recovery Without This Page
+
+A threshold backup is plain text that starts with your script type. Paste it into [multisigbackup.com](https://multisigbackup.com) with the same keys and it decrypts there. That tool is not ours and does not depend on us. The format it reads is published, and a [test vector](https://github.com/Bitcoin-Butlers/kaitiaki/blob/main/docs/descriptor-backup-vector.md) lets anyone check that our text and theirs are the same thing.
+
+A one-key backup follows draft BIP-138. Any wallet that implements that draft can read it.
+
+### Never Put Seeds Here
+
+The page takes a descriptor and nothing else. Seeds belong on steel or in a codex32 kit, never on a public chain.
+
 ## Advanced: Time-Delayed Recovery {#timelock}
 
 You can set a waiting period when creating bundles. Even if your guardians combine their pieces early, the files stay locked until the date you chose: 30 days, 6 months, or a specific date.
