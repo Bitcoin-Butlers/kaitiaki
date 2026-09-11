@@ -104,6 +104,12 @@ export function getIndexHtml(): string {
   return getOrBuild('indexHtml', (dir) => buildHtmlResource(dir, 'index.html', ['index']));
 }
 
+export function getDescriptorHtml(): string {
+  return getOrBuild('descriptorHtml', (dir) =>
+    buildHtmlResource(dir, 'descriptor.html', ['descriptor'])
+  );
+}
+
 // Get absolute path to rememory binary
 export function getRememoryBin(): string {
   const binEnv = process.env.REMEMORY_BIN || './kaitiaki';

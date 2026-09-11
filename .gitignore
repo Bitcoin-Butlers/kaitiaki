@@ -10,6 +10,7 @@
 /internal/html/assets/tlock-recover.js
 /internal/html/assets/app-selfhosted.js
 /internal/html/assets/create-app-selfhosted.js
+/internal/html/assets/descriptor-app.js
 /internal/html/assets/app-tlock.js
 /node_modules/
 /e2e/playwright-report/

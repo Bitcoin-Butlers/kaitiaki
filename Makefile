@@ -29,6 +29,7 @@ ts:
 	esbuild internal/html/assets/src/app.ts --bundle --format=iife --define:__TLOCK__=false --minify-syntax --outfile=internal/html/assets/app.js --target=es2020 --loader:.txt=text --conditions=zbar-inlined
 	esbuild internal/html/assets/src/app.ts --bundle --format=iife --define:__TLOCK__=true --minify-syntax --outfile=internal/html/assets/app-tlock.js --target=es2020 --loader:.txt=text --conditions=zbar-inlined
 	esbuild internal/html/assets/src/create-app.ts --bundle --format=iife --define:__SELFHOSTED__=false --minify-syntax --outfile=internal/html/assets/create-app.js --target=es2020
+	esbuild internal/html/assets/src/descriptor-app.ts --bundle --format=iife --minify-syntax --outfile=internal/html/assets/descriptor-app.js --target=es2020
 	@echo "Compiling selfhosted TypeScript variant..."
 	esbuild internal/html/assets/src/create-app.ts --bundle --format=iife --define:__SELFHOSTED__=true --minify-syntax --outfile=internal/html/assets/create-app-selfhosted.js --target=es2020
 
@@ -113,7 +114,7 @@ lint:
 clean:
 	rm -f $(BINARY) $(BINARY)-cjk coverage.out coverage.html
 	rm -f internal/html/assets/recover.wasm internal/html/assets/create.wasm internal/html/assets/create-cjk.wasm
-	rm -f internal/html/assets/app.js internal/html/assets/app-tlock.js internal/html/assets/create-app.js internal/html/assets/shared.js internal/html/assets/types.js internal/html/assets/create-app-selfhosted.js
+	rm -f internal/html/assets/app.js internal/html/assets/app-tlock.js internal/html/assets/create-app.js internal/html/assets/shared.js internal/html/assets/types.js internal/html/assets/create-app-selfhosted.js internal/html/assets/descriptor-app.js
 	rm -rf dist/ man/ .test-build/
 	go clean -testcache
 

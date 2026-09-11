@@ -1,0 +1,196 @@
+    <div class="page-intro">
+      <h1>Descriptor Backup</h1>
+      <p class="subtitle">Put your wallet's map on Bitcoin, so your keys are always enough.</p>
+      <p>
+        A multisig wallet needs two things to spend: enough keys, and the
+        descriptor that says how those keys fit together. Lose the descriptor
+        and the keys alone will not open the wallet. This page encrypts the
+        descriptor so that your own keys unlock it, and gives you a line of
+        text to write onto the chain. After that, your keys are enough.
+      </p>
+
+      <details class="how-secure-intro-details">
+        <summary>How this works and how to use it safely</summary>
+        <div class="details-content">
+          <ul>
+            <li><strong>Everything happens on this device.</strong> The descriptor is encrypted in your browser. Only the encrypted text leaves this page, and only when you publish it.</li>
+            <li><strong>What goes on the chain is public and permanent.</strong> Anyone can read the encrypted text. Only your keys can decrypt it. Treat this as a one-way decision.</li>
+            <li><strong>Your policy stays readable.</strong> The script type, the threshold and the derivation paths are not encrypted, because whoever recovers needs them to know which keys to derive.</li>
+            <li><strong>Never put seed words here.</strong> Seeds belong on steel or in a codex32 kit. This page takes a descriptor and nothing else.</li>
+            <li><strong>Recovery does not need us.</strong> The text this page produces can be decrypted by other tools. See the recover step for how.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <div class="mode-tabs descriptor-tabs" id="descriptor-tabs">
+      <button type="button" class="mode-tab active" data-panel="protect">Protect a descriptor</button>
+      <button type="button" class="mode-tab" data-panel="recover">Recover a descriptor</button>
+    </div>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section id="panel-protect">
+      <div class="card">
+        <h2><span class="step-number">1</span> Your descriptor</h2>
+        <textarea id="descriptor-input" rows="5" spellcheck="false"
+          placeholder="wsh(sortedmulti(2,[abcd1234/48h/0h/0h/2h]xpub.../&lt;0;1&gt;/*,...))"></textarea>
+        <small>Export it from your coordinator. In Sparrow: Settings, then Export, then Output Descriptor.</small>
+        <div id="descriptor-summary" class="descriptor-summary hidden"></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-number">2</span> Who can open it</h2>
+        <div class="choice-list" id="scheme-choice">
+          <label class="choice">
+            <input type="radio" name="scheme" value="threshold" checked>
+            <span class="choice-body">
+              <strong>My wallet's threshold</strong>
+              <span class="choice-note">The same number of keys it takes to spend. A 2 of 3 wallet needs 2 keys to open the backup. Matches your wallet exactly, and the text can be recovered on multisigbackup.com.</span>
+            </span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="scheme" value="any">
+            <span class="choice-body">
+              <strong>Any one of my keys</strong>
+              <span class="choice-note">One key opens it. Easier to recover, and easier for anyone who gets hold of a single key. Follows the draft BIP-138 format, which other wallets are starting to read.</span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-number">3</span> The text to publish</h2>
+        <button type="button" class="btn btn-primary" id="protect-btn">Encrypt my descriptor</button>
+        <div id="protect-error" class="alert-error hidden"></div>
+        <div id="protect-result" class="hidden">
+          <div class="result-meta" id="protect-meta"></div>
+          <textarea id="protect-output" rows="6" readonly spellcheck="false"></textarea>
+          <div class="button-row">
+            <button type="button" class="btn btn-secondary" id="copy-output">Copy the text</button>
+            <button type="button" class="btn btn-secondary" id="download-output">Save it as a file</button>
+          </div>
+
+          <h3>Put it on the chain</h3>
+          <p class="publish-intro">
+            Two ways. Both put the same text into one OP_RETURN output. Keep
+            the transaction id afterwards, and write it on your estate insert.
+          </p>
+
+          <details class="publish-option" open>
+            <summary>Pay someone to publish it</summary>
+            <div class="details-content">
+              <p>
+                <a href="https://opreturnbot.com" target="_blank" rel="noopener">opreturnbot.com</a>
+                takes the text and publishes it for you. You pay on chain or
+                over Lightning. You need no node and no wallet software.
+              </p>
+              <p>
+                Tick its <strong>Private</strong> box. Without it the site
+                announces your backup on social media. Your backup is public
+                either way, but there is no reason to advertise it.
+              </p>
+              <p class="note">
+                The transaction comes from their wallet, so your own coins are
+                never linked to your backup.
+              </p>
+            </div>
+          </details>
+
+          <details class="publish-option">
+            <summary>Publish it yourself with Bitcoin Core</summary>
+            <div class="details-content">
+              <p>Run this against your own node. It builds, signs and broadcasts in one step.</p>
+              <pre><code id="core-command"></code></pre>
+              <button type="button" class="btn btn-secondary" id="copy-command">Copy the command</button>
+              <p class="note">Needs Bitcoin Core 30 or newer, with a funded wallet loaded.</p>
+            </div>
+          </details>
+
+          <div class="drill-note">
+            <strong>Before you stop:</strong> come back to this page, open
+            Recover, and read your backup off the chain with your own keys.
+            A backup you have not read back is a guess.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section id="panel-recover" class="hidden">
+      <div class="card">
+        <h2><span class="step-number">1</span> Find the backup</h2>
+        <div class="choice-list" id="source-choice">
+          <label class="choice">
+            <input type="radio" name="source" value="text" checked>
+            <span class="choice-body">
+              <strong>I have the text</strong>
+              <span class="choice-note">Paste it from the estate insert, a file, or a block explorer.</span>
+            </span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="source" value="txid">
+            <span class="choice-body">
+              <strong>I have the transaction id</strong>
+              <span class="choice-note">This page fetches the text from a public explorer. It is the only step that touches the network.</span>
+            </span>
+          </label>
+        </div>
+
+        <div id="source-text">
+          <textarea id="recover-input" rows="6" spellcheck="false"
+            placeholder="wsh(sortedmulti(2,[48h/0h/0h/2h]&lt;0;1&gt;/*,...))BASE64... or QklQMTM4..."></textarea>
+        </div>
+
+        <div id="source-txid" class="hidden">
+          <label for="txid-input">Transaction id</label>
+          <input type="text" id="txid-input" spellcheck="false" placeholder="64 hexadecimal characters">
+          <label for="explorer-input">Explorer</label>
+          <input type="text" id="explorer-input" spellcheck="false" value="https://mempool.space/api">
+          <small>Change this to your own mempool or Esplora instance if you run one.</small>
+          <button type="button" class="btn btn-secondary" id="fetch-btn">Fetch it</button>
+          <div id="fetch-status" class="note"></div>
+        </div>
+
+        <div id="recover-summary" class="descriptor-summary hidden"></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-number">2</span> Your keys</h2>
+        <p id="keys-needed" class="note">Paste the extended public keys of the wallet, one per line.</p>
+        <textarea id="xpubs-input" rows="5" spellcheck="false" placeholder="xpub...&#10;xpub..."></textarea>
+        <small>Derive these from your seeds with your signing device, using the paths shown above. This page never asks for a seed.</small>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-number">3</span> Your descriptor</h2>
+        <button type="button" class="btn btn-primary" id="recover-btn">Rebuild my descriptor</button>
+        <div id="recover-error" class="alert-error hidden"></div>
+        <div id="recover-result" class="hidden">
+          <div class="verification-status">
+            <div class="verification-header"><span>&#10003;</span> <span>Recovered</span></div>
+            <div class="verification-details" id="recover-detail"></div>
+          </div>
+          <textarea id="recover-output" rows="6" readonly spellcheck="false"></textarea>
+          <div class="button-row">
+            <button type="button" class="btn btn-secondary" id="copy-recovered">Copy the descriptor</button>
+            <button type="button" class="btn btn-secondary" id="download-recovered">Save it as a file</button>
+          </div>
+          <p class="note">Import this into Sparrow or any coordinator to watch and spend from the wallet again.</p>
+        </div>
+      </div>
+
+      <div class="card card-muted">
+        <h2>If this page is gone</h2>
+        <p>
+          A threshold backup is plain text that begins with the script type.
+          Paste it into
+          <a href="https://multisigbackup.com" target="_blank" rel="noopener">multisigbackup.com</a>
+          with the same keys and it decrypts there. That tool is not ours and
+          does not depend on us.
+        </p>
+        <p>
+          A one-key backup follows draft BIP-138. Any wallet that implements
+          that draft can read it.
+        </p>
+      </div>
+    </section>

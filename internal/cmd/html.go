@@ -77,11 +77,14 @@ func runHTML(cmd *cobra.Command, args []string) error {
 		}
 		content = html.GenerateMakerHTML(createWASM, html.MakerHTMLOptions{})
 
+	case "descriptor":
+		content = html.GenerateDescriptorHTML(false)
+
 	case "site":
 		return runHTMLSite(cmd)
 
 	default:
-		return fmt.Errorf("unknown subcommand: %s (use 'about', 'create', 'docs', 'recover', or 'site')", subcommand)
+		return fmt.Errorf("unknown subcommand: %s (use 'about', 'create', 'descriptor', 'docs', 'recover', or 'site')", subcommand)
 	}
 
 	// Output to file or stdout
@@ -127,6 +130,7 @@ func runHTMLSite(cmd *cobra.Command) error {
 		{"index.html", aboutHTML}, // Copy for GitHub Pages root URL
 		{"maker.html", html.GenerateMakerHTML(createWASM, html.MakerHTMLOptions{})},
 		{"docs.html", html.GenerateDocsHTML("en", false)},
+		{"descriptor.html", html.GenerateDescriptorHTML(false)},
 		{"recover.html", html.GenerateRecoverHTML(nil, html.RecoverHTMLOptions{NoTlock: noTlock})},
 	}
 
