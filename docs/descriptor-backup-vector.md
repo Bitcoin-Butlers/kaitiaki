@@ -67,6 +67,8 @@ whole path can be checked by anyone with no software from us:
 | Published through | opreturnbot.com, Private flag set |
 | Payload | 545 bytes in one OP_RETURN output |
 | Transaction size | 671 vB, 3,355 sat at 5 sat/vB |
+| Confirmed in | block 966450, `00000000000000000000e747012e57d01eda2fa303a2a5da6c32eaadbfd493c7` |
+| Mined by | ViaBTC, in the first block after broadcast |
 
 Read the transaction on any explorer, take the OP_RETURN bytes as text,
 and decrypt them with any two of the three keys above. You get the
