@@ -295,12 +295,12 @@ If your device has a camera, scan the QR code on the PDF to import your share di
 </div>
 
 <figure class="screenshot">
-<img src="screenshots/qr-camera-permission.png" alt="Browser asking for camera permission">
-<figcaption>Your browser will ask for permission to use the camera</figcaption>
+<img src="screenshots/scan-qr-button.png" alt="The share step of the recovery tool, with the Scan QR code button">
+<figcaption>Choose Scan QR code. Your browser then asks for permission to use the camera.</figcaption>
 </figure>
 
 <figure class="screenshot">
-<img src="screenshots/qr-scanning.png" alt="Scanning a QR code from a printed PDF">
+<img src="screenshots/qr-scanning.png" alt="The recovery tool's scanner with a printed QR code in view">
 <figcaption>Point your camera at the QR code on the printed PDF to import the share</figcaption>
 </figure>
 
@@ -313,8 +313,8 @@ If your device has a camera, scan the QR code on the PDF to import your share di
 </div>
 
 <figure class="screenshot">
-<img src="screenshots/manifest-file-picker.png" alt="Selecting MANIFEST.age from a folder">
-<figcaption>Select the MANIFEST.age file from where you stored it</figcaption>
+<img src="screenshots/manifest-drop-zone.png" alt="The manifest step of the recovery tool, waiting for MANIFEST.age">
+<figcaption>Drop MANIFEST.age here, or click to choose it. A recover.html from any guardian's bundle works too.</figcaption>
 </figure>
 
 <div class="step-guide">

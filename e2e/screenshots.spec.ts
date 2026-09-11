@@ -14,6 +14,7 @@
  */
 
 import { test, expect, Page } from './fixtures';
+import { chromium } from '@playwright/test';
 import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -44,11 +45,15 @@ const VIEWPORT = { width: 1280, height: 2000 };
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Save a screenshot cropped tightly to visible cards. */
+/** Save a screenshot cropped tightly to visible cards, under docs/screenshots/{lang}/. */
 async function snap(page: Page, lang: Lang, name: string): Promise<void> {
   const dir = path.join(SCREENSHOTS_ROOT, lang);
   fs.mkdirSync(dir, { recursive: true });
+  await snapTo(page, path.join(dir, `${name}.png`));
+}
 
+/** Save a screenshot cropped tightly to visible cards, to an absolute path. */
+async function snapTo(page: Page, file: string): Promise<void> {
   // Remove overflow:hidden from cards so content isn't clipped, then measure bounds.
   const bounds = await page.evaluate(() => {
     const cards = document.querySelectorAll('.container > .card');
@@ -73,7 +78,7 @@ async function snap(page: Page, lang: Lang, name: string): Promise<void> {
 
   const pad = 16;
   await page.screenshot({
-    path: path.join(dir, `${name}.png`),
+    path: file,
     clip: {
       x: bounds.x - pad,
       y: bounds.y - pad,
@@ -478,5 +483,119 @@ test.describe('README screenshot', () => {
         width: bounds.width + pad * 2, height: bounds.height + pad * 2,
       },
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Docs step screenshots
+//
+// The guide's recovery section had three images the generator above did not
+// make: a browser asking for camera permission, the scanner in use, and an
+// OS file picker. The first and last were dialogs of the reader's browser and
+// operating system, not of this tool, and a page screenshot cannot contain
+// them. They are replaced by the page at that step: the share step with the
+// Scan button, and the manifest drop zone. The scanner shot needs a camera,
+// which the offline fixtures do not provide, so it launches its own Chromium
+// with a fake camera fed from a rendered QR code on paper, and stubs
+// BarcodeDetector so the modal stays open long enough to photograph.
+//
+// Also made here: the Open Graph image (docs/screenshots/recovery-1.png) at
+// 1200x630, and the root friends.png the README links to.
+// ---------------------------------------------------------------------------
+
+test.describe('Docs step screenshots', () => {
+  test('scan button, scanner, manifest drop zone, og image', async () => {
+    test.setTimeout(120000);
+    const aliceDir = extractBundle(bundlesDir, 'Alice');
+
+    // A QR code on warm paper, as a short looping video the fake camera plays.
+    // The code carries our recovery URL and nothing else, so a reader who
+    // scans the documentation image lands on the tool.
+    const work = fs.mkdtempSync(path.join(os.tmpdir(), 'kaitiaki-qr-'));
+    const qrPng = path.join(work, 'qr.png');
+    const feed = path.join(work, 'qr.y4m');
+    execFileSync('qrencode', ['-o', qrPng, '-s', '10', '-m', '2', 'https://www.bitcoinbutlers.com/tools/kaitiaki/recover.html']);
+    // Portrait, like a phone camera; the code sized to sit inside the 250px frame.
+    execFileSync('ffmpeg', [
+      '-y', '-loglevel', 'error',
+      '-f', 'lavfi', '-i', 'color=c=0xf3eee4:s=480x640:r=10:d=2',
+      '-i', qrPng,
+      '-filter_complex', '[1:v]scale=150:-1[q];[0:v][q]overlay=(W-w)/2:(H-h)/2',
+      '-pix_fmt', 'yuv420p', '-t', '2', feed,
+    ]);
+
+    const browser = await chromium.launch({
+      args: [
+        '--use-fake-device-for-media-stream',
+        '--use-fake-ui-for-media-stream',
+        `--use-file-for-fake-video-capture=${feed}`,
+      ],
+    });
+    try {
+      const context = await browser.newContext({ viewport: VIEWPORT, permissions: ['camera'] });
+      // Never detect anything: the modal must stay open for the photograph.
+      await context.addInitScript(() => {
+        (window as any).BarcodeDetector = class {
+          static getSupportedFormats() { return Promise.resolve(['qr_code']); }
+          detect() { return Promise.resolve([]); }
+        };
+      });
+      const page = await context.newPage();
+      const recovery = new RecoveryPage(page, aliceDir);
+      await recovery.open();
+      await recovery.expectShareCount(1);
+
+      // The share step, with the Scan QR code button the reader is about to press.
+      await frameRecoveryStep(page, [0]);
+      await snapTo(page, path.join(SCREENSHOTS_ROOT, 'scan-qr-button.png'));
+
+      // The scanner, with the printed code in the camera's view. The guide says
+      // to scan with a phone, so this one is a phone: 430x932 at 2x.
+      const phone = await browser.newContext({
+        viewport: { width: 430, height: 932 },
+        deviceScaleFactor: 2,
+        permissions: ['camera'],
+      });
+      await phone.addInitScript(() => {
+        (window as any).BarcodeDetector = class {
+          static getSupportedFormats() { return Promise.resolve(['qr_code']); }
+          detect() { return Promise.resolve([]); }
+        };
+      });
+      const phonePage = await phone.newPage();
+      const phoneRecovery = new RecoveryPage(phonePage, aliceDir);
+      await phoneRecovery.open();
+      await phoneRecovery.expectShareCount(1);
+      await phonePage.locator('#scan-qr-btn').click();
+      const modal = phonePage.locator('#qr-scanner-modal');
+      await expect(modal).toBeVisible();
+      await phonePage.waitForFunction(() => {
+        const v = document.getElementById('qr-video') as HTMLVideoElement | null;
+        return !!v && v.readyState >= 2 && v.videoWidth > 0;
+      }, null, { timeout: 20000 });
+      await phonePage.waitForTimeout(700);
+      await modal.screenshot({ path: path.join(SCREENSHOTS_ROOT, 'qr-scanning.png') });
+      await phone.close();
+
+      // The manifest step before anything is loaded: the standalone page, not
+      // a personalised bundle, because a bundle carries its manifest with it.
+      await recovery.openFile(standaloneRecoverHtml);
+      await frameRecoveryStep(page, [1]);
+      await snapTo(page, path.join(SCREENSHOTS_ROOT, 'manifest-drop-zone.png'));
+
+      // Open Graph image: the recovery tool with a bundle open, 1200x630.
+      const og = await browser.newPage({ viewport: { width: 1200, height: 630 } });
+      const ogRecovery = new RecoveryPage(og, aliceDir);
+      await ogRecovery.open();
+      await ogRecovery.expectShareCount(1);
+      await og.screenshot({ path: path.join(SCREENSHOTS_ROOT, 'recovery-1.png') });
+      await og.close();
+    } finally {
+      await browser.close();
+      fs.rmSync(work, { recursive: true, force: true });
+    }
+
+    // The README links the root friends.png; keep it the same image as the guide's.
+    fs.copyFileSync(path.join(SCREENSHOTS_ROOT, 'en', 'friends.png'), path.join(SCREENSHOTS_ROOT, 'friends.png'));
   });
 });
