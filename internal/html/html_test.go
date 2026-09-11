@@ -117,7 +117,6 @@ func TestStaticHTMLNoUnexpectedURLs(t *testing.T) {
 		// docs: linked in user-facing documentation and index.html
 		"https://github.com/FiloSottile/age", // age encryption library
 		"https://www.bitcoinbutlers.com",     // every page links back to the Bitcoin Butlers site
-		"https://multisigbackup.com",         // descriptor backup: the fallback that proves recovery does not need us
 		"https://opreturnbot.com",            // descriptor backup: the publishing service Butlers pay
 		"https://mempool.space",              // descriptor backup: default explorer for the one fetch-by-txid call, and the reader can change it
 		"https://www.cloudflare.com",         // docs: League of Entropy (tlock section)

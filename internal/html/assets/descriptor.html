@@ -45,7 +45,7 @@
             <input type="radio" name="scheme" value="threshold" checked>
             <span class="choice-body">
               <strong>My wallet's threshold</strong>
-              <span class="choice-note">The same number of keys it takes to spend. A 2 of 3 wallet needs 2 keys to open the backup. Matches your wallet exactly, and the text can be recovered on multisigbackup.com.</span>
+              <span class="choice-note">The same number of keys it takes to spend. A 2 of 3 wallet needs 2 keys to open the backup. Matches your wallet exactly, so the backup is never harder to open than the money is to spend.</span>
             </span>
           </label>
           <label class="choice">
@@ -182,15 +182,14 @@
       <div class="card card-muted">
         <h2>If this page is gone</h2>
         <p>
-          A threshold backup is plain text that begins with the script type.
-          Paste it into
-          <a href="https://multisigbackup.com" target="_blank" rel="noopener">multisigbackup.com</a>
-          with the same keys and it decrypts there. That tool is not ours and
-          does not depend on us.
+          Neither format is ours to own. A threshold backup uses the published
+          multisig-backup format. A one-key backup follows draft BIP-138. Both
+          are open, and other software already reads them, so your descriptor
+          can be rebuilt with no Bitcoin Butlers involved.
         </p>
         <p>
-          A one-key backup follows draft BIP-138. Any wallet that implements
-          that draft can read it.
+          Your estate insert names the tool and how to reach it, because that
+          is the page someone reads on the day this one is gone.
         </p>
       </div>
     </section>

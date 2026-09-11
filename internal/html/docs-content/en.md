@@ -588,9 +588,9 @@ Keep the transaction id on your estate insert. It is the fastest way in. If it i
 
 ### Recovery Without This Page
 
-A threshold backup is plain text that starts with your script type. Paste it into [multisigbackup.com](https://multisigbackup.com) with the same keys and it decrypts there. That tool is not ours and does not depend on us. The format it reads is published, and a [test vector](https://github.com/Bitcoin-Butlers/kaitiaki/blob/main/docs/descriptor-backup-vector.md) lets anyone check that our text and theirs are the same thing.
+Neither format is ours to own, and that is the point. A threshold backup uses the published multisig-backup format. A one-key backup follows draft BIP-138. Both are open specifications with other software already reading them, so a technical person can rebuild your descriptor with no Bitcoin Butlers involved.
 
-A one-key backup follows draft BIP-138. Any wallet that implements that draft can read it.
+Your estate insert names the tool to use and how to reach it, because that is the page someone reads on the day we are not here. Our own test vectors are in the [source repository](https://github.com/Bitcoin-Butlers/kaitiaki) for anyone who wants to check the formats match, byte for byte.
 
 ### Never Put Seeds Here
 
