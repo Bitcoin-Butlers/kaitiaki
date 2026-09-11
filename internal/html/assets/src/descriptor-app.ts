@@ -31,6 +31,12 @@ const TX_OVERHEAD_VBYTES = 137;
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
+/**
+ * What the protect step produced, so the confirm step can check the chain
+ * against it. Held in memory only; nothing is stored or sent anywhere.
+ */
+let produced: { descriptor: string; text: string; scheme: Scheme } | null = null;
+
 function show(el: HTMLElement, visible: boolean) {
   el.classList.toggle('hidden', !visible);
 }
@@ -94,6 +100,17 @@ interface Shape {
 function displayPaths(descriptor: string): string[] {
   const origins = descriptor.matchAll(/\[(?:[0-9a-fA-F]{8})?\/?((?:\d+['h]?)(?:\/\d+['h]?)*)\]/g);
   return [...new Set([...origins].map((m) => m[1]).filter(Boolean))];
+}
+
+/**
+ * The extended public keys written in the descriptor itself.
+ *
+ * This is what lets the confirm step decrypt the backup without asking the
+ * reader for anything. They already handed us the keys when they pasted the
+ * descriptor, so requiring them again would be theatre.
+ */
+function keysIn(descriptor: string): string[] {
+  return [...new Set(descriptor.match(/[xyztuvUVYZ]pub[a-zA-Z0-9]{107}/g) ?? [])];
 }
 
 function describe(descriptor: string): Shape {
@@ -182,10 +199,106 @@ async function protect() {
 
     $<HTMLTextAreaElement>('protect-output').value = text;
     $('core-command').textContent = coreCommand(text);
+    produced = { descriptor, text, scheme };
+    show(result, true);
+    show($('confirm-card'), true);
+    show($('confirm-result'), false);
+    show($('confirm-error'), false);
+  } catch (error) {
+    fail(errorBox, error);
+  }
+}
+
+/**
+ * Reads the published backup back off the chain and proves three things:
+ * the bytes are the ones we made, they decrypt, and what comes out is the
+ * descriptor we started from. Anything less is not proof.
+ */
+async function confirmOnChain() {
+  const errorBox = $('confirm-error');
+  const result = $('confirm-result');
+  show(errorBox, false);
+  show(result, false);
+
+  if (!produced) {
+    fail(errorBox, new Error('Encrypt a descriptor first.'));
+    return;
+  }
+
+  const txid = $<HTMLInputElement>('confirm-txid').value.trim().toLowerCase();
+  try {
+    const onChain = await fetchFromChain(txid, 'https://mempool.space/api');
+    if (onChain !== produced.text) {
+      throw new Error(
+        'That transaction carries different bytes from the text above. Check the transaction id, and check that the whole text was pasted.'
+      );
+    }
+
+    const keys = keysIn(produced.descriptor);
+    let recovered: string | undefined;
+    if (produced.scheme === 'threshold') {
+      recovered = (await decryptThreshold(onChain, keys)).descriptor;
+    } else {
+      recovered = decryptAnyKey(onChain, keys[0]);
+    }
+    if (recovered !== produced.descriptor) {
+      throw new Error('The backup on the chain did not give back your descriptor. Do not rely on it.');
+    }
+
+    const status = await fetchStatus(txid);
+    const detail = $('confirm-detail');
+    detail.innerHTML = '';
+    for (const line of [
+      'The bytes on the chain match the text this page produced.',
+      'They decrypt with the keys in your own descriptor, and give it back exactly.',
+      status.confirmed
+        ? `Confirmed in block ${status.block_height}.`
+        : 'Still in the mempool. It is readable now and will confirm shortly.',
+    ]) {
+      const p = document.createElement('p');
+      p.textContent = line;
+      detail.appendChild(p);
+    }
+
+    $<HTMLTextAreaElement>('estate-block').value = estateBlock(txid, status, produced.scheme);
     show(result, true);
   } catch (error) {
     fail(errorBox, error);
   }
+}
+
+interface TxStatus {
+  confirmed: boolean;
+  block_height?: number;
+  block_hash?: string;
+}
+
+async function fetchStatus(txid: string): Promise<TxStatus> {
+  const response = await fetch(`https://mempool.space/api/tx/${txid}/status`);
+  if (!response.ok) return { confirmed: false };
+  return (await response.json()) as TxStatus;
+}
+
+/** The lines that go onto the page kept with the will. */
+function estateBlock(txid: string, status: TxStatus, scheme: Scheme): string {
+  const opens =
+    scheme === 'threshold'
+      ? 'the same number of keys it takes to spend'
+      : 'any one of the wallet keys';
+  return [
+    'OUR WALLET DESCRIPTOR IS ON BITCOIN',
+    '',
+    `Transaction id: ${txid}`,
+    `Block height:   ${status.block_height ?? 'pending, check the transaction id'}`,
+    `Block hash:     ${status.block_hash ?? 'pending, check the transaction id'}`,
+    `Written on:     ${new Date().toISOString().slice(0, 10)}`,
+    `Opens with:     ${opens}`,
+    '',
+    'To read it: open bitcoinbutlers.com/tools/kaitiaki/descriptor.html,',
+    'choose Recover, enter the transaction id, then enter the wallet keys.',
+    'If that page is gone, any block explorer shows the same text, and the',
+    'format is public, so any technical person can rebuild the descriptor.',
+  ].join('\n');
 }
 
 // ---------------------------------------------------------------------------
@@ -374,6 +487,14 @@ function init() {
   );
   $<HTMLButtonElement>('download-output').addEventListener('click', () =>
     saveFile($<HTMLTextAreaElement>('protect-output').value, 'descriptor-backup.txt')
+  );
+  $<HTMLButtonElement>('open-bot').addEventListener('click', (event) => {
+    copyToClipboard($<HTMLTextAreaElement>('protect-output').value, event.currentTarget as HTMLButtonElement);
+    window.open('https://opreturnbot.com', '_blank', 'noopener');
+  });
+  $<HTMLButtonElement>('confirm-btn').addEventListener('click', confirmOnChain);
+  $<HTMLButtonElement>('copy-estate').addEventListener('click', (event) =>
+    copyToClipboard($<HTMLTextAreaElement>('estate-block').value, event.currentTarget as HTMLButtonElement)
   );
 
   // Recover

@@ -84,11 +84,15 @@
                 takes the text and publishes it for you. You pay on chain or
                 over Lightning. You need no node and no wallet software.
               </p>
-              <p>
-                Tick its <strong>Private</strong> box. Without it the site
-                announces your backup on social media. Your backup is public
-                either way, but there is no reason to advertise it.
-              </p>
+              <ol class="publish-steps">
+                <li>Paste the text into its Message box.</li>
+                <li><strong>Tick Private.</strong> Without it the site
+                  announces your backup on social media. Your backup is public
+                  either way, but there is no reason to advertise it.</li>
+                <li>Pay on chain or over Lightning.</li>
+                <li>Copy the transaction id and bring it back to step 4 here.</li>
+              </ol>
+              <button type="button" class="btn btn-primary" id="open-bot">Copy the text and open the site</button>
               <p class="note">
                 The transaction comes from their wallet, so your own coins are
                 never linked to your backup.
@@ -102,14 +106,39 @@
               <p>Run this against your own node. It builds, signs and broadcasts in one step.</p>
               <pre><code id="core-command"></code></pre>
               <button type="button" class="btn btn-secondary" id="copy-command">Copy the command</button>
-              <p class="note">Needs Bitcoin Core 30 or newer, with a funded wallet loaded.</p>
+              <p class="note">Needs Bitcoin Core 30 or newer, with a funded wallet loaded. It prints the transaction id; bring that back to step 4.</p>
             </div>
           </details>
 
           <div class="drill-note">
-            <strong>Before you stop:</strong> come back to this page, open
-            Recover, and read your backup off the chain with your own keys.
-            A backup you have not read back is a guess.
+            <strong>Not finished yet.</strong> Publishing is not proof. Come
+            back here with the transaction id and let this page read your
+            backup off the chain. A backup nobody has read back is a guess.
+          </div>
+        </div>
+      </div>
+
+      <div class="card hidden" id="confirm-card">
+        <h2><span class="step-number">4</span> Prove it landed</h2>
+        <p class="note">
+          Paste the transaction id from whoever published it. This page reads
+          the bytes back off the chain and opens them with the keys already in
+          your descriptor, so you have to type nothing else.
+        </p>
+        <label for="confirm-txid">Transaction id</label>
+        <input type="text" id="confirm-txid" spellcheck="false" placeholder="64 hexadecimal characters">
+        <button type="button" class="btn btn-primary" id="confirm-btn">Check it on the chain</button>
+        <div id="confirm-error" class="alert-error hidden"></div>
+        <div id="confirm-result" class="hidden">
+          <div class="verification-status">
+            <div class="verification-header"><span>&#10003;</span> <span>Verified on the chain</span></div>
+            <div class="verification-details" id="confirm-detail"></div>
+          </div>
+          <h3>For your estate insert</h3>
+          <p class="note">Copy this onto the page that lives with your will.</p>
+          <textarea id="estate-block" rows="7" readonly spellcheck="false"></textarea>
+          <div class="button-row">
+            <button type="button" class="btn btn-secondary" id="copy-estate">Copy it</button>
           </div>
         </div>
       </div>

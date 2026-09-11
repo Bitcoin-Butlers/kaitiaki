@@ -97,6 +97,84 @@ test.describe('Descriptor Backup page', () => {
     await expect(page.locator('#recover-output')).toHaveValue(vector.descriptor);
   });
 
+  /**
+   * Step 4 is the one that turns "I published something" into proof, so it is
+   * worth testing both ways: it must go green on the real bytes, and it must
+   * refuse loudly on anything else.
+   */
+  async function mockChain(page: import('@playwright/test').Page, opReturnText: string, confirmed = true) {
+    const bytes = Buffer.from(opReturnText, 'utf8');
+    // OP_RETURN then OP_PUSHDATA2, which is what a payload this size uses.
+    const script =
+      '6a4d' +
+      bytes.length.toString(16).padStart(4, '0').match(/../g)!.reverse().join('') +
+      bytes.toString('hex');
+    // A single glob for both /api/tx/<id> and /api/tx/<id>/status. A single
+    // star stops at a slash, which let the status call reach the real network.
+    await page.route('**/api/tx/**', async (route) => {
+      if (route.request().url().endsWith('/status')) {
+        return route.fulfill({
+          json: confirmed
+            ? { confirmed: true, block_height: 966450, block_hash: '0000000000000000000012345' }
+            : { confirmed: false },
+        });
+      }
+      return route.fulfill({
+        json: { vout: [{ scriptpubkey: script, scriptpubkey_type: 'op_return' }] },
+      });
+    });
+  }
+
+  const TXID = '4801ea9c10e14a5ea5c0e5e68bfe08fd2422005ea0a3a9631fead29ce910a4df';
+
+  test('step 4 verifies the real bytes and writes the estate block', async ({ page }) => {
+    await page.fill('#descriptor-input', vector.descriptor);
+    await page.click('#protect-btn');
+    const text = await page.locator('#protect-output').inputValue();
+
+    await expect(page.locator('#confirm-card')).toBeVisible();
+    await mockChain(page, text);
+    await page.fill('#confirm-txid', TXID);
+    await page.click('#confirm-btn');
+
+    const detail = page.locator('#confirm-detail');
+    await expect(detail).toContainText('match the text this page produced');
+    await expect(detail).toContainText('give it back exactly');
+    await expect(detail).toContainText('block 966450');
+
+    // The reader typed no keys. The descriptor they pasted carried them.
+    const estate = await page.locator('#estate-block').inputValue();
+    expect(estate).toContain(TXID);
+    expect(estate).toContain('966450');
+    expect(estate).toContain('the same number of keys it takes to spend');
+  });
+
+  test('step 4 refuses when the chain carries different bytes', async ({ page }) => {
+    await page.fill('#descriptor-input', vector.descriptor);
+    await page.click('#protect-btn');
+
+    await mockChain(page, 'wsh(sortedmulti(2,[48h/0h/0h/2h]<0;1>/*))SOMETHINGELSE');
+    await page.fill('#confirm-txid', TXID);
+    await page.click('#confirm-btn');
+
+    await expect(page.locator('#confirm-error')).toContainText('different bytes');
+    await expect(page.locator('#confirm-result')).toBeHidden();
+  });
+
+  test('step 4 says so when the transaction is still unconfirmed', async ({ page }) => {
+    await page.fill('#descriptor-input', vector.descriptor);
+    await page.check('input[name="scheme"][value="any"]');
+    await page.click('#protect-btn');
+    const text = await page.locator('#protect-output').inputValue();
+
+    await mockChain(page, text, false);
+    await page.fill('#confirm-txid', TXID);
+    await page.click('#confirm-btn');
+
+    await expect(page.locator('#confirm-detail')).toContainText('Still in the mempool');
+    await expect(page.locator('#estate-block')).toHaveValue(/any one of the wallet keys/);
+  });
+
   test('a stranger key opens nothing', async ({ page }) => {
     await page.fill('#descriptor-input', vector.descriptor);
     await page.click('#protect-btn');
