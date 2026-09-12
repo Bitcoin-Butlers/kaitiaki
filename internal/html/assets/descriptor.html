@@ -16,7 +16,7 @@
           <ul>
             <li><strong>Everything happens on this device.</strong> The descriptor is encrypted in your browser. Only the encrypted text leaves this page, and only when you publish it.</li>
             <li><strong>What goes on the chain is public and permanent.</strong> Anyone can read the encrypted text. Only your keys can decrypt it. Treat this as a one-way decision.</li>
-            <li><strong>Your policy stays readable.</strong> The script type, the threshold and the derivation paths are not encrypted, because whoever recovers needs them to know which keys to derive.</li>
+            <li><strong>What stays readable depends on the format.</strong> In the threshold format the script type, the threshold and the derivation paths stay in plain text. Whoever recovers needs them to know which keys to derive. In the one-key format the whole descriptor is encrypted. Only a marker and a padded list of entries stay readable.</li>
             <li><strong>Never put seed words here.</strong> Seeds belong on steel or in a codex32 kit. This page takes a descriptor and nothing else.</li>
             <li><strong>Recovery does not need us.</strong> The text this page produces can be decrypted by other tools. See the recover step for how.</li>
           </ul>

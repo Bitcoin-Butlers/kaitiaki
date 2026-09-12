@@ -30,10 +30,10 @@ inside the bundle (README) using free standard tools.
 
 ## The wallet's map is also on Bitcoin
 
-Our wallet needs a **descriptor** as well as its keys. If one key is lost,
-the other keys cannot rebuild the wallet without it. A copy of that
-descriptor is written on the Bitcoin blockchain, encrypted. It cannot be
-deleted and it cannot be lost.
+Our wallet needs a **descriptor** as well as its keys. Lose one key and the
+descriptor together, and the keys you still hold cannot rebuild the wallet,
+even when they are enough to sign. An encrypted copy of that descriptor is
+on the Bitcoin blockchain. Nobody can delete it and nobody can lose it.
 
 | | |
 |---|---|
