@@ -1,7 +1,7 @@
 ---
 title: "Bitcoin Inheritance Guide"
-subtitle: "How to create bundles and recover files"
-cli_guide_note: 'There is also a <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">CLI guide</a>.'
+subtitle: "How to make bundles, place them with guardians, and recover"
+cli_guide_note: 'There is also a <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">guide for the command line</a>.'
 nav_home: "Inheritance"
 nav_home_link: "Home"
 nav_create: "Create Bundles"
@@ -14,66 +14,71 @@ footer_home: "Home"
 
 ## Overview {#overview}
 
-Bitcoin Inheritance is a digital safe with multiple keys. You choose who holds them and how many must come together to open it.
+Bitcoin Inheritance keeps the instructions around your bitcoin safe until the day someone else needs them. You choose the people who hold the pieces, and how many of them must agree before anything opens.
 
-Under the hood, it encrypts your files with [age](https://github.com/FiloSottile/age), splits the key among people you trust, and gives each person a self-contained bundle for recovery.
+It encrypts your files with [age](https://github.com/FiloSottile/age), splits the key into pieces with Shamir's Secret Sharing, and gives each guardian one self-contained bundle. A bundle holds the encrypted files, one piece of the key, and the recovery tool.
 
-Recovery is opening a file in a browser.\* No servers, no need for this website to exist.
-
-<p style="font-size: 0.8125rem; color: #8A8480;">* <a href="#timelock" style="color: #8A8480;">Time-locked</a> archives need a brief internet connection at recovery time.</p>
+Recovery is opening one file in a browser. It needs no server, no account and no internet connection, and it works if this website is gone. The one exception is a time-locked bundle, which needs a brief connection to check the date. See [Time-Delayed Recovery](#timelock).
 
 <div class="tip">
-<strong>Tip:</strong> No one person can access your data. They need to bring together enough pieces, for example 3 of 5.
+<strong>No guardian can open anything alone.</strong> A 3 of 5 set needs three of the five guardians together. Two of them learn nothing.
 </div>
+
+This site has two tools:
+
+- The **guardian bundles**, made on the [Create Bundles](maker.html) page and opened on the [Recover](recover.html) page. They hold files: your estate letter, your wallet descriptor, where your steel backups are, who to call.
+- The **descriptor backup**, on the [Descriptor Backup](descriptor.html) page. It is for multisig wallets only. It puts an encrypted copy of your wallet's descriptor on Bitcoin, where nobody can lose it. See [Descriptor Backup on Bitcoin](#descriptor-backup).
+
+Both tools are free and run in your browser. Bitcoin Butlers also offers them with a Butler on a video call. A [placement session](https://www.bitcoinbutlers.com/concierge/inheritance) ends with a tested recovery and a completed estate insert. An [annual drill](https://www.bitcoinbutlers.com/concierge/inheritance/drill) rehearses the recovery every year. A [descriptor backup session](https://www.bitcoinbutlers.com/concierge/inheritance/descriptor) puts a multisig descriptor on Bitcoin while you watch. The Butler guides. Your files stay on your machine, and no Butler ever holds a bundle.
 
 ## Why Bitcoin Inheritance {#why-bitcoin-inheritance}
 
-You probably have digital secrets that matter: password manager recovery codes, important documents, instructions for loved ones. What happens to these if you're suddenly unavailable?
+Your seed words belong on steel or in a codex32 kit, offline, and nothing here changes that. The problem is everything around the seeds. Your family needs to know that a wallet exists, where the backups are, which software opens it, what the descriptor is, and who to call. Today that knowledge lives in one head.
 
-Think of it like a safe deposit box that needs two keys to open. No single person holds enough to get in alone.
+The common ways to pass it on each have a failure mode:
 
-Traditional approaches have weaknesses:
+- **One person holds everything.** One accident, one falling out or one theft, and it is gone or exposed.
+- **A sealed envelope with a lawyer.** One copy in one office. Whoever opens it reads everything.
+- **A will.** A will becomes a public record, and probate is slow.
+- **A password manager's emergency access.** The company has to exist and cooperate on the day, and one person gets everything.
+- **Files split by hand.** Confusing, error-prone, and usually not encrypted.
 
-- **Give one person everything**: a single point of failure and trust
-- **Split files manually**: confusing, error-prone, no encryption
-- **Use a password manager's emergency access**: similar to "give one person everything", also relies on the company existing
-- **Write it in a will**: becomes public record, slow legal process
+Bitcoin Inheritance works differently:
 
-Bitcoin Inheritance takes a different approach:
-
-- **No single point of failure**: requires multiple people to cooperate
-- **No trust in any one person**: even your most trusted guardian cannot access your secrets alone
-- **Offline and self-contained**: recovery works without internet or servers\*
-- **Designed for anyone**: clear instructions, not cryptographic puzzles
+- **Several people must agree.** No guardian can read anything alone, and no single loss ends the plan.
+- **Nothing to keep running.** Recovery is one file in one browser. There is no server to keep alive and no company that has to exist.
+- **Written for the person who opens it.** Each bundle explains what it is, what it cannot do alone, and who else to contact. The reader needs no help from you.
 
 ## Creating Bundles {#creating}
 
-Three steps. Everything happens in your browser. Your files never leave your device. Open the [bundle creator](maker.html) to get started.
+Three steps, all in your browser. Your files never leave your device. Open [Create Bundles](maker.html) to begin.
 
 ### Step 1: Add Guardians {#step1}
 
-Add the people who will hold pieces of your recovery key. For each, provide a name and optionally contact information.
+Add the people who will each hold one piece of the key. Give each one a name and, if you want, a way to reach them. The contact details go into every bundle, so the guardians can find each other without you.
 
 <figure class="screenshot">
 <img src="screenshots/en/friends.png" alt="Adding guardians in Step 1">
-<figcaption>Each person here will hold one piece of the key</figcaption>
+<figcaption>Each person here holds one piece of the key</figcaption>
 </figure>
 
-Then choose your **threshold**: how many people must come together to recover your files.
+Then set the **threshold**: how many guardians must come together to recover the files.
 
 <div class="tip">
 <strong>Choosing a threshold:</strong>
 <ul>
-<li><strong>3 people, threshold 2:</strong> The simplest setup</li>
-<li><strong>5 people, threshold 3:</strong> A good balance</li>
-<li><strong>7 people, threshold 4–5:</strong> More secure, more coordination</li>
+<li><strong>3 guardians, threshold 2:</strong> the simplest setup. A couple and a lawyer is a common shape.</li>
+<li><strong>5 guardians, threshold 3:</strong> a good balance for a wider family.</li>
+<li><strong>7 guardians, threshold 4 or 5:</strong> harder to collude, more people to coordinate.</li>
 </ul>
-High enough that collusion is unlikely. Low enough that recovery works if one or two people are unavailable.
+Set it high enough that a small group cannot act alone. Set it low enough that recovery still works when one or two people cannot be reached. Put at least one guardian outside your own household.
 </div>
+
+If the guardians should not know each other, use [Anonymous Mode](#anonymous).
 
 ### Step 2: Add Files {#step2}
 
-Drag and drop the files or folder you want to protect.
+Drag in the files or the folder you want to protect.
 
 <figure class="screenshot">
 <img src="screenshots/en/files.png" alt="Adding files in Step 2">
@@ -82,157 +87,165 @@ Drag and drop the files or folder you want to protect.
 
 **Good candidates:**
 
-- Password manager recovery codes
-- Important account credentials
-- Instructions for loved ones
-- Legal document locations
-- Safe combinations
+- An estate letter: what you hold, where it is, and what you want done with it
+- Your wallet descriptor, or a wallet export, so the wallet can be rebuilt
+- The extended public keys of each cosigner
+- Where each steel backup or codex32 kit is kept, and who has access to it
+- Which software and which devices open the wallet
+- Who to call: your Butler, your lawyer, your accountant
+- Recovery codes for a password manager, and where the legal documents are
 
 <div class="warning">
-<strong>Not for Bitcoin seeds or private keys.</strong> Never put seed words or private keys in a bundle. Those belong on a steel backup or a codex32 split, kept offline. Use Bitcoin Inheritance for the instructions around them, such as where the steel plates are and who to call.
+<strong>Never put seed words or private keys in a bundle.</strong> Seeds belong on steel or in a codex32 kit, kept offline. Use Bitcoin Inheritance for the instructions around them: where the plates are, and who to call.
 </div>
 
 <div class="warning">
-<strong>Note:</strong> Avoid files that change often. This is designed for secrets you set once and leave.
+<strong>Files that change often do not belong here.</strong> Bundles hold things you set once and leave. When a file changes, you make new bundles.
 </div>
 
 ### Step 3: Generate Bundles {#step3}
 
-Click "Generate Bundles" to encrypt your files and create a bundle for each person.
+Click **Generate Bundles**. The page encrypts your files and makes one bundle for each guardian.
 
 <figure class="screenshot">
 <img src="screenshots/en/bundles.png" alt="Generating bundles in Step 3">
 <figcaption>Download each bundle, or all at once</figcaption>
 </figure>
 
-Each bundle includes the full recovery tool. It works even if this website is gone.
+Each bundle contains the full recovery tool. It works if this website is gone.
+
+Two options live in this step:
+
+- **Owner key (optional).** Gives you a way to open your own backup alone, without calling the guardians. See [Owner Key](#owner-key).
+- **Advanced: Add a time lock.** Keeps the files closed until a date you choose, even if the guardians combine their pieces early. See [Time-Delayed Recovery](#timelock).
 
 ### Distributing to Guardians {#distributing}
 
-Hand each guardian their bundle by the most private channel you can manage, in this order of preference:
+Hand each guardian their bundle by the most private route you can manage. In order of preference:
 
-1. **In person:** A USB drive or printed PDF, handed over directly. The most private option.
-1. **Encrypted messaging:** Signal or another end-to-end encrypted messenger.
-1. **Plain email or cloud drives:** Discouraged for sensitive payloads. The provider keeps a copy, and your account becomes a collection point.
+1. **In person.** A USB stick or a microSD card, or the printed `README.pdf`, handed over directly. Label the media with the guardian's name and the year only. Never write the word bitcoin on it.
+1. **An encrypted messenger.** Signal or another end-to-end encrypted messenger.
+1. **Email or a cloud drive.** Avoid these for handing out bundles. The provider keeps a copy, and your account becomes a place where every piece can be collected.
 
-If you must send bundles by email or messaging, delete the messages from your sent folder once each guardian confirms receipt. Otherwise your account ends up holding a copy of every piece, which defeats the point of splitting them.
+If you have to send a bundle by email or messenger, delete it from your sent folder once the guardian confirms they have it. An account that holds every piece undoes the split.
 
 ### After Creating Bundles {#after-creating}
 
-Once your bundles are ready, there are a few things worth doing before you put this out of your mind:
+Before you put this away, do these things:
 
-- Verify each person received their bundle and can open `recover.html`
-- Tell each person what this is, why they have it, and that they should keep it safe. They cannot use it alone. They will need to coordinate with others.
-- Keep a copy of `MANIFEST.age` somewhere safe. It is just encrypted data, useless without enough pieces
-- Save your `project.yml` so you can regenerate bundles later
-- Print `README.pdf` as a paper backup before sending the digital bundle. Paper doesn't need adapters or power.
-- Set a yearly reminder to check in. See [Keeping Bundles Current](#keeping-current)
-- Consider running a [recovery drill](#recovery-drills). It is the only way to know your plan actually works
+- Check that each guardian has their bundle and can open its `recover.html`.
+- Tell each guardian what they hold, why they hold it, and that it does nothing alone. They will need the others.
+- Keep a copy of `MANIFEST.age` somewhere safe. It is encrypted data, useless without enough pieces.
+- Save your `project.yml`, so you can make new bundles later. See [About project.yml](#project-file).
+- Print `README.pdf` for each guardian. Paper needs no adapter, no power and no working device.
+- Fill in an estate insert and file it with your will. It names the guardians, where each bundle lives, and how to start a recovery. It holds no secrets. There is a [template]({{GITHUB_REPO}}/blob/main/docs/service/estate-insert.md) in the source repository.
+- Set a yearly reminder. See [Keeping Bundles Current](#keeping-current).
+- Run a [recovery drill](#recovery-drills). It is the only way to know that the plan works.
 
 ## Recovering Files {#recovering}
 
-If you are here because someone you care about is no longer available, take a breath. There's no rush. The bundles don't expire, and the process is designed to be done at your own pace.
+If you are reading this because someone has died or can no longer act, there is no time limit. The bundles do not expire. Work through the steps at your own pace, and ask the other guardians for help along the way.
 
-If you don't have a bundle yet, you can open the [recovery tool](recover.html) directly. You will add pieces manually as you collect them from other holders.
+You may have a bundle already. If not, open the [Recover](recover.html) page directly and add the pieces as you collect them from the other guardians.
 
 ### What Guardians Receive {#bundle-contents}
 
-Each bundle contains:
+Each bundle is a ZIP file with these files inside:
 
 <div class="bundle-contents">
 <div class="file">
 <span class="file-name">README.txt</span>
-<span class="file-desc">Instructions, your unique piece, contact list</span>
+<span class="file-desc">What this is, your piece of the key, and the list of the other guardians</span>
 </div>
 <div class="file">
 <span class="file-name">README.pdf</span>
-<span class="file-desc">Same content, formatted for printing. Includes a <strong>QR code</strong> for importing the piece.</span>
+<span class="file-desc">The same, laid out for printing, with your piece as a QR code and as a list of words</span>
 </div>
 <div class="file">
 <span class="file-name">MANIFEST.age</span>
-<span class="file-desc">Your encrypted files. Included as a separate file for larger archives.</span>
+<span class="file-desc">The encrypted files. Every bundle carries the same copy.</span>
 </div>
 <div class="file">
 <span class="file-name">OWNER.age</span>
-<span class="file-desc">Only present when the bundles were made with an owner key. Lets the owner recover alone. Useless to anyone without the owner's secret key.</span>
+<span class="file-desc">Only present when the owner set an owner key. It lets the owner recover alone and is useless to anyone else.</span>
 </div>
 <div class="file">
 <span class="file-name">recover.html</span>
-<span class="file-desc">Recovery tool (~300 KB), runs in any browser</span>
+<span class="file-desc">The recovery tool. It opens in any browser, offline, with your piece already loaded.</span>
 </div>
 </div>
 
 <p style="margin-top: 1rem;">
-Each bundle is personalized. The guardian's share is pre-loaded, and a contact list shows who else holds pieces. When the encrypted data is small enough, it's embedded too.
+Each bundle is made for its guardian. Your piece is already inside your <code>recover.html</code>, and the contact list shows who else holds one. When the encrypted files are 10 MB or smaller, they are inside <code>recover.html</code> too.
 </p>
 
 ### Path A: I Have the Bundle ZIP {#recovery-bundle}
 
-The simplest path. If you have the bundle ZIP (or the files from it):
+The simplest path. You have the bundle ZIP, or the files from it.
 
 <div class="step-guide">
 <div class="step-number">1</div>
 <div class="step-content">
 <h4>Extract the ZIP and open recover.html</h4>
-<p>Open it in any modern browser. Your share is already loaded.</p>
+<p>Open it in any modern browser. Your piece is already loaded.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">2</div>
 <div class="step-content">
-<h4>Load the encrypted manifest</h4>
-<p>For small archives (≤ 10 MB), this is automatic because the data is already embedded. Otherwise, drag <code>MANIFEST.age</code> from the bundle onto the page.</p>
+<h4>Add the encrypted archive</h4>
+<p>For archives of 10 MB or less this is automatic, because the data is inside the page. Otherwise, drag <code>MANIFEST.age</code> from the bundle onto the page.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Coordinate with other guardians</h4>
-<p>The tool shows a contact list with other guardians' names and how to reach them. Ask them to send their <code>README.txt</code>.</p>
+<h4>Contact the others</h4>
+<p>The page lists the other guardians and how to reach them. Ask each of them for their <code>README.txt</code>, or for their words over the phone.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Add shares from other guardians</h4>
-<p>For each guardian's piece: drag their <code>README.txt</code> onto the page, paste the text, or scan a QR code from their PDF. A checkmark appears as each piece is added.</p>
+<h4>Add their pieces</h4>
+<p>For each guardian: drag their <code>README.txt</code> onto the page, paste the text, or scan the QR code on their PDF. A check mark appears as each piece is accepted.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">5</div>
 <div class="step-content">
-<h4>Recovery happens automatically</h4>
-<p>Once enough pieces are gathered (e.g., 3 of 5), recovery starts on its own.</p>
+<h4>Recover the files</h4>
+<p>When enough pieces are in, recovery starts on its own. The files open in your browser, and you can download them. If nothing happens, click <strong>Unlock &amp; Recover</strong>.</p>
 </div>
 </div>
 
 <div class="tip">
-<strong>Tip:</strong> If a guardian sends their entire <code>.zip</code> bundle, drag it onto the page. Both the piece and the archive are imported at once.
+<strong>Tip:</strong> If a guardian sends their whole <code>.zip</code> bundle, drag it onto the page. The piece and the archive are both read from it.
 </div>
 
 <figure class="screenshot">
-<img src="screenshots/en/recovery-1.png" alt="Recovery interface - collecting shares">
-<figcaption>The recovery tool showing collected shares and contact list</figcaption>
+<img src="screenshots/en/recovery-1.png" alt="The recovery tool collecting pieces">
+<figcaption>The recovery tool with the pieces collected so far and the list of guardians</figcaption>
 </figure>
 
 <figure class="screenshot">
-<img src="screenshots/en/recovery-2.png" alt="Recovery interface - decryption complete">
-<figcaption>Once threshold is met, files are decrypted and ready to download</figcaption>
+<img src="screenshots/en/recovery-2.png" alt="The recovery tool after the files are recovered">
+<figcaption>When enough pieces are in, the files are recovered and ready to download</figcaption>
 </figure>
 
 ### Path B: I Have a Printed PDF with Words {#recovery-words}
 
-Each printed PDF includes your share as a list of numbered words. Type them into the recovery tool. No camera or scanner is needed.
+Each printed PDF carries your piece as a numbered list of words. Type them into the recovery tool. No camera or scanner is needed.
 
 <div class="step-guide">
 <div class="step-number">1</div>
 <div class="step-content">
 <h4>Open the recovery tool</h4>
-<p>Visit the URL printed on the PDF, or open <code>recover.html</code> from any guardian's bundle.</p>
+<p>Open the address printed on the PDF, or open <code>recover.html</code> from any guardian's bundle.</p>
 </div>
 </div>
 
@@ -240,7 +253,7 @@ Each printed PDF includes your share as a list of numbered words. Type them into
 <div class="step-number">2</div>
 <div class="step-content">
 <h4>Type in your recovery words</h4>
-<p>Find the word list on your PDF and type the words into the text area. You do not need the numbers, just the words, separated by spaces.</p>
+<p>Choose <strong>Paste a piece or type recovery words</strong>. Type the words from your PDF, separated by spaces. You do not need the numbers.</p>
 </div>
 </div>
 
@@ -250,331 +263,131 @@ Each printed PDF includes your share as a list of numbered words. Type them into
 </figure>
 
 <figure class="screenshot">
-<img src="screenshots/en/recovery-words-recognized.png" alt="Recovery tool after words have been entered, showing the share was recognized">
-<figcaption>The recovery tool recognizes the words and loads your share</figcaption>
+<img src="screenshots/en/recovery-words-recognized.png" alt="The recovery tool after the words are entered, showing the piece was accepted">
+<figcaption>The recovery tool recognizes the words and loads your piece</figcaption>
 </figure>
 
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Load the encrypted manifest</h4>
-<p>You may need the <code>MANIFEST.age</code> file. Drag it onto the page or click to browse. If you do not have it, any guardian can send theirs. Every bundle has the same copy.</p>
+<h4>Add the encrypted archive</h4>
+<p>You may need the <code>MANIFEST.age</code> file. Drag it onto the page or click to browse. If you do not have it, any guardian can send theirs. Every bundle carries the same copy.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Collect shares from other guardians</h4>
-<p>Contact other guardians and ask for their pieces. They can send their <code>README.txt</code>, read their words over the phone, or you can scan their QR code.</p>
+<h4>Collect pieces from the other guardians</h4>
+<p>Contact the other guardians and ask for their pieces. They can send their <code>README.txt</code>, read their words to you over the phone, or show you their QR code.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">5</div>
 <div class="step-content">
-<h4>Recovery happens automatically</h4>
-<p>Once the threshold is met, decryption starts immediately.</p>
+<h4>Recover the files</h4>
+<p>When enough pieces are in, recovery starts on its own. If nothing happens, click <strong>Unlock &amp; Recover</strong>.</p>
 </div>
 </div>
 
 <div class="tip">
-<strong>Tip:</strong> Words are the easiest to share over the phone. If a guardian cannot send their share digitally, they can read the words aloud and you type them in.
+<strong>Tip:</strong> Words are the easiest thing to pass over the phone. A guardian who cannot send a file can read their words aloud while you type them in.
 </div>
 
 ### Path C: I Have a Printed PDF with QR Code {#recovery-pdf}
 
-If your device has a camera, scan the QR code on the PDF to import your share directly.
+If your device has a camera, scan the QR code on the PDF to load your piece directly.
 
 <div class="step-guide">
 <div class="step-number">1</div>
 <div class="step-content">
 <h4>Open the recovery tool</h4>
-<p>Scan the QR code with your phone camera. It opens the recovery tool with your share pre-filled. Or visit the URL on the PDF and type the short code shown below the QR code.</p>
+<p>Scan the QR code with your phone camera. It opens the recovery tool with your piece filled in. Or open the address on the PDF and type the short code printed under the QR code.</p>
 </div>
 </div>
 
 <figure class="screenshot">
-<img src="screenshots/scan-qr-button.png" alt="The share step of the recovery tool, with the Scan QR code button">
+<img src="screenshots/scan-qr-button.png" alt="The pieces step of the recovery tool, with the Scan QR code button">
 <figcaption>Choose Scan QR code. Your browser then asks for permission to use the camera.</figcaption>
 </figure>
 
 <figure class="screenshot">
 <img src="screenshots/qr-scanning.png" alt="The recovery tool's scanner with a printed QR code in view">
-<figcaption>Point your camera at the QR code on the printed PDF to import the share</figcaption>
+<figcaption>Point the camera at the QR code on a printed PDF to load that piece</figcaption>
 </figure>
 
 <div class="step-guide">
 <div class="step-number">2</div>
 <div class="step-content">
-<h4>Load the encrypted manifest</h4>
-<p>You may need the <code>MANIFEST.age</code> file. Drag it onto the page or click to browse. If you do not have it, any guardian can send theirs. Every bundle has the same copy.</p>
+<h4>Add the encrypted archive</h4>
+<p>You may need the <code>MANIFEST.age</code> file. Drag it onto the page or click to browse. If you do not have it, any guardian can send theirs. Every bundle carries the same copy.</p>
 </div>
 </div>
 
 <figure class="screenshot">
-<img src="screenshots/manifest-drop-zone.png" alt="The manifest step of the recovery tool, waiting for MANIFEST.age">
+<img src="screenshots/manifest-drop-zone.png" alt="The archive step of the recovery tool, waiting for MANIFEST.age">
 <figcaption>Drop MANIFEST.age here, or click to choose it. A recover.html from any guardian's bundle works too.</figcaption>
 </figure>
 
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Collect shares from other guardians</h4>
-<p>Contact other guardians and ask for their pieces. They can send their <code>README.txt</code>, or you can scan their QR code.</p>
+<h4>Collect pieces from the other guardians</h4>
+<p>Contact the other guardians and ask for their pieces. They can send their <code>README.txt</code>, or you can scan their QR code.</p>
 </div>
 </div>
 
 <div class="step-guide">
 <div class="step-number">4</div>
 <div class="step-content">
-<h4>Recovery happens automatically</h4>
-<p>Once the threshold is met, decryption starts immediately.</p>
+<h4>Recover the files</h4>
+<p>When enough pieces are in, recovery starts on its own. If nothing happens, click <strong>Unlock &amp; Recover</strong>.</p>
 </div>
 </div>
 
 <div class="tip">
 <strong>About recovery:</strong>
 <ul>
-<li>Works entirely <span title="No internet needed. Time-locked archives need a connection to verify the unlock date.">offline*</span></li>
-<li>Nothing leaves the browser</li>
-<li>Guardians can be anywhere. They just need to send their README.txt files</li>
+<li>It works offline. Only a time-locked archive needs a connection, to check the date.</li>
+<li>Nothing leaves the browser.</li>
+<li>The guardians can be anywhere. They send their <code>README.txt</code>, or read their words to you.</li>
 </ul>
 </div>
 
-## Best Practices {#best-practices}
+### If You Are the Owner {#recovery-owner}
 
-### Choosing Guardians
+If the bundles were made with an owner key, you can recover alone. Drop any one bundle onto the Recover page, open **I am the owner and have my owner key**, and paste your secret key. See [Owner Key](#owner-key).
 
-- **Longevity:** People likely to be reachable in 5–10 years
-- **Geographic spread:** Not all in the same place
-- **Technical ability:** Any mix is fine. The tool is designed for everyone
-- **Relationships:** Will they cooperate with each other?
-- **Trust:** A single piece reveals nothing, but you're trusting them with responsibility
+### If the Page Will Not Open {#recovery-independent}
 
-### Security Considerations
+The files can be recovered without this tool. A technical person can do it with `age` and a short Python script from the source repository, using only the pieces and `MANIFEST.age`. The steps and the test files are in [Independent recovery]({{GITHUB_REPO}}/blob/main/docs/independent-recovery.md).
 
-- Do not keep all bundles together. That defeats the point of splitting
-- Consider printing `README.pdf`. Paper survives digital disasters
-- Save `project.yml` if you want to regenerate bundles later
+## Descriptor Backup on Bitcoin {#descriptor-backup}
 
-### Storing Bundles Safely {#storing-bundles}
+This tool is for multisig wallets, and it solves a different problem from the bundles.
 
-Bundles are small (under 10 MB) and designed to be stored in everyday places. Here's what works well:
+A multisig wallet needs two things to spend: enough keys, and its **descriptor**. The descriptor lists every key in the wallet and says how they fit together. If you still hold every key, the descriptor can be rebuilt with some work. Lose one key and the descriptor together, and the keys you still hold cannot rebuild the wallet, even when they are enough to sign. A 2 of 3 with two keys and no descriptor is locked.
 
-- **Email** is a surprisingly good option. Most people keep the same email address for decades, and bundles are small enough to attach. Many email providers retain messages indefinitely.
-- **Cloud storage** (Google Drive, Dropbox, iCloud) works well as a secondary copy.
-- **USB drives** can work, but keep in mind that connectors change over time (USB-A is already giving way to USB-C) and flash memory can degrade if left unpowered for years. Not ideal as the only copy.
-- **Paper** is the most durable option. Printing `README.pdf` gives your guardians a copy that does not need adapters, power, or any working device.
+The [Descriptor Backup](descriptor.html) page encrypts the descriptor so that your own keys open it. Then it gives you one line of text to put into one OP_RETURN output on Bitcoin. After that, your keys are enough again. The chain cannot lose the text, and nobody can delete it.
 
-The best approach is redundancy: email plus paper, or cloud plus paper. More than one copy, in more than one form.
+### How to Make One {#descriptor-make}
 
-### Keeping Bundles Current {#keeping-current}
+1. Paste your descriptor into step 1. The page reads it back to you: the script type, the threshold and the derivation path. Check that it matches your wallet.
+1. In step 2, choose who can open the backup. See [Who Can Open It](#descriptor-who).
+1. Click **Encrypt my descriptor**. Step 3 shows the text to publish. Copy it, or save it as a file.
+1. Put it on the chain. Two ways: pay opreturnbot.com to publish it, or send it from your own Bitcoin Core node with the command the page writes for you. Both put the same text into one OP_RETURN output. On opreturnbot.com, tick **Private**. Without it, the site announces the transaction in public.
+1. In step 4, **Prove it landed**, paste the transaction id. The page reads the text back off the chain and opens it with the keys already in your descriptor. Publishing is not proof. This step is.
+1. Copy the block under **For your estate insert**: the transaction id, the block height, the block hash and who can open it. Write it on your estate insert.
 
-Set a yearly reminder to check in with your guardians. Confirm they still have their bundles and update contact details if anything has changed.
-
-When your files change, create new bundles and send them. The old bundles won't open the new archive, so there is no risk in leaving them around. Still, ask guardians to replace theirs to keep things tidy.
-
-When contacts change, for example someone moves or you want to add or remove someone, do the same thing: new bundles, ask people to delete the old ones.
-
-Between updates, keep your source files in an encrypted vault. Tools like [Cryptomator](https://cryptomator.org) or [VeraCrypt](https://veracrypt.fr) work well. Don't leave plaintext copies sitting in a regular folder.
-
-Think of it like updating your emergency contacts. Brief, periodic, worth doing.
-
-### Recovery Drills {#recovery-drills}
-
-Nobody tests their backup plan. A recovery drill changes that, and it turns out to be basically an escape room.
-
-Create a test bundle with a harmless secret (a photo, a message, a recipe). Hand out pieces to your guardians. Set a [timelock](#timelock) if you want a real countdown. Then step back and let them figure it out: coordinate, combine pieces, and unlock the files without your help.
-
-What you learn:
-
-- Can your guardians actually find their bundles when they need them?
-- Do they understand the instructions, or do they get stuck?
-- Can they reach each other without you coordinating?
-
-A drill that goes smoothly means your real plan will too. A drill that goes badly is a gift: you found the problem before it mattered.
-
-### Revoking Access {#revoking-access}
-
-Once a piece has been distributed, it cannot be revoked. This is by design. There is no server, no central authority.
-
-If you need to change who holds pieces:
-
-1. **Create new bundles** with a new set of guardians and a fresh key
-1. **Send new bundles** to the guardians you still trust
-1. **Ask every remaining guardian to delete their old bundle** and replace it with the new one
-
-<div class="warning">
-<strong>Important:</strong> Old pieces still work with old archives. When you send a new bundle, be clear: <strong>delete the old one</strong>, keep only the new one. No version history, no "just in case."
-</div>
-
-The same applies when secrets change. New bundles mean a new key and new pieces. Old pieces won't open the new archive, but they still work with the old one. Make sure guardians are not holding on to old copies.
-
-### About project.yml {#project-file}
-
-When you create bundles, your project is saved in a `project.yml` file. This file stores:
-
-- Guardians' names and contact information
-- Your chosen threshold (e.g., 3 of 5)
-- A verification hash for checking if bundles match
-- Share checksums for verifying bundle integrity
-
-It does **not** store any secrets: no passphrase, no key material, no file contents. It's safe to keep alongside your other project files.
-
-With `project.yml`, you can regenerate bundles, verify existing ones, and check the status of your setup.
-
-## Understanding the Security {#security}
-
-Bitcoin Inheritance composes well-established cryptographic tools rather than inventing its own. Here's what that means in practice.
-
-### What Protects Your Data {#cryptography}
-
-Your files are locked with a modern encryption tool ([age](https://github.com/FiloSottile/age)), which is widely reviewed with no known weaknesses.
-
-The key that locks them is 256 bits long, generated from your operating system's random number generator. For scale: guessing it would take longer than the universe has existed.
-
-Even if someone tried every possible password, scrypt makes each guess deliberately slow, millions of times slower than a naive attempt.
-
-The key is then split using Shamir's Secret Sharing. **Any fewer than *threshold* pieces contain zero information about the original.** Not "very little." Mathematically zero.
-
-Each bundle includes checksums so the recovery tool can verify nothing was corrupted or tampered with.
-
-### What Could Go Wrong {#what-could-go-wrong}
-
-<div class="bundle-contents">
-<div class="file">
-<span class="file-name">A guardian loses their bundle</span>
-<span class="file-desc">Fine, as long as enough other guardians still have theirs. That's why you set the threshold below the total.</span>
-</div>
-<div class="file">
-<span class="file-name">A guardian leaks their piece publicly</span>
-<span class="file-desc">A single piece is useless without the others. Someone would still need threshold-1 more pieces to do anything.</span>
-</div>
-<div class="file">
-<span class="file-name">Some guardians cannot be reached</span>
-<span class="file-desc">That is why you set the threshold below the total number of guardians. If you chose 3-of-5, any three will do.</span>
-</div>
-<div class="file">
-<span class="file-name">Bitcoin Inheritance disappears in 10 years</span>
-<span class="file-desc"><code>recover.html</code> still works because it is self-contained. No servers, no downloads, no dependencies on this project.</span>
-</div>
-<div class="file">
-<span class="file-name">Browsers change dramatically</span>
-<span class="file-desc">The recovery tool uses standard JavaScript and the Web Crypto API: browser fundamentals, not trends.</span>
-</div>
-<div class="file">
-<span class="file-name">You forget how this works</span>
-<span class="file-desc">Each bundle's README.txt explains everything. Your guardians do not need to remember anything. It is all written down for them.</span>
-</div>
-</div>
-
-The things that *do* need to be true: your device is trusted when you create bundles, and the browser used for recovery isn't compromised. These are the same assumptions you make any time you use a computer for something important.
-
-For a detailed technical evaluation, see the [security self-review]({{GITHUB_REPO}}/blob/main/docs/security-review.md).
-
-## How It Compares {#comparison}
-
-Bitcoin Inheritance isn't the first tool to use Shamir's Secret Sharing. There are many others, from command-line tools to web apps. Here's what sets Bitcoin Inheritance apart:
-
-- **Handles files, not just text.** Most Shamir tools only split passwords or short text. Bitcoin Inheritance encrypts entire files and folders.
-- **Self-contained recovery tool.** Each guardian receives `recover.html`, a complete recovery tool that runs in any browser, offline.\* No installation, no CLI needed.
-- **Contact details included.** Each bundle includes a list of other guardians and how to reach them, so coordination doesn't depend on you being available.
-- **No server dependency.** Everything runs locally. There's no service to sign up for, no account to maintain, nothing that needs to stay online.
-
-For a detailed comparison with other tools, see the [full comparison table on GitHub]({{GITHUB_REPO}}#other-similar-tools).
-
-## CLI Alternative {#cli}
-
-There is also a command-line tool for those who prefer a terminal or need to automate bundle creation.
-
-<a href="{{GITHUB_REPO}}/blob/main/docs/guide.md" class="btn btn-secondary">Read the CLI Guide</a>
-
-<p style="margin-top: 1rem;">
-The CLI provides the same functionality, plus batch operations and scripting.
-</p>
-
-## Advanced: Anonymous Mode {#anonymous}
-
-When holders should not know each other's identities, use **anonymous mode**:
-
-- People are labeled as "Share 1", "Share 2", etc.
-- No contact information is collected or stored
-- READMEs skip the "Other Share Holders" section
-- Bundle filenames use numbers instead of names
-
-### When to Use Anonymous Mode
-
-This is useful when:
-
-- Holders should not know each other
-- You're testing quickly without entering names
-- You have another way to coordinate recovery
-- Privacy is a higher priority than ease of coordination
-
-### How to Enable
-
-In the [bundle creator](maker.html), enable the **Anonymous** toggle in the Guardians section:
-
-- The guardian list is replaced by a share count
-- Set how many shares and the threshold
-- Bundles are named `bundle-share-1.zip`, `bundle-share-2.zip`, etc.
-
-### Recovery in Anonymous Mode
-
-Recovery works the same way, but without the contact list. Holders see generic labels like "Share 1" instead of names.
-
-<div class="warning">
-<strong>Important:</strong> Without a built-in contact list, make sure holders know how to reach each other when recovery is needed.
-</div>
-
-## Advanced: Owner Key {#owner-key}
-
-By default, only a group of guardians can decrypt your backup. That is the right shape for an estate, but it means you cannot open your own backup without convening them.
-
-The owner key is an optional second path. You give the bundle maker an [age](https://github.com/FiloSottile/age) public key (it starts with `age1`). Every bundle then also contains `OWNER.age`: the recovery passphrase locked to that key. With the matching secret key you can recover alone, any time. Guardians see no difference, and bundles made without an owner key are exactly as before.
-
-### How to Enable
-
-1. Create an age keypair with any age tool, for example `age-keygen -o owner-key.txt`. The file shows your public key (`age1...`) and holds your secret key (`AGE-SECRET-KEY-1...`).
-1. In the bundle maker, open **Owner key (optional)** in step 3 and paste the *public* key.
-1. After generating, store `owner-key.txt` somewhere safe and separate from your bundles, for example printed on paper with your other vital documents. You can also save `OWNER.age` on its own; every bundle already contains a copy.
-
-**Never paste seed words or other secrets into the owner key field.** It takes an age public key only.
-
-### How to Recover With It
-
-In the recovery tool: drop any one bundle, open **I am the owner and have my owner key**, and paste your secret key (`AGE-SECRET-KEY-1...`). Recovery runs immediately, no other pieces needed.
-
-Without the tool, any age CLI works:
-
-```
-age -d -i owner-key.txt OWNER.age   # prints the recovery passphrase
-age -d MANIFEST.age > archive       # enter that passphrase when asked
-```
-
-### The Tradeoff, Plainly
-
-The owner key is a single key that opens the whole backup. Anyone who holds the secret key can read everything in it, alone, with no guardian involved. Store it with the same care as the things it protects. If you lose it, nothing is lost: the guardian path still works, and you can regenerate bundles with a new owner key at any time.
-
-If you derive the owner key from another secret you already guard (rather than generating a random one), understand that the two are then linked: whoever controls that secret controls this backup too.
-
-## Advanced: Descriptor Backup on Bitcoin {#descriptor-backup}
-
-This one is for multisig wallets, and it solves a different problem from the rest of Bitcoin Inheritance.
-
-A multisig wallet needs two things to spend: enough keys, and the **descriptor** that says how those keys fit together. People protect the keys carefully and then lose the descriptor, and the keys alone will not open the wallet. A 2 of 3 should mean two keys is enough. Without the descriptor, it is not.
-
-The [descriptor backup page](descriptor.html) encrypts the descriptor so that your own keys unlock it, and gives you one line of text to write onto the Bitcoin blockchain. After that, your keys really are enough. The chain cannot lose it and nobody can delete it.
-
-### Who Can Open It
+### Who Can Open It {#descriptor-who}
 
 You choose, and the choice matters:
 
 - **Your wallet's threshold.** The same number of keys it takes to spend. A 2 of 3 wallet needs two keys to open the backup. This matches your wallet exactly, so the backup is never harder to open than the money is to spend.
 - **Any one of your keys.** One key opens it. Easier to recover, and easier for anyone who gets hold of a single key. This follows the draft BIP-138 format, which other wallets are beginning to read.
 
-### What Is Public
+### What Is Public {#descriptor-public}
 
 The text goes into one OP_RETURN output. It is public and permanent. The descriptor is encrypted before it goes there, and only your keys open it. What an observer can read without your keys depends on the format you chose.
 
@@ -583,62 +396,289 @@ The text goes into one OP_RETURN output. It is public and permanent. The descrip
 
 In both formats anyone can see that a wallet backup exists. In neither can anyone read a key without your keys. That is the trade, and it is deliberate. A backup that only you can find is a backup that dies with you. This one survives you, survives us, and survives the guardians.
 
-### How to Recover It
+### How to Recover It {#descriptor-recover}
 
-Open the page, choose **Recover**, and give it either the text or the transaction id. Then paste the wallet's extended public keys, which any of your signing devices can produce from your seeds. The page rebuilds the descriptor.
+Choose **Recover a descriptor**. Give the page the text, or give it the transaction id and let it fetch the text from a public explorer. Then paste the wallet's extended public keys, as many as your choice above requires. Any of your signing devices can produce its extended public key from its seed. Click **Rebuild my descriptor**.
 
 Keep the transaction id on your estate insert. It is the fastest way in. If it is lost, a threshold backup can still be found by searching the chain for a short tag built from any two of your wallet's fingerprints.
 
-### Recovery Without This Page
+### Recovery Without This Page {#descriptor-independent}
 
 Neither format is ours to own, and that is the point. A threshold backup uses the published multisig-backup format. A one-key backup follows draft BIP-138. Both are open specifications with other software already reading them, so a technical person can rebuild your descriptor with no Bitcoin Butlers involved.
 
-Your estate insert names the tool to use and how to reach it, because that is the page someone reads on the day we are not here. Our own test vectors are in the [source repository](https://github.com/Bitcoin-Butlers/kaitiaki) for anyone who wants to check the formats match, byte for byte.
+Your estate insert names the tool to use and how to reach it. That is the page someone reads on the day we are not here. Our own test vectors are in the [source repository]({{GITHUB_REPO}}/blob/main/docs/descriptor-backup-vector.md) for anyone who wants to check the formats match, byte for byte.
 
-### Never Put Seeds Here
+### Never Put Seeds Here {#descriptor-no-seeds}
 
 The page takes a descriptor and nothing else. Seeds belong on steel or in a codex32 kit, never on a public chain.
 
-## Advanced: Time-Delayed Recovery {#timelock}
+## Best Practices {#best-practices}
 
-You can set a waiting period when creating bundles. Even if your guardians combine their pieces early, the files stay locked until the date you chose: 30 days, 6 months, or a specific date.
+### Choosing Guardians {#choosing-guardians}
 
-### How to Enable
+- **Longevity:** people who are likely to be reachable in ten years
+- **Spread:** not all in one house, one town or one branch of the family
+- **Technical ability:** any mix. The tool is written for everyone.
+- **Relationships:** they must be willing to work with each other when the time comes
+- **Trust:** a single piece reveals nothing, but each guardian carries a duty
+- **Professionals:** a lawyer or an accountant can be one guardian. A Butler cannot. Bitcoin Butlers never holds a piece.
 
-In the [bundle creator](maker.html), switch to **Advanced** mode and check **Add a time lock**. Choose how long the files should stay locked, up to two years.
+### Security Considerations {#security-considerations}
 
-The two-year limit is deliberate. Time locks depend on the League of Entropy continuing to operate, and we don't think it's responsible to lock your files behind a longer bet on external infrastructure. If you need a longer duration and understand the trade-off, the CLI has no cap: `inheritance seal --timelock 5y`.
+- Do not keep all the bundles together. That undoes the split.
+- Print `README.pdf`. Paper survives failed drives and dead batteries.
+- Save `project.yml` if you want to make new bundles later.
+- Between updates, keep your source files in an encrypted vault such as [Cryptomator](https://cryptomator.org) or [VeraCrypt](https://veracrypt.fr). Do not leave plain copies in a normal folder.
 
-<figure class="screenshot">
-<img src="screenshots/en/tlock-setup.png" alt="Time lock setup in Advanced mode">
-<figcaption>The time lock option appears in Advanced mode</figcaption>
-</figure>
+### Storing Bundles Safely {#storing-bundles}
 
-### Recovery
+A bundle is small, in most cases under 10 MB, and it is encrypted. What matters is that each guardian keeps their own, and that no single place holds them all.
 
-When someone opens a time-locked bundle before the date, the recovery tool shows a waiting notice. Once the time passes, recovery proceeds normally.
+- **Paper** is the most durable copy. `README.pdf` holds the piece as words and as a QR code, and it needs no device.
+- **USB sticks and microSD cards** work, with two cautions. Connectors change, and flash memory fades when it sits unpowered for years. Check them at every drill, and replace them every five years or at the first read error.
+- **Email and cloud drives** keep a copy for as long as the account lives. Use them as a guardian's second copy only, never as the place where every bundle collects.
 
-<figure class="screenshot">
-<img src="screenshots/en/tlock-waiting.png" alt="Recovery tool showing a time lock waiting notice">
-<figcaption>The recovery tool waits until the time lock expires</figcaption>
-</figure>
+More than one copy, in more than one form: paper plus a card, or paper plus the guardian's own cloud drive.
 
-Opening a time-locked archive requires a brief internet connection. Your files are not sent anywhere. The connection only verifies that enough time has passed. Without the time lock, recovery is fully offline.
+### Keeping Bundles Current {#keeping-current}
+
+Once a year, contact every guardian. Confirm that they still have their bundle, that it still opens, and that their contact details are current.
+
+When your files change, make new bundles and hand them out. Old bundles cannot open the new archive, so leaving them around costs nothing. Still, ask each guardian to replace theirs.
+
+When the guardians change, do the same: new bundles, and ask everyone to delete the old ones.
+
+A multisig wallet changes too: a new cosigner, a new device, a moved wallet. When it does, the descriptor in the bundles and the copy on the chain are stale. Make new bundles, publish a new descriptor backup, and write the new transaction id on the estate insert.
+
+### Recovery Drills {#recovery-drills}
+
+Nobody tests a backup plan until they need it. A drill tests it earlier, while a problem is cheap to fix. Run one a year:
+
+1. **Roll call.** Contact every guardian, not only the number needed. Each one confirms that they still have their bundle, where it is, and that the media reads.
+1. **Media check.** Each guardian opens the ZIP and confirms that `README.txt` and `recover.html` open.
+1. **Rehearsal recovery.** The needed number of guardians recover the files on one guardian's own computer, with `recover.html`, offline. Choose a different group each year.
+1. **Read the descriptor back.** If you have an on-chain descriptor backup, open the Descriptor Backup page and enter the transaction id from the estate insert. Rebuild the descriptor with your keys. It takes two minutes.
+1. **Check freshness.** If the wallet or the files changed since the last drill, the bundles are stale. Make new ones.
+1. **Sign the drill record** on the estate insert: the date, the guardians confirmed, the group that recovered, and the version of the files.
+
+A drill that fails is the plan working. You found the problem before it mattered.
+
+For a first drill, a test set with a harmless file works well: a photo, a recipe. Hand out the pieces and let the guardians recover it without your help. What you learn: whether they can find their bundles, whether the instructions are clear to them, and whether they can reach each other without you.
+
+Bitcoin Butlers runs this drill with you and your guardians over video, once a year: the [annual drill](https://www.bitcoinbutlers.com/concierge/inheritance/drill).
+
+### Revoking Access {#revoking-access}
+
+Once a piece has been handed out, it cannot be taken back. There is no server and no central authority, so there is nothing to revoke it with.
+
+If you need to change who holds pieces:
+
+1. **Make new bundles** with the new set of guardians. The key is new too.
+1. **Hand out the new bundles** to the guardians you keep.
+1. **Ask every remaining guardian to delete their old bundle** and keep only the new one.
 
 <div class="warning">
-<strong>Experimental.</strong> Time-delayed recovery depends on the <a href="https://www.cloudflare.com/en-ca/leagueofentropy/" target="_blank">League of Entropy</a>, a distributed network operated by serious organizations around the world. If this network stops operating before a time lock expires, that archive becomes unrecoverable. Bundles without a time lock are not affected.
+<strong>Important:</strong> old pieces still open the old archive. When you hand out a new bundle, say it plainly: <strong>delete the old one</strong>, keep only the new one. No version history, no spare copy.
+</div>
+
+The same applies when the files change. New bundles mean a new key and new pieces. Old pieces cannot open the new archive, but they still open the old one. Check that no guardian keeps an old copy.
+
+### About project.yml {#project-file}
+
+When you make bundles, the page saves your project in a `project.yml` file. It stores:
+
+- The guardians' names and contact details
+- Your threshold, for example 3 of 5
+- A hash to check that a set of bundles belongs together
+- Checksums to check that a bundle is intact
+
+It stores **no secrets**: no passphrase, no key material, no file contents. It is safe to keep with your other project files.
+
+With `project.yml` you can make new bundles for the same guardians, check existing bundles, and see the state of your setup.
+
+## Understanding the Security {#security}
+
+Bitcoin Inheritance combines well-reviewed tools. It invents no ciphers of its own. This is what that means in practice.
+
+### What Protects Your Data {#cryptography}
+
+Your files are encrypted with [age](https://github.com/FiloSottile/age), a modern tool that is widely reviewed and has no known weaknesses.
+
+The key that locks them is 256 bits long, taken from your operating system's random number generator. Guessing it is out of reach in any span of time that matters.
+
+Where a passphrase is involved, scrypt makes each guess slow on purpose. Trying many passphrases then costs millions of times more than it otherwise would.
+
+The key is split with Shamir's Secret Sharing. **Fewer pieces than the threshold hold no information about the key at all.** That is a property of the mathematics, and more computing power does not change it.
+
+Each bundle carries checksums, so the recovery tool can tell when a piece is damaged or altered.
+
+For the details, see the [security review]({{GITHUB_REPO}}/blob/main/docs/security-review.md) in the source repository.
+
+### What Could Go Wrong {#what-could-go-wrong}
+
+<div class="bundle-contents">
+<div class="file">
+<span class="file-name">A guardian loses their bundle</span>
+<span class="file-desc">Fine, as long as enough other guardians still have theirs. That is why the threshold sits below the total.</span>
+</div>
+<div class="file">
+<span class="file-name">A guardian's piece is exposed</span>
+<span class="file-desc">A single piece is useless on its own. Whoever has it still needs the rest of the threshold.</span>
+</div>
+<div class="file">
+<span class="file-name">Some guardians cannot be reached</span>
+<span class="file-desc">Any group of the threshold size will do. With 3 of 5, any three guardians recover the files.</span>
+</div>
+<div class="file">
+<span class="file-name">Bitcoin Butlers closes, or this website is gone</span>
+<span class="file-desc"><code>recover.html</code> still works, because it is self-contained. The descriptor backup still reads back, because its formats are public. Nothing depends on us.</span>
+</div>
+<div class="file">
+<span class="file-name">Browsers change</span>
+<span class="file-desc">The recovery tool uses standard JavaScript and the Web Crypto API: browser fundamentals, in place for years.</span>
+</div>
+<div class="file">
+<span class="file-name">You forget how this works</span>
+<span class="file-desc">Each bundle's <code>README.txt</code> explains everything. Your guardians do not need to remember anything. It is all written down for them.</span>
+</div>
+</div>
+
+Two things do need to be true. The device you use to make the bundles is trusted, and the browser used for recovery is not compromised. These are the same assumptions you make when you use a computer for anything that matters.
+
+## How It Compares {#comparison}
+
+Bitcoin Inheritance is one of many tools that split a secret with Shamir's Secret Sharing. This is what sets it apart:
+
+- **It holds files.** Most Shamir tools split a password or a short text. Bitcoin Inheritance encrypts whole files and folders: your estate letter, your descriptor, your instructions.
+- **Recovery comes with the bundle.** Each guardian receives `recover.html`, a complete recovery tool that runs in any browser, offline. Nothing to install.
+- **The guardians can find each other.** Each bundle lists the other guardians and how to reach them, so recovery does not depend on you being available.
+- **Nothing to keep running.** There is no service to sign up for, no account to maintain, and nothing that has to stay online.
+- **It knows what a multisig needs.** The descriptor backup puts the wallet's descriptor on Bitcoin, so the keys stay enough on their own.
+
+Against the alternatives people reach for first:
+
+- A single trusted person is a single point of failure.
+- A will is public, and probate is slow.
+- A password manager's emergency access needs the company to exist.
+- A multisig wallet on its own protects the keys and leaves the descriptor unprotected.
+
+## Advanced: Anonymous Mode {#anonymous}
+
+When the guardians should not know each other, use **anonymous mode**:
+
+- Guardians are labelled Share 1, Share 2, and so on
+- No contact details are collected or stored
+- The READMEs leave out the list of other guardians
+- Bundle file names carry numbers instead of names
+
+### When to Use Anonymous Mode {#anonymous-when}
+
+- The guardians should not know each other
+- You are testing quickly and do not want to enter names
+- You have another way to coordinate a recovery
+- Privacy matters more to you than easy coordination
+
+### How to Enable {#anonymous-enable}
+
+On the [Create Bundles](maker.html) page, choose **Anonymous** at the top of the Guardians step:
+
+- The list of guardians is replaced by a count, labelled **Number of shares**
+- Set how many pieces to make, and the threshold
+- The bundles are named `bundle-share-1.zip`, `bundle-share-2.zip`, and so on
+
+### Recovery in Anonymous Mode {#anonymous-recovery}
+
+Recovery works the same way, without the contact list. Guardians see Share 1, Share 2, and so on instead of names.
+
+<div class="warning">
+<strong>Important:</strong> without a built-in contact list, the guardians need another way to reach each other when a recovery is needed. Write it down for them.
+</div>
+
+## Advanced: Owner Key {#owner-key}
+
+By default, only a group of guardians can open your backup. That is the right shape for an estate, but it means you cannot open your own backup without calling them together.
+
+The owner key is an optional second path. You give the bundle maker an [age](https://github.com/FiloSottile/age) public key, which starts with `age1`. Every bundle then also contains `OWNER.age`: the recovery passphrase, locked to that key. With the matching secret key you can recover alone, at any time. The guardians see no difference, and bundles made without an owner key are exactly as before.
+
+### How to Enable {#owner-key-enable}
+
+1. Make an age key pair with any age tool, for example `age-keygen -o owner-key.txt`. The file shows your public key (`age1...`) and holds your secret key (`AGE-SECRET-KEY-1...`).
+1. On the Create Bundles page, open **Owner key (optional)** in step 3 and paste the *public* key.
+1. After generating, store `owner-key.txt` somewhere safe and separate from the bundles, for example printed on paper with your other vital documents. You can also keep `OWNER.age` on its own. Every bundle already contains a copy.
+
+**Never paste seed words or any other secret into the owner key field.** It takes an age public key only.
+
+The command line cannot set an owner key yet. Make those bundles in the browser.
+
+### How to Recover With It {#owner-key-recover}
+
+On the Recover page: drop any one bundle, open **I am the owner and have my owner key**, and paste your secret key (`AGE-SECRET-KEY-1...`). Recovery runs at once, with no other pieces needed.
+
+Without the tool, any age command line works:
+
+```
+# Prints the recovery passphrase:
+age -d -i owner-key.txt OWNER.age
+# Enter that passphrase when asked:
+age -d MANIFEST.age > archive
+```
+
+The test vector for this path is in the [source repository]({{GITHUB_REPO}}/blob/main/docs/owner-key-vector.md).
+
+### The Trade-off, Plainly {#owner-key-tradeoff}
+
+The owner key is a single key that opens the whole backup. Anyone who holds the secret key can read everything in it, alone, with no guardian involved. Store it with the same care as the things it protects. If you lose it, nothing is lost. The guardian path still works, and you can make new bundles with a new owner key at any time.
+
+You can derive the owner key from another secret you already guard instead of generating a random one. Then the two are linked. Whoever controls that secret controls this backup too.
+
+## Advanced: Time-Delayed Recovery {#timelock}
+
+You can set a waiting period when you make the bundles. Even if the guardians combine their pieces early, the files stay closed until the date you chose: 30 days, 6 months, or a specific date.
+
+### How to Enable {#timelock-enable}
+
+On the [Create Bundles](maker.html) page, choose the **Advanced** tab in step 3 and tick **Add a time lock**. Choose how long the files stay closed, up to two years.
+
+The two-year limit is deliberate. Time locks depend on the League of Entropy continuing to operate. A longer lock is a longer bet on outside infrastructure, and we do not think that is responsible. If you need a longer period and accept the trade-off, the command line has no cap: `inheritance seal --timelock 5y`.
+
+<figure class="screenshot">
+<img src="screenshots/en/tlock-setup.png" alt="Time lock setup in the Advanced tab">
+<figcaption>The time lock option is in the Advanced tab</figcaption>
+</figure>
+
+### Recovery {#timelock-recovery}
+
+When someone opens a time-locked bundle before the date, the recovery tool shows a waiting notice. Once the date has passed, recovery proceeds as normal.
+
+<figure class="screenshot">
+<img src="screenshots/en/tlock-waiting.png" alt="The recovery tool showing a time lock waiting notice">
+<figcaption>The recovery tool waits until the time lock has passed</figcaption>
+</figure>
+
+Opening a time-locked archive needs a brief internet connection. Your files are not sent anywhere. The connection only checks that the date has passed. Without a time lock, recovery is fully offline.
+
+<div class="warning">
+<strong>Experimental.</strong> Time-delayed recovery depends on the <a href="https://www.cloudflare.com/en-ca/leagueofentropy/" target="_blank">League of Entropy</a>, a distributed network run by serious organizations around the world. If this network stops before a time lock passes, that archive becomes unrecoverable. Bundles without a time lock are not affected.
 </div>
 
 ### How It Works {#timelock-technical}
 
-The League of Entropy produces a new cryptographic value every 3 seconds. Each value is numbered. You can predict which number corresponds to a given time, but no one can produce the value for that number early, not even the network operators.
+The League of Entropy publishes a new random value every 3 seconds. Each value is numbered. Anyone can work out which number belongs to a given time. Nobody can produce the value for that number early, and that includes the network operators.
 
-When you create a time-locked bundle, the archive is encrypted to a specific future value. The key to open it doesn't exist yet. It will come from the network when that moment arrives.
+When you make a time-locked bundle, the archive is encrypted to a specific future value. The key to open it does not exist yet. It comes from the network when that moment arrives.
 
-For a deeper look at the cryptography behind this, see the [drand timelock encryption documentation](https://docs.drand.love/docs/timelock-encryption/).
+For the details, see the [drand timelock encryption documentation](https://docs.drand.love/docs/timelock-encryption/).
+
+## CLI Alternative {#cli}
+
+The same tool exists for the command line, for people who prefer a terminal or want to script it. The binary is called `inheritance`, and you build it from the [source repository]({{GITHUB_REPO}}) with Go. There are no published binaries yet.
+
+The commands are `init`, `seal`, `bundle`, `recover`, `verify` and `status`. They make the same bundles as the browser, with two differences. The command line has no cap on the time lock, and it cannot set an owner key.
+
+<a href="{{GITHUB_REPO}}/blob/main/docs/guide.md" class="btn btn-secondary">Read the guide for the command line</a>
 
 ## Self-Hosting {#selfhosted}
 
-Bitcoin Inheritance can also run as a web app on your own server using `inheritance serve`. The server provides the same creation and recovery tools through a browser. Guardians only need their share. The encrypted archive is served automatically.
+Every page on this site is one file that works from a disk. Save `maker.html`, `recover.html` and `descriptor.html`, and you have the whole tool, with no server at all.
 
-This is an advanced option for people who already run a homelab or want a shared web UI. The offline bundles remain the primary way to use Bitcoin Inheritance and work without any server. See the [self-hosting guide](https://github.com/eljojo/rememory/blob/main/docs/selfhosted.md) on GitHub for details.
+For people who already run a server, `inheritance serve` provides the same creation and recovery pages from your own machine. The guardians need only their piece; the server holds the encrypted archive. The offline bundles remain the primary way to use Bitcoin Inheritance. See [Hosting Bitcoin Inheritance]({{GITHUB_REPO}}/blob/main/docs/selfhosted.md) in the source repository.

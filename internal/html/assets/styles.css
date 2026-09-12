@@ -1327,3 +1327,11 @@ input, textarea, select {
   margin-top: 0.4rem;
   color: var(--text-muted);
 }
+
+/* A long command scrolls inside its box. Without this, one wide <pre> makes
+   the whole page scroll sideways on a phone; the owner-key commands in the
+   guide and the Bitcoin Core command on the descriptor page both did. */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}

@@ -30,8 +30,8 @@ All notable changes to ReMemory are documented here.
 - The "See how it works" walkthrough now builds a test set in the maker
   instead of pointing at a demo download this fork does not publish.
 - New page: **Descriptor Backup**. A multisig wallet needs its descriptor as
-  well as its keys, and losing the descriptor can cost you the wallet even
-  when every key is safe. The page encrypts the descriptor so that your own
+  well as its keys. Losing the descriptor together with one key can cost you
+  the wallet, even when the keys you still hold are enough to sign. The page encrypts the descriptor so that your own
   keys unlock it, and gives you one line of text to put on Bitcoin. Choose
   who can open it: the same threshold your wallet spends with, or any single
   key. Recovery reads it back from a transaction id or from pasted text.
