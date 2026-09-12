@@ -576,9 +576,12 @@ You choose, and the choice matters:
 
 ### What Is Public
 
-Everything you put on the chain is public and permanent. Anyone can see that a wallet backup exists, and can read your script type, your threshold and your derivation paths. Nobody can read your keys without the keys.
+The text goes into one OP_RETURN output. It is public and permanent. The descriptor is encrypted before it goes there, and only your keys open it. What an observer can read without your keys depends on the format you chose.
 
-That is the trade, and it is deliberate. A backup that only you can find is a backup that dies with you. This one survives you, survives us, and survives the guardians.
+- **Threshold backup.** Your extended public keys and their fingerprints are encrypted. The shape of the wallet is written in plain text in front of the encrypted part: the script type, the threshold and the derivation paths. For a 2 of 3 the text begins `wsh(sortedmulti(2,[48h/0h/0h/2h]<0;1>/*,...`. That plain part is what lets multisigbackup.com read the backup with no software from us. After the encrypted part come short lookup tags, one per pair of your fingerprints. The tags let someone who already holds two of your keys find the backup, and they reveal nothing else.
+- **One-key backup (BIP-138).** The whole descriptor is inside the encryption, script type and threshold included. In plain text there is the marker `BIP138`, seven key slots, and any derivation path outside the common set. Some slots hold your real keys, the rest hold random decoys, and nothing tells them apart. Standard multisig paths are left out, so an observer cannot tell the script family.
+
+In both formats anyone can see that a wallet backup exists. In neither can anyone read a key without your keys. That is the trade, and it is deliberate. A backup that only you can find is a backup that dies with you. This one survives you, survives us, and survives the guardians.
 
 ### How to Recover It
 
