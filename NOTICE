@@ -1,4 +1,4 @@
-Kaitiaki
+Bitcoin Inheritance
 Copyright 2026 Bitcoin Butlers
 
 This product is a fork of Rememory (https://github.com/eljojo/rememory),
@@ -7,7 +7,7 @@ distributed under the Apache License, Version 2.0. We thank the
 Rememory authors for their excellent work; all credit for the original
 design and implementation belongs to them.
 
-Changes made in this fork (Kaitiaki):
+Changes made in this fork (Bitcoin Inheritance):
 - docs/independent-recovery.md: recovery procedure with independent
   tools (stock age + contrib/combine.py), proven against the golden
   fixtures in internal/core/testdata/.

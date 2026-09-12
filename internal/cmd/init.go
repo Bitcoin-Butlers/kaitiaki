@@ -15,16 +15,16 @@ import (
 
 var initCmd = &cobra.Command{
 	Use:   "init [name]",
-	Short: "Create a new kaitiaki project",
-	Long: `Create a new kaitiaki project with a manifest directory and configuration.
+	Short: "Create a new inheritance project",
+	Long: `Create a new inheritance project with a manifest directory and configuration.
 
 The project will contain:
   - project.yml: Configuration with friends' contact information
   - manifest/: Directory for your secret files
 
 Example:
-  kaitiaki init my-recovery-2026
-  kaitiaki init my-recovery --from ../old-project`,
+  inheritance init my-recovery-2026
+  inheritance init my-recovery --from ../old-project`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runInit,
 }
@@ -97,7 +97,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("directory already exists: %s", dir)
 	}
 
-	fmt.Printf("Creating new kaitiaki project: %s/\n\n", dirName)
+	fmt.Printf("Creating new inheritance project: %s/\n\n", dirName)
 
 	var friends []project.Friend
 	var threshold int
@@ -285,7 +285,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 	fmt.Printf("  - project.yml (edit to update friends)\n")
 	fmt.Printf("  - manifest/README.md (add your secrets here)\n")
 	fmt.Println()
-	fmt.Println("Next: Add files to manifest/, then run `kaitiaki seal`")
+	fmt.Println("Next: Add files to manifest/, then run `inheritance seal`")
 
 	return nil
 }

@@ -41,7 +41,7 @@ type Sealed struct {
 	TlockUnlockTime  *time.Time  `yaml:"tlock_unlock_time,omitempty"`
 }
 
-// Project represents a kaitiaki project configuration.
+// Project represents a inheritance project configuration.
 type Project struct {
 	Name      string `yaml:"name"`
 	Created   string `yaml:"created"`

@@ -116,7 +116,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
 	}
 
 	// CSP meta tag
-	headMeta := `<meta name="generator" content="Kaitiaki {{VERSION}}">
+	headMeta := `<meta name="generator" content="Bitcoin Inheritance {{VERSION}}">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-{{CSP_NONCE}}' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src blob: data:; connect-src ` + cspConnectSrc + `; form-action 'none';">`
 
 	navExtras := ""
@@ -183,7 +183,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
       </div>`
 
 	result := applyLayout(LayoutOptions{
-		Title:      "Kaitiaki Recovery Tool",
+		Title:      "Bitcoin Inheritance Recovery Tool",
 		HeadMeta:   headMeta,
 		Selfhosted: selfhosted,
 		NavExtras: bundleNavHTML + `
@@ -206,7 +206,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
     </div>
   </div>`,
 		Content: content,
-		FooterContent: `<p>Kaitiaki {{VERSION}}</p>
+		FooterContent: `<p>Bitcoin Inheritance {{VERSION}}</p>
     <p>
       <span data-i18n="need_help">Need help?</span>
       <a href="{{GITHUB_PAGES}}/docs#recovering" target="_blank">Docs</a> &#xB7;

@@ -71,7 +71,7 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 	}
 
 	// CSP meta tag
-	headMeta := `<meta name="generator" content="Kaitiaki {{VERSION}}">
+	headMeta := `<meta name="generator" content="Bitcoin Inheritance {{VERSION}}">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-{{CSP_NONCE}}' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src blob: data:; connect-src ` + cspConnectSrc + `; form-action 'none';">`
 
 	navExtras := ""
@@ -107,8 +107,8 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 
 	// Translations (docs link rewriting + rememoryUpdateUI are handled by core i18n.js)
 	scripts.WriteString(i18nScript(I18nScriptOptions{
-		Component:         "maker",
-		UseNonce:          true,
+		Component: "maker",
+		UseNonce:  true,
 	}))
 
 	// WASM runtime
@@ -141,7 +141,7 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 
 	// Assemble page using layout
 	result := applyLayout(LayoutOptions{
-		Title:      "Kaitiaki - Create Recovery Bundles",
+		Title:      "Bitcoin Inheritance - Create Recovery Bundles",
 		HeadMeta:   headMeta,
 		PageStyles: makerCSS,
 		Selfhosted: opts.Selfhosted,
@@ -149,7 +149,7 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 		BeforeContainer: `<!-- Toast notifications container -->
   <div id="toast-container" class="toast-container" role="alert" aria-live="polite"></div>`,
 		Content:       content,
-		FooterContent: `<p class="version">Kaitiaki {{VERSION}}</p>`,
+		FooterContent: `<p class="version">Bitcoin Inheritance {{VERSION}}</p>`,
 		Scripts:       navHideScript + scripts.String(),
 	})
 

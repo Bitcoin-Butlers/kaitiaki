@@ -1,4 +1,4 @@
-/* Kaitiaki palette — Bitcoin Butlers v2.0 design system (gold & neutral darks).
+/* Bitcoin Inheritance palette — Bitcoin Butlers v2.0 design system (gold & neutral darks).
    Source of truth: Website-frontend/src/app/globals.css brand tokens.
    Font note: BB uses Geist Sans/Mono via next/font; these static pages must stay
    self-contained with zero external requests, so we use the same fallback stack
@@ -1081,13 +1081,17 @@ input, textarea, select {
 }
 
 /* QR Scanner modal */
+/* A camera viewfinder is dark whatever the page theme. Upstream painted it
+ * with var(--text) and wrote on it in var(--paper-light), which on a paper
+ * theme is dark ink under light text and on ours inverts to a light box with
+ * a white hint nobody could read. Fixed colours, not tokens, on purpose. */
 .qr-scanner-modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--text);
+  background: #0b0b0b;
   z-index: 1500;
   display: flex;
   flex-direction: column;
@@ -1098,7 +1102,7 @@ input, textarea, select {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  color: var(--paper-light);
+  color: rgba(255,255,255,0.92);
   font-size: 1.125rem;
   font-weight: 500;
 }
@@ -1106,7 +1110,7 @@ input, textarea, select {
 .qr-scanner-close {
   background: none;
   border: none;
-  color: var(--paper-light);
+  color: rgba(255,255,255,0.92);
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
@@ -1322,4 +1326,12 @@ input, textarea, select {
   display: block;
   margin-top: 0.4rem;
   color: var(--text-muted);
+}
+
+/* A long command scrolls inside its box. Without this, one wide <pre> makes
+   the whole page scroll sideways on a phone; the owner-key commands in the
+   guide and the Bitcoin Core command on the descriptor page both did. */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
 }

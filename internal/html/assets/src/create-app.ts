@@ -1,4 +1,4 @@
-// Kaitiaki Bundle Creator - Browser-based bundle creation using Go WASM
+// Bitcoin Inheritance Bundle Creator - Browser-based bundle creation using Go WASM
 // Tlock encryption is inline and offline — it uses the embedded drand chain
 // config to encrypt for a future round without any HTTP calls.
 
@@ -1044,7 +1044,7 @@ declare const __SELFHOSTED__: boolean;
         ownerSep.classList.remove('hidden');
         ownerBtn.onclick = (e) => {
           e.preventDefault();
-          const blob = new Blob([ownerData], { type: 'text/plain' });
+          const blob = new Blob([ownerData as BlobPart], { type: 'text/plain' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
@@ -1142,7 +1142,7 @@ declare const __SELFHOSTED__: boolean;
   }
 
   function downloadProjectYaml(): void {
-    let yaml = `# Kaitiaki Project Configuration\n`;
+    let yaml = `# Bitcoin Inheritance Project Configuration\n`;
     yaml += `# Generated: ${new Date().toISOString()}\n`;
     yaml += `# Import this file to quickly restore your friend list\n\n`;
     yaml += `name: ${state.projectName}\n`;

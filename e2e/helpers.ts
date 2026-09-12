@@ -104,9 +104,15 @@ export function getIndexHtml(): string {
   return getOrBuild('indexHtml', (dir) => buildHtmlResource(dir, 'index.html', ['index']));
 }
 
+export function getDescriptorHtml(): string {
+  return getOrBuild('descriptorHtml', (dir) =>
+    buildHtmlResource(dir, 'descriptor.html', ['descriptor'])
+  );
+}
+
 // Get absolute path to rememory binary
 export function getRememoryBin(): string {
-  const binEnv = process.env.REMEMORY_BIN || './kaitiaki';
+  const binEnv = process.env.REMEMORY_BIN || './inheritance';
   return path.resolve(binEnv);
 }
 
@@ -695,7 +701,7 @@ export class CreationPage {
 
   // UI assertions
   async expectUIElements(): Promise<void> {
-    await expect(this.page.locator('.logo')).toContainText('Kaitiaki');
+    await expect(this.page.locator('.logo')).toContainText('Inheritance');
     await expect(this.page.locator('#friends-list')).toBeVisible();
     await expect(this.page.locator('#files-drop-zone')).toBeVisible();
     await expect(this.page.locator('#generate-btn')).toBeVisible();

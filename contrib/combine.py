@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Standalone Shamir combiner for Kaitiaki / Rememory shares.
+# Standalone Shamir combiner for Bitcoin Inheritance / Rememory shares.
 #
 # Share format (hashicorp/vault shamir, as used by this project):
 #   - Field: GF(2^8) with the AES polynomial 0x11b.
@@ -17,7 +17,7 @@
 # Input files are the "-----BEGIN REMEMORY SHARE-----" text files.
 # The script reads the base64 body of each file. It prints the
 # recovered passphrase on stdout. Feed that passphrase to stock
-# `age -d` to decrypt MANIFEST.age. No Kaitiaki/Rememory code runs.
+# `age -d` to decrypt MANIFEST.age. No Bitcoin Inheritance/Rememory code runs.
 #
 # If you give fewer shares than the threshold, the output is garbage
 # and age rejects it. That is expected and safe.

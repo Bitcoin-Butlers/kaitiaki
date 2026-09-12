@@ -30,7 +30,7 @@ This command:
   5. Generates ZIP bundles for distribution
   6. Writes checksums to project.yml
 
-Run this command inside a project directory (created with 'kaitiaki init').`,
+Run this command inside a project directory (created with 'inheritance init').`,
 	RunE: runSeal,
 }
 

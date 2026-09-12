@@ -538,7 +538,7 @@ func verifyBundle(t *testing.T, bundlePath string, friend project.Friend, allFri
 	if !strings.Contains(readmeContent, "METADATA FOOTER") {
 		t.Error("README missing metadata footer")
 	}
-	if !strings.Contains(readmeContent, "kaitiaki-version:") {
+	if !strings.Contains(readmeContent, "inheritance-version:") {
 		t.Error("README missing version in footer")
 	}
 	if !strings.Contains(readmeContent, "checksum-manifest:") {
@@ -546,7 +546,7 @@ func verifyBundle(t *testing.T, bundlePath string, friend project.Friend, allFri
 	}
 
 	// Verify recover.html contains expected elements
-	if !strings.Contains(recoverContent, "Kaitiaki") {
+	if !strings.Contains(recoverContent, "Inheritance") {
 		t.Error("recover.html missing title")
 	}
 	if !strings.Contains(recoverContent, "v1.0.0-test") {

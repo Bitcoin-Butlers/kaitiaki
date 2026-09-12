@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Kaitiaki is now Bitcoin Inheritance. Pages, guide, README, the PDF bundle
+  title, and every translation say the new name; short labels such as the page
+  logo say Inheritance. The CLI binary is now `inheritance` (`inheritance init`,
+  `inheritance seal`, `inheritance recover`), the bundle metadata key is
+  `inheritance-version`, and the printed recovery URL moved to
+  bitcoinbutlers.com/tools/inheritance/recover.html, which the site redirects
+  to permanently from the old path. Only the repository name keeps the old word.
+
 All notable changes to ReMemory are documented here.
 
 ## Unreleased
@@ -19,6 +29,14 @@ All notable changes to ReMemory are documented here.
   active label used to be white on white.
 - The "See how it works" walkthrough now builds a test set in the maker
   instead of pointing at a demo download this fork does not publish.
+- New page: **Descriptor Backup**. A multisig wallet needs its descriptor as
+  well as its keys. Losing the descriptor together with one key can cost you
+  the wallet, even when the keys you still hold are enough to sign. The page encrypts the descriptor so that your own
+  keys unlock it, and gives you one line of text to put on Bitcoin. Choose
+  who can open it: the same threshold your wallet spends with, or any single
+  key. Recovery reads it back from a transaction id or from pasted text.
+  Nothing is uploaded, and the encrypted text can also be recovered with
+  other people's tools if this project disappears.
 - The guardian README.txt and README.pdf speak for Bitcoin Butlers. The
   title is now KAITIAKI GUARDIAN BUNDLE, the instructions are shorter and
   plainer, and the fallback links point at bitcoinbutlers.com and at this

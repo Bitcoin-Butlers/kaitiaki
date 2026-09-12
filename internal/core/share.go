@@ -19,7 +19,7 @@ const (
 
 	// DefaultRecoveryURL is the default base URL for QR codes in PDFs.
 	// Points to the recover.html hosted on bitcoinbutlers.com.
-	DefaultRecoveryURL = "https://www.bitcoinbutlers.com/tools/kaitiaki/recover.html"
+	DefaultRecoveryURL = "https://www.bitcoinbutlers.com/tools/inheritance/recover.html"
 )
 
 // Share represents a single Shamir share with metadata.

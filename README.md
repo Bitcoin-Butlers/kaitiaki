@@ -1,6 +1,6 @@
-# Kaitiaki
+# Bitcoin Inheritance
 
-Kaitiaki is a Bitcoin Butlers fork of
+Bitcoin Inheritance is a Bitcoin Butlers fork of
 [Rememory](https://github.com/eljojo/rememory) by
 [eljojo](https://github.com/eljojo). Rememory does the heavy lifting;
 this fork adds a small set of changes for our recovery service. See

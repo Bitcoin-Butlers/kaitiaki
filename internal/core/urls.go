@@ -6,4 +6,4 @@ package core
 const GitHubRepo = "https://github.com/Bitcoin-Butlers/kaitiaki"
 
 // GitHubPages is where the static pages and their screenshots are served.
-const GitHubPages = "https://www.bitcoinbutlers.com/tools/kaitiaki"
+const GitHubPages = "https://www.bitcoinbutlers.com/tools/inheritance"

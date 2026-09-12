@@ -17,7 +17,7 @@ test.describe('Documentation Page', () => {
     await page.goto('file://' + docsPath);
 
     // Page title
-    await expect(page).toHaveTitle(/Kaitiaki Guide/);
+    await expect(page).toHaveTitle(/Bitcoin Inheritance Guide/);
 
     // TOC sidebar is visible
     const toc = page.locator('.toc');

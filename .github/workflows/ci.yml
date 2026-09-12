@@ -64,6 +64,9 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps
 
+      - name: Test descriptor backup formats
+        run: make test-ts
+
       - name: Run Playwright E2E tests
         run: make test-e2e
 

@@ -46,7 +46,7 @@ func runVerify(cmd *cobra.Command, args []string) error {
 	}
 
 	if p.Sealed == nil {
-		return fmt.Errorf("project has not been sealed yet; run 'kaitiaki seal' first")
+		return fmt.Errorf("project has not been sealed yet; run 'inheritance seal' first")
 	}
 
 	allOK := true

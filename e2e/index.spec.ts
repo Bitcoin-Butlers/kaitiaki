@@ -17,7 +17,7 @@ test.describe('Landing Page', () => {
     await page.goto('file://' + indexPath);
 
     // Main heading
-    await expect(page.locator('h1')).toContainText('Kaitiaki');
+    await expect(page.locator('h1')).toContainText('Bitcoin Inheritance');
 
     // Key sections
     await expect(page.locator('.intro')).toBeVisible();

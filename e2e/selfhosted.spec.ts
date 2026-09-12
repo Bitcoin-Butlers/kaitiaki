@@ -97,7 +97,7 @@ test.describe('Selfhosted Server', () => {
     // Step 1: Visit root — should show setup page (no password)
     // -----------------------------------------------------------
     await page.goto(baseURL);
-    await expect(page.locator('h1')).toContainText('Set up Kaitiaki');
+    await expect(page.locator('h1')).toContainText('Set up Bitcoin Inheritance');
 
     // Fill in password
     await page.locator('#password').fill(adminPassword);
