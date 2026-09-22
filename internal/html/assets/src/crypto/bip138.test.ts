@@ -27,7 +27,7 @@ import {
   encodeDerivationPaths,
   encodeIndividualSecrets,
   encryptDescriptor,
-  INHERITANCE_SECRET_ENTRIES,
+  secretEntryBucket,
   decodeBackup as decodeBip138,
   hexToBytes,
   normalizeKeys,
@@ -256,11 +256,18 @@ test('common account paths are dropped, uncommon ones are kept', () => {
   assert.deepEqual(dropCommonDerivationPaths([common, personal]), [personal]);
 });
 
-test('a Bitcoin Inheritance backup always writes seven secret entries', () => {
+test('a backup pads its secret entries to the BIP-138 bucket', () => {
+  // The buckets are the BIP's own, so our backups do not stand out among
+  // other BIP-138 backups, and a 2-of-3 does not pay for cover it never uses.
+  assert.equal(secretEntryBucket(3), 5, 'a 2-of-3 pads to five');
+  assert.equal(secretEntryBucket(5), 5, 'five keys still fit the first bucket');
+  assert.equal(secretEntryBucket(7), 10, 'a 3-of-7 pads to ten');
+  assert.equal(secretEntryBucket(20), 20);
+  assert.equal(secretEntryBucket(21), 40, 'above twenty the count steps in twenties');
+
   const { backup } = encryptDescriptor(descriptorVector.descriptor);
   const decoded = decodeBip138(backup);
-  assert.equal(INHERITANCE_SECRET_ENTRIES, 7);
-  assert.equal(decoded.individualSecrets.length, 7, 'three real keys, four decoys');
+  assert.equal(decoded.individualSecrets.length, 5, 'three real keys, two decoys');
 
   // The decoys must not cost anyone their recovery.
   for (const xpub of descriptorVector.xpubs) {
@@ -271,7 +278,7 @@ test('a Bitcoin Inheritance backup always writes seven secret entries', () => {
   // at the front where a reader could pick them out.
   const asHex = decoded.individualSecrets.map(bytesToHex);
   assert.deepEqual(asHex, [...asHex].sort(), 'entries are written in sorted order');
-  assert.equal(new Set(asHex).size, 7, 'no entry repeats');
+  assert.equal(new Set(asHex).size, 5, 'no entry repeats');
 });
 
 test('two backups of the same wallet share no decoy', () => {
@@ -304,5 +311,5 @@ test('the on-chain size of both formats is measured, not guessed', () => {
   // about 2 sat per extra byte at 2 sat/vB.
   assert.equal(kOfN, 345, 'k-of-n 2-of-3 payload');
   assert.equal(bare, 591, 'BIP-138 2-of-3 with no decoys');
-  assert.equal(shipped, 719, 'BIP-138 2-of-3 as Bitcoin Inheritance ships it, padded to seven entries');
+  assert.equal(shipped, 655, 'BIP-138 2-of-3 as Bitcoin Inheritance ships it, padded to the bucket of five');
 });

@@ -102,11 +102,11 @@ Every nonce is zero, which is safe here because no two keys repeat.
 
 ## One-key format (BIP-138)
 
-The one-key format follows the draft at
-[bitcoin/bips#1951](https://github.com/bitcoin/bips/pull/1951). It uses a
-random nonce and random decoy entries, so there is no fixed output to
-publish. Check it against the draft's own vectors, which this repository
-runs in its test suite:
+The one-key format follows
+[BIP-138](https://github.com/bitcoin/bips/blob/master/bip-0138.md), which
+has a number and the status Draft. It uses a random nonce and random decoy
+entries, so there is no fixed output to publish. Check it against the BIP's
+own vectors, which this repository runs in its test suite:
 `internal/html/assets/src/crypto/testdata/bip138/`.
 
 Two things about our encoder are worth stating:
@@ -114,8 +114,12 @@ Two things about our encoder are worth stating:
 - We drop the common account paths from the encoding, because a
   recovering wallet tries them anyway. The draft's end-to-end vectors do
   the same.
-- We pad the entry list to seven, so that counting the entries does not
-  count the cosigners.
+- We pad the entry list to the buckets the BIP asks for, 5, 10 and 20, so
+  that counting the entries does not count the cosigners. A 2-of-3 pads to
+  five and a 3-of-7 pads to ten. We wrote a fixed seven until 2026-09-22.
+  That number covered every wallet up to seven cosigners, and it also marked
+  our backups as ours among all BIP-138 backups. A 2-of-3 is 64 bytes
+  smaller on the bucket: 655 bytes rather than 719.
 
 ## Running the checks
 

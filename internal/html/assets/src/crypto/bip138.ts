@@ -315,11 +315,9 @@ export interface EncodeOptions {
   /**
    * Pad the entry list with random decoys up to this many entries.
    *
-   * The draft suggests buckets of 5, 10, 20. Bitcoin Inheritance uses 7, decided by Ben
-   * on 2026-09-10: it covers every wallet up to seven cosigners without
-   * jumping to ten, and the 128 extra bytes cost about 128 sat. An unusual
-   * bucket would normally make our backups stand out, which does not apply
-   * here because a BIP-138 backup already begins with the ASCII text BIP138.
+   * Use `secretEntryBucket` to choose the value. The BIP tells an encoder to
+   * pad to a bucket, so that counting the entries does not reveal how many
+   * cosigners a wallet has.
    */
   padSecretsTo?: number;
   derivationPaths?: number[][];
@@ -376,8 +374,30 @@ function padWithDecoys(secrets: Uint8Array[], target?: number): Uint8Array[] {
   return padded;
 }
 
-/** How many individual-secret entries a Bitcoin Inheritance backup writes. */
-export const INHERITANCE_SECRET_ENTRIES = 7;
+/**
+ * Entry-count buckets, as BIP-138 asks an encoder to use.
+ *
+ * Padding the secret count to a bucket stops an onlooker counting the
+ * cosigners. A 2-of-3 pads to five. A 3-of-7 pads to ten.
+ *
+ * Bitcoin Inheritance wrote a fixed seven until 2026-09-22 (see commit
+ * 89f7e07). Ben decided the seven on 2026-09-10, to cover every wallet up to
+ * seven cosigners without jumping to ten. His standing order of 2026-09-22 is
+ * to ride the standards wherever one fits, so the buckets replaced it. The
+ * fixed seven also marked our backups as ours among all BIP-138 backups, and
+ * it cost a 2-of-3 sixty-four bytes more than the bucket does.
+ */
+export const SECRET_ENTRY_BUCKETS = [5, 10, 20];
+
+/** The smallest bucket that holds `keyCount` individual secrets. */
+export function secretEntryBucket(keyCount: number): number {
+  if (keyCount > 255) throw new Error('A backup carries at most 255 individual secrets');
+  for (const bucket of SECRET_ENTRY_BUCKETS) {
+    if (keyCount <= bucket) return bucket;
+  }
+  // Above twenty keys the count keeps stepping in twenties, so it stays coarse.
+  return Math.min(Math.ceil(keyCount / 20) * 20, 255);
+}
 
 /** A 12-byte nonce that is never all zero, as the draft requires. */
 function randomNonce(): Uint8Array {
@@ -498,7 +518,7 @@ export function encryptDescriptor(
 ): { backup: Uint8Array; text: string; excluded: string[] } {
   const { pubkeys, excluded } = descriptorPubkeys(descriptor);
   const backup = encodeBackup({
-    padSecretsTo: INHERITANCE_SECRET_ENTRIES,
+    padSecretsTo: secretEntryBucket(pubkeys.length),
     ...options,
     pubkeys,
     items: [{ bip: BIP380, content: utf8.encode(descriptor) }],
