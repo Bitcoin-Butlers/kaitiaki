@@ -476,7 +476,9 @@ func renderWordGridPDF(p *fpdf.Fpdf, words []string, title string, leftMargin, c
 func addSection(pdf *fpdf.Fpdf, title string) {
 	pdf.SetFont(fontSans, "B", headingSize)
 	pdf.SetFillColor(230, 230, 230)
-	pdf.CellFormat(0, 8, " "+title, "", 1, "L", true, 0, "")
+	// MultiCell, not CellFormat: a heading longer than the line must wrap.
+	// CellFormat clips at the right margin and drops the rest of the words.
+	pdf.MultiCell(0, 8, " "+title, "", "L", true)
 	pdf.Ln(2)
 }
 
