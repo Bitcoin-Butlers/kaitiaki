@@ -1,7 +1,3 @@
-// Bitcoin Inheritance Bundle Creator - Browser-based bundle creation using Go WASM
-// Tlock encryption is inline and offline — it uses the embedded drand chain
-// config to encrypt for a future round without any HTTP calls.
-
 import type {
   CreationState,
   BundleFile,
@@ -16,6 +12,74 @@ import { createTimelockEncrypter } from 'tlock-js/drand/timelock-encrypter';
 import { encryptAge } from 'tlock-js/age/age-encrypt-decrypt';
 import { Buffer } from 'buffer';
 import { createOfflineClient, QUICKNET_GENESIS, QUICKNET_PERIOD, formatTimelockDate } from './drand';
+
+/**
+ * The owner's own words, read off the six prompts in step 3.
+ *
+ * Two texts come out, and they go to different places. The method travels to
+ * the chain and into every README, because a lone guardian may safely hold it
+ * and an heir with one bundle and one key needs it early. The people and
+ * places go only into the encrypted archive, because a README is built to be
+ * forwarded: a guardian's own copy tells them to send it to whoever asks.
+ *
+ * Empty boxes contribute nothing, so an owner who skips step 3 gets exactly
+ * the bundle they would have got before it existed.
+ */
+/**
+ * "Anything else" repeats, because the prior art this design follows says any
+ * number of such records may be included and an owner rarely has exactly one
+ * extra thing to say.
+ */
+function wireAddAnother(): void {
+  const button = document.getElementById('words-add-another');
+  const list = document.getElementById('words-else-list');
+  if (!button || !list) return;
+  button.addEventListener('click', () => {
+    const first = list.querySelector<HTMLTextAreaElement>('.words-else');
+    const box = document.createElement('textarea');
+    box.className = 'words-else';
+    box.rows = 2;
+    if (first) box.placeholder = first.placeholder;
+    list.appendChild(box);
+    box.focus();
+  });
+}
+
+function collectOwnersWords(): { recoverySteps: string; peopleAndPlaces: string } {
+  const read = (id: string): string =>
+    (document.getElementById(id) as HTMLTextAreaElement | null)?.value.trim() || '';
+
+  const section = (label: string, body: string): string =>
+    body ? `${label}\n${body}\n` : '';
+
+  const recoverySteps = [
+    section('The wallet:', read('words-wallet')),
+    section('What opens it:', read('words-opens')),
+    section('How to sign and send:', read('words-sign')),
+  ]
+    .filter(Boolean)
+    .join('\n')
+    .trim();
+
+  const extras = Array.from(document.querySelectorAll<HTMLTextAreaElement>('.words-else'))
+    .map((el) => el.value.trim())
+    .filter(Boolean);
+
+  const peopleAndPlaces = [
+    section('Where each key is:', read('words-keys')),
+    section('Who to call first:', read('words-call')),
+    extras.length > 0 ? section('Also:', extras.join('\n\n')) : '',
+  ]
+    .filter(Boolean)
+    .join('\n')
+    .trim();
+
+  return { recoverySteps, peopleAndPlaces };
+}
+// Bitcoin Inheritance Bundle Creator - Browser-based bundle creation using Go WASM
+// Tlock encryption is inline and offline — it uses the embedded drand chain
+// config to encrypt for a future round without any HTTP calls.
+
 
 // Translation function and language state (defined in HTML)
 declare const t: TranslationFunction;
@@ -203,6 +267,7 @@ declare const __SELFHOSTED__: boolean;
     setupFiles();
     setupGenerate();
     setupTimelock();
+    wireAddAnother();
 
     // Add initial 2 friends
     addFriend();
@@ -963,7 +1028,15 @@ declare const __SELFHOSTED__: boolean;
       setStatus(t('archiving'));
       await sleep(100);
 
-      const archiveResult = window.rememoryCreateArchive(filesForWasm);
+      const ownersWords = collectOwnersWords();
+
+      // The people and places go INSIDE the archive, so they open only when
+      // enough guardians combine. Go names the file and writes its header, so
+      // a bundle made here matches one made by the command line.
+      const archiveResult = window.rememoryCreateArchive(
+        filesForWasm,
+        ownersWords.peopleAndPlaces || undefined
+      );
       if (archiveResult.error || !archiveResult.data) {
         throw new Error(archiveResult.error || 'Failed to create archive');
       }
@@ -1011,6 +1084,7 @@ declare const __SELFHOSTED__: boolean;
         tlockRound: tlockRound,
         tlockUnlock: tlockUnlock,
         ownerRecipient: ownerRecipient,
+        recoverySteps: ownersWords.recoverySteps,
       });
 
       if (result.error || !result.bundles) {

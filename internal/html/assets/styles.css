@@ -1335,3 +1335,110 @@ pre {
   max-width: 100%;
   overflow-x: auto;
 }
+
+/* ---------------------------------------------------------------------------
+   Step 3, the owner's own words.
+
+   Two groups, and the label on each says where that text goes. The split is
+   not decoration: a README is built to be forwarded, so the method may sit in
+   one and the key locations may not.
+   --------------------------------------------------------------------------- */
+
+.words-group {
+  margin: 1.5rem 0;
+  padding: 1rem 1.125rem 1.125rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--paper);
+}
+
+.words-group h3 {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 1rem;
+}
+
+.words-dest {
+  display: inline-block;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.words-dest-chain {
+  background: var(--info-bg);
+  border-color: var(--info-border);
+  color: var(--info-text);
+}
+
+.words-dest-sealed {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+  color: var(--success-text);
+}
+
+.words-group label {
+  display: block;
+  margin: 0.875rem 0 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--sage);
+}
+
+.words-group textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--paper-light);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.words-group textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+
+.words-group .words-else + .words-else {
+  margin-top: 0.5rem;
+}
+
+.words-warning,
+.words-note {
+  margin: 0.875rem 0 0;
+  padding: 0.625rem 0.75rem;
+  border-radius: 3px;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.words-warning {
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
+}
+
+.words-note {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+}
+
+.btn-link {
+  margin-top: 0.625rem;
+  padding: 0.375rem 0;
+  border: none;
+  background: none;
+  color: var(--sage);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  text-decoration: underline;
+}

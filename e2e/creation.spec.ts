@@ -407,6 +407,51 @@ friends:
     await creation.expectFriendCount(2);
   });
 
+  test("the owner's words land where they were decided to land", async ({ page }, testInfo) => {
+    // The one that must never silently regress. A README is built to be
+    // forwarded: a guardian's own copy tells them to send it to whoever asks
+    // for their piece. So the method may sit in it and the key locations may
+    // not. The locations are sealed in the encrypted archive instead.
+    testInfo.setTimeout(120000);
+    const creation = new CreationPage(page, htmlPath);
+    await creation.open();
+
+    await creation.setFriend(0, 'Hannah', 'hannah@test.com');
+    await creation.setFriend(1, 'Sebastian', 'sebastian@test.com');
+
+    const method = 'The older Coldcard needs firmware 5.1 or it will not show the wallet.';
+    const location = 'Key 1: the safe at the Wellington house.';
+    const alsoNote = 'The safe code is my birth year backwards.';
+
+    await page.fill('#words-wallet', 'A 2 of 3. Any two of the three keys can spend.');
+    await page.fill('#words-sign', method);
+    await page.fill('#words-keys', location);
+    await page.fill('#words-call', 'Hannah. She has done this drill twice.');
+    await page.fill('.words-else', alsoNote);
+
+    const testFiles = creation.createTestFiles(tmpDir, 'ownerwords');
+    await creation.addFiles(testFiles);
+    await creation.generate();
+    await creation.expectGenerationComplete();
+
+    const data = await creation.downloadBundle(0);
+    expect(data).toBeTruthy();
+    const dir = path.join(tmpDir, 'ownerwords-bundle');
+    fs.mkdirSync(dir, { recursive: true });
+    const zipPath = path.join(dir, 'bundle.zip');
+    fs.writeFileSync(zipPath, data!);
+    const readme = new AdmZip(zipPath).readAsText('README.txt');
+
+    // The method is readable by a lone guardian, because an heir with one
+    // bundle and one key needs it before anyone combines anything.
+    expect(readme).toContain(method);
+
+    // The key locations are not, at any price.
+    expect(readme).not.toContain(location);
+    expect(readme).not.toContain(alsoNote);
+    expect(readme).not.toContain('Wellington');
+  });
+
   test('browser-created bundles can be recovered @cross-browser', async ({ page }, testInfo) => {
     testInfo.setTimeout(120000);
     const creation = new CreationPage(page, htmlPath);

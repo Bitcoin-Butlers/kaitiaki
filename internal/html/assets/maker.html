@@ -106,10 +106,51 @@
       <div id="files-summary" class="files-summary hidden"></div>
     </div>
 
-    <!-- Step 3: Generate -->
+    <!-- Step 3: The owner's words -->
+    <div class="card">
+      <h2><span class="step-number pending" id="step-number-3">3</span> <span data-i18n="step3_title">What Your Heirs Need To Know</span></h2>
+      <p data-i18n="words_intro">Write these in your own words. Your guardians and your heirs read them, never us.</p>
+
+      <div class="words-group">
+        <p class="words-dest words-dest-chain" data-i18n="words_method_dest">goes on the chain and in the bundles</p>
+        <h3 data-i18n="words_method_group">Recovery steps</h3>
+
+        <label for="words-wallet" data-i18n="words_wallet_label">What kind of wallet is this</label>
+        <textarea id="words-wallet" rows="2" data-i18n-placeholder="words_wallet_eg" placeholder="A 2 of 3. Any two of the three keys can spend."></textarea>
+
+        <label for="words-opens" data-i18n="words_opens_label">What opens it</label>
+        <textarea id="words-opens" rows="2" data-i18n-placeholder="words_opens_eg" placeholder="Sparrow Wallet on a laptop. Load the descriptor first."></textarea>
+
+        <label for="words-sign" data-i18n="words_sign_label">How to sign and send</label>
+        <textarea id="words-sign" rows="4" data-i18n-placeholder="words_sign_eg" placeholder="Plug in two of the three signers, one at a time.&#10;Sparrow asks each one to approve. The older Coldcard&#10;needs firmware 5.1 or it will not show the wallet."></textarea>
+
+        <p class="words-warning" data-i18n="words_method_warn">This text is public and permanent once you publish it on the chain. Any ONE of your keys opens it, now or in twenty years. Write the method, not the people.</p>
+      </div>
+
+      <div class="words-group">
+        <p class="words-dest words-dest-sealed" data-i18n="words_places_dest">bundles only</p>
+        <h3 data-i18n="words_places_group">People and places</h3>
+
+        <label for="words-keys" data-i18n="words_keys_label">Where each key is</label>
+        <textarea id="words-keys" rows="4" data-i18n-placeholder="words_keys_eg" placeholder="Key 1: the safe at home, top shelf.&#10;Key 2: Hannah has it.&#10;Key 3: bank box, Cuba Street branch, in my name."></textarea>
+
+        <label for="words-call" data-i18n="words_call_label">Who to call first</label>
+        <textarea id="words-call" rows="2" data-i18n-placeholder="words_call_eg" placeholder="Hannah. She has done this drill with me twice."></textarea>
+
+        <label for="words-else" data-i18n="words_else_label">Anything else</label>
+        <div id="words-else-list">
+          <textarea class="words-else" rows="2" placeholder="The safe code is my mother's birth year, backwards." data-i18n-placeholder="words_else_eg"></textarea>
+        </div>
+        <button type="button" id="words-add-another" class="btn btn-link" data-i18n="words_add_another">Add another</button>
+
+        <p class="words-note" data-i18n="words_places_note">This stays sealed inside the encrypted archive. It appears only when enough guardians come together. It never goes on the chain.</p>
+      </div>
+    </div>
+
+    <!-- Step 4: Generate -->
     <div class="card">
       <div class="card-header">
-        <h2><span class="step-number pending" id="step-number-3">3</span> <span data-i18n="step3_title">Generate Bundles</span></h2>
+        <h2><span class="step-number pending" id="step-number-4">4</span> <span data-i18n="generate_step_title">Generate Bundles</span></h2>
         {{TLOCK_TABS_HTML}}
       </div>
 
