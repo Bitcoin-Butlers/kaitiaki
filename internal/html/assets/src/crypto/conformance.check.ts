@@ -39,6 +39,19 @@ const check = (name: string, ok: boolean, detail = '') => {
   check('this reader skips the note rather than failing',
     items.length === 1 && items[0].bip === 380, `${items.length} item(s) returned`);
 
+  // A backup the key opens, holding contents this version cannot read, must
+  // never be reported as a key problem. An heir told to find more keys goes
+  // hunting for keys they already have enough of.
+  let message = '';
+  try {
+    decryptBip138(d.unreadable, d.xpubs[1]);
+    message = '(no error was raised)';
+  } catch (e: any) {
+    message = e.message;
+  }
+  check('unreadable contents do not blame the key',
+    !/none of the keys/i.test(message) && /opened this backup/i.test(message), message);
+
   if (failures.length > 0) {
     console.error(`\n${failures.length} cross-language check(s) failed`);
     process.exit(1);

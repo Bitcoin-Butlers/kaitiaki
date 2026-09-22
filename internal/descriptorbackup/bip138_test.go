@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 
 	"golang.org/x/crypto/chacha20poly1305"
@@ -281,5 +282,67 @@ func TestVectorCipher(t *testing.T) {
 	}
 	if checked == 0 {
 		t.Fatal("no cipher vectors were exercised")
+	}
+}
+
+// buildBackupWithPayload assembles a container by hand around a payload that
+// is already sealed, so a test can put unreadable contents inside a backup the
+// key genuinely opens.
+func buildBackupWithPayload(t *testing.T, pubkey []byte, payload []byte) []byte {
+	t.Helper()
+	secret, individual, err := DeriveSecrets([][]byte{pubkey})
+	if err != nil {
+		t.Fatalf("DeriveSecrets: %v", err)
+	}
+	nonce := []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+	aead, err := chacha20poly1305.New(secret)
+	if err != nil {
+		t.Fatalf("chacha20poly1305.New: %v", err)
+	}
+	ciphertext := aead.Seal(nil, nonce, payload, nil)
+
+	secretBlock, err := EncodeIndividualSecrets(individual)
+	if err != nil {
+		t.Fatalf("EncodeIndividualSecrets: %v", err)
+	}
+	out := append([]byte{}, Magic...)
+	out = append(out, Version)
+	out = append(out, 0x00) // no derivation paths
+	out = append(out, secretBlock...)
+	out = append(out, EncryptionChaCha20Poly1305)
+	out = append(out, nonce...)
+	out = append(out, EncodeCompactSize(len(ciphertext))...)
+	return append(out, ciphertext...)
+}
+
+func TestUnreadableContentsDoNotBlameTheKey(t *testing.T) {
+	pubkey := mustHex(t, "02e6642fd69bd211f93f7f1f36ca51a26a5290eb2dd1b0d8279a87bb0d480c8443")
+	// Content type 0x80 and above is one this version must refuse.
+	backup := buildBackupWithPayload(t, pubkey, []byte{0x80, 0x00, 0x00})
+
+	_, err := DecryptBackup(backup, pubkey)
+	if err == nil {
+		t.Fatal("expected a refusal for contents this version cannot read")
+	}
+	msg := err.Error()
+	if strings.Contains(msg, "none of the keys") {
+		t.Errorf("the key was correct, so the error must not blame it:\n  %s", msg)
+	}
+	if !strings.Contains(msg, "opened this backup") {
+		t.Errorf("the error should say the key worked:\n  %s", msg)
+	}
+}
+
+func TestWrongKeyStillBlamesTheKey(t *testing.T) {
+	pubkey := mustHex(t, "02e6642fd69bd211f93f7f1f36ca51a26a5290eb2dd1b0d8279a87bb0d480c8443")
+	other := mustHex(t, "0339710356a496726c84692621b2b6e3645dd35bc0026c587f16411897990a1e1f")
+	backup := buildBackupWithPayload(t, pubkey, []byte{0x01, 0x01, 0x7c, 0x01, 0x78})
+
+	_, err := DecryptBackup(backup, other)
+	if err == nil {
+		t.Fatal("a backup must not open with a key that is not in it")
+	}
+	if !strings.Contains(err.Error(), "none of the keys") {
+		t.Errorf("a genuinely wrong key should say so:\n  %s", err.Error())
 	}
 }

@@ -465,11 +465,23 @@ export function decryptBackup(bytes: Uint8Array, pubkey: Uint8Array): ContentIte
   const mine = taggedHash('BIP138_INDIVIDUAL_SECRET', toXOnly(pubkey));
 
   for (const entry of backup.individualSecrets) {
+    let payload: Uint8Array;
     try {
-      const payload = chacha20poly1305(xor(entry, mine), backup.nonce).decrypt(backup.ciphertext);
-      return decodePayload(payload);
+      payload = chacha20poly1305(xor(entry, mine), backup.nonce).decrypt(backup.ciphertext);
     } catch {
       // Not our entry, or a decoy. Try the next one.
+      continue;
+    }
+    // The key worked. Anything that fails from here is about the contents, so
+    // it must never be reported as a key problem. An heir told to find more
+    // keys goes hunting for keys they already have enough of.
+    try {
+      return decodePayload(payload);
+    } catch (cause) {
+      throw new Error(
+        `Your key opened this backup, but this page cannot read what is inside it. ${(cause as Error).message}`,
+        { cause }
+      );
     }
   }
   throw new Error('None of the keys you supplied can open this backup');

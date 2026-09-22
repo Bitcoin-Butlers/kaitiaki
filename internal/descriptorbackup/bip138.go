@@ -711,7 +711,14 @@ func DecryptBackup(b []byte, pubkey []byte) ([]ContentItem, error) {
 			// Not our entry, or a decoy. Try the next one.
 			continue
 		}
-		return DecodePayload(payload)
+		// The key worked. Anything that fails from here is about the contents,
+		// so it must never be reported as a key problem. An heir told to find
+		// more keys goes hunting for keys they already have enough of.
+		items, err := DecodePayload(payload)
+		if err != nil {
+			return nil, fmt.Errorf("your key opened this backup, but this page cannot read what is inside it: %w", err)
+		}
+		return items, nil
 	}
 	return nil, errors.New("none of the keys you supplied can open this backup")
 }
