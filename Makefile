@@ -75,6 +75,13 @@ test:
 # multisig-backup source; the BIP-138 suite checks them against that draft's
 # own vectors. Either one failing means a client's fallback tool has stopped
 # agreeing with us, so this runs in CI on every push.
+test-xlang:
+	@if [ ! -d node_modules ]; then echo "Run 'npm install' first"; exit 1; fi
+	@mkdir -p .test-build
+	go run ./internal/descriptorbackup/conformance .test-build/go-backups.json
+	npx esbuild internal/html/assets/src/crypto/conformance.check.ts --bundle --format=esm --platform=node --outfile=.test-build/conformance.check.mjs --log-level=warning
+	node .test-build/conformance.check.mjs .test-build/go-backups.json
+
 test-ts:
 	@if [ ! -d node_modules ]; then echo "Run 'npm install' first"; exit 1; fi
 	@mkdir -p .test-build
