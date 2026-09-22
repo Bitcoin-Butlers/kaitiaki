@@ -30,6 +30,17 @@ type ReadmeData struct {
 	ManifestEmbedded bool   // true when manifest is embedded in recover.html
 	OwnerKeyPresent  bool   // true when the bundle contains OWNER.age
 	TlockEnabled     bool   // true when manifest uses time-lock encryption
+
+	// RecoverySteps is the owner's own method, in the open because a lone
+	// guardian may safely hold it and an heir may need it early.
+	RecoverySteps string
+	// ChainPayload is the encrypted chain copy, ciphertext locked to the
+	// wallet's keys. An identical copy is public on the chain, so putting it
+	// here costs nothing and saves the heir who cannot gather enough pieces.
+	ChainPayload string
+	// ChainTxid is written in by the owner after publishing. It is proof that
+	// the copy landed, never the route in, so a missing one costs nothing.
+	ChainTxid string
 }
 
 // writeWordGrid writes a two-column word grid to the string builder.
@@ -99,6 +110,33 @@ func GenerateReadme(data ReadmeData) string {
 				sb.WriteString(fmt.Sprintf("  %s\n", t("contact_label", friend.Contact)))
 			}
 			sb.WriteString("\n")
+		}
+	}
+
+	// The owner's own words, and the chain copy. Both sit in the open: a lone
+	// guardian may safely hold them, and an heir with one bundle and one key
+	// needs them before anyone combines anything. The people and places went
+	// into the encrypted archive instead.
+	if data.RecoverySteps != "" {
+		sb.WriteString("--------------------------------------------------------------------------------\n")
+		sb.WriteString(fmt.Sprintf("%s\n", t("owner_steps_title")))
+		sb.WriteString("--------------------------------------------------------------------------------\n")
+		sb.WriteString(fmt.Sprintf("%s\n\n", t("owner_steps_intro")))
+		sb.WriteString(strings.TrimRight(data.RecoverySteps, "\n") + "\n\n")
+	}
+
+	if data.ChainPayload != "" {
+		sb.WriteString("--------------------------------------------------------------------------------\n")
+		sb.WriteString(fmt.Sprintf("%s\n", t("chain_copy_title")))
+		sb.WriteString("--------------------------------------------------------------------------------\n")
+		sb.WriteString(fmt.Sprintf("%s\n\n", t("chain_copy_intro")))
+		sb.WriteString(data.ChainPayload + "\n\n")
+		sb.WriteString(fmt.Sprintf("%s ", t("chain_copy_txid")))
+		if data.ChainTxid != "" {
+			sb.WriteString(data.ChainTxid + "\n\n")
+		} else {
+			sb.WriteString("________________________________________________________________\n")
+			sb.WriteString(fmt.Sprintf("%s\n\n", t("chain_copy_txid_blank")))
 		}
 	}
 

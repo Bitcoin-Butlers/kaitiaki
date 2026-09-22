@@ -1,0 +1,116 @@
+package bundle
+
+import (
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/eljojo/rememory/internal/core"
+)
+
+// The three texts must land exactly where the split-by-harm decision put them.
+// README.txt is built to be forwarded: a guardian's own copy tells them to send
+// it to whoever asks. So the method and the chain copy may sit in it, and the
+// key locations may not.
+
+const (
+	steps     = "2 of 3. Open Sparrow, load the descriptor, connect any two signers."
+	locations = "Key 1: the safe at home. Key 2: Hannah has it. Key 3: bank box."
+	payload   = "QklQMTM4AQAFLr8hjVQ5qqHdxyiEOfHcVsZlnWdF"
+)
+
+func baseData() ReadmeData {
+	return ReadmeData{
+		ProjectName: "Test Project",
+		Holder:      "Alice",
+		Threshold:   2,
+		Total:       3,
+		Version:     "v0.0.22",
+		Created:     time.Date(2026, 9, 22, 12, 0, 0, 0, time.UTC),
+		Language:    "en",
+		Share:       core.NewShare(2, 1, 3, 2, "Alice", []byte{1, 2, 3, 4, 5, 6, 7, 8}),
+	}
+}
+
+func TestRecoveryStepsAppearInTheReadme(t *testing.T) {
+	d := baseData()
+	d.RecoverySteps = steps
+	got := GenerateReadme(d)
+
+	if !strings.Contains(got, steps) {
+		t.Error("the owner's method must be readable by a lone guardian")
+	}
+	if !strings.Contains(got, "the owner wrote this") && !strings.Contains(got, "owner wrote this") {
+		t.Error("the README must say these are the owner's words, not the tool's")
+	}
+}
+
+func TestChainCopyAppearsWithABlankTxidLine(t *testing.T) {
+	d := baseData()
+	d.ChainPayload = payload
+	got := GenerateReadme(d)
+
+	if !strings.Contains(got, payload) {
+		t.Error("the chain copy must be in the README, so an heir with one bundle and one key can use it")
+	}
+	if !strings.Contains(got, "____") {
+		t.Error("a blank line must be left for the transaction id, which does not exist at bundle time")
+	}
+	if !strings.Contains(got, "any ONE of the wallet's keys") {
+		t.Error("the README must say one key opens the chain copy")
+	}
+}
+
+func TestAKnownTxidReplacesTheBlank(t *testing.T) {
+	d := baseData()
+	d.ChainPayload = payload
+	d.ChainTxid = "4801ea9c10e14a5ea5c0e5e68bfe08fd2422005ea0a3a9631fead29ce910a4df"
+	got := GenerateReadme(d)
+
+	if !strings.Contains(got, d.ChainTxid) {
+		t.Error("a transaction id that is known must be printed")
+	}
+	if strings.Contains(got, "____") {
+		t.Error("the blank line must go once the transaction id is known")
+	}
+}
+
+func TestKeyLocationsNeverReachTheReadme(t *testing.T) {
+	// The strongest test in this file. A README travels to whoever asks a
+	// guardian for their piece. Key locations must never be in one.
+	d := baseData()
+	d.RecoverySteps = steps
+	d.ChainPayload = payload
+	got := GenerateReadme(d)
+
+	for _, secret := range []string{locations, "Hannah", "bank box", "safe at home"} {
+		if strings.Contains(got, secret) {
+			t.Errorf("a README must never carry key locations, found %q", secret)
+		}
+	}
+}
+
+func TestKeyLocationsGoInTheSealedArchiveFile(t *testing.T) {
+	name, content := PeopleAndPlacesFile(locations, "en")
+	if name != PeopleAndPlacesFileName {
+		t.Errorf("file name: got %q want %q", name, PeopleAndPlacesFileName)
+	}
+	body := string(content)
+	if !strings.Contains(body, locations) {
+		t.Error("the owner's text must be in the file")
+	}
+	if !strings.Contains(body, "enough guardians combine their pieces") {
+		t.Error("the file must say why it was sealed, so a reader knows what they are holding")
+	}
+}
+
+func TestNothingIsAddedWhenTheOwnerWroteNothing(t *testing.T) {
+	// An owner who skips the boxes gets the README they got before this
+	// effort. No empty headings, no blank transaction line.
+	got := GenerateReadme(baseData())
+	for _, marker := range []string{"THE CHAIN COPY", "the owner wrote this", "____"} {
+		if strings.Contains(got, marker) {
+			t.Errorf("an empty field must add nothing, found %q", marker)
+		}
+	}
+}

@@ -66,5 +66,12 @@
   "recovery_rule": "RECOVERY RULE",
   "recovery_rule_count": "{0} of {1} required",
   "readme_filename": "README",
-  "owner_note": "This bundle may also hold a file named OWNER.age. It belongs to the person who made this backup. They hold a separate key for it. You do not need it, and it is useless without that key."
+  "owner_note": "This bundle may also hold a file named OWNER.age. It belongs to the person who made this backup. They hold a separate key for it. You do not need it, and it is useless without that key.",
+  "owner_steps_title": "HOW TO SPEND THE BITCOIN (the owner wrote this)",
+  "owner_steps_intro": "These are the owner's own words. They are not instructions from this tool.",
+  "chain_copy_title": "THE CHAIN COPY",
+  "chain_copy_intro": "The same instructions are written on the Bitcoin chain, where they cannot be lost. The text below opens with any ONE of the wallet's keys. Keep it even if you never need it.",
+  "chain_copy_txid": "Published as transaction:",
+  "chain_copy_txid_blank": "(the owner writes the transaction id here after publishing)",
+  "people_places_file_header": "WHERE THE KEYS ARE\n\nThe owner wrote this. It was sealed inside the encrypted archive, so it\nappears only when enough guardians combine their pieces.\n"
 }

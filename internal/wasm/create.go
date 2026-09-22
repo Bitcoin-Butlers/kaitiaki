@@ -55,6 +55,18 @@ type CreateBundlesFromArchiveConfig struct {
 	TlockRound      uint64
 	TlockUnlock     string // RFC 3339 timestamp
 	OwnerRecipient  string // optional age X25519 recipient; adds OWNER.age
+
+	// RecoverySteps is the owner's method. It goes in the open in both README
+	// forms, because a lone guardian may safely hold it and an heir may need
+	// it early.
+	RecoverySteps string
+	// ChainPayload is the encrypted chain copy, if the owner chose to make
+	// one. Ciphertext locked to the wallet's keys, and an identical copy is
+	// public on the chain.
+	ChainPayload string
+	// ChainTxid is proof the copy landed. Usually blank at bundle time,
+	// because the transaction does not exist yet.
+	ChainTxid string
 }
 
 // bundleGenConfig holds shared parameters for bundle generation from an
@@ -68,6 +80,12 @@ type bundleGenConfig struct {
 	DefaultLanguage string
 	TlockEnabled    bool
 	OwnerFile       []byte // optional OWNER.age content for every bundle
+
+	// The owner's own texts, carried through to both README forms. See
+	// CreateBundlesFromArchiveConfig for what each one is.
+	RecoverySteps string
+	ChainPayload  string
+	ChainTxid     string
 }
 
 // createBundlesFromArchive creates bundles from pre-built archive data.
@@ -146,6 +164,9 @@ func createBundlesFromArchive(config CreateBundlesFromArchiveConfig) ([]BundleOu
 		DefaultLanguage: config.DefaultLanguage,
 		TlockEnabled:    tlockEnabled,
 		OwnerFile:       ownerFile,
+		RecoverySteps:   config.RecoverySteps,
+		ChainPayload:    config.ChainPayload,
+		ChainTxid:       config.ChainTxid,
 	})
 	if err != nil {
 		return nil, nil, nil, err
@@ -263,6 +284,9 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 			Anonymous:        config.Anonymous,
 			Language:         lang,
 			ManifestEmbedded: manifestEmbedded,
+			RecoverySteps:    config.RecoverySteps,
+			ChainPayload:     config.ChainPayload,
+			ChainTxid:        config.ChainTxid,
 		}
 		readmeContent := bundle.GenerateReadme(readmeData)
 
@@ -282,6 +306,9 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 			Anonymous:        config.Anonymous,
 			Language:         lang,
 			ManifestEmbedded: manifestEmbedded,
+			RecoverySteps:    config.RecoverySteps,
+			ChainPayload:     config.ChainPayload,
+			ChainTxid:        config.ChainTxid,
 		}
 		pdfContent, err := pdf.GenerateReadme(pdfData)
 		if err != nil {
@@ -480,6 +507,17 @@ func createArchiveJS(this js.Value, args []js.Value) any {
 		files[i] = FileEntry{Name: name, Data: data}
 	}
 
+	// The people-and-places text is sealed INSIDE the archive, so it appears
+	// only when enough guardians combine their pieces. It never goes in a
+	// README, because a README is built to be forwarded: the guardian's own
+	// copy tells them to send it to whoever asks.
+	if len(args) > 1 && !args[1].IsUndefined() && !args[1].IsNull() {
+		if text := args[1].String(); text != "" {
+			name, content := bundle.PeopleAndPlacesFile(text, "")
+			files = append(files, FileEntry{Name: name, Data: content})
+		}
+	}
+
 	archiveData, err := createZip(files)
 	if err != nil {
 		return errorResult(err.Error())
@@ -530,6 +568,18 @@ func createBundlesFromArchiveJS(this js.Value, args []js.Value) any {
 	}
 	if tlockUnlock := configJS.Get("tlockUnlock"); !tlockUnlock.IsUndefined() && !tlockUnlock.IsNull() {
 		config.TlockUnlock = tlockUnlock.String()
+	}
+	for _, f := range []struct {
+		key string
+		dst *string
+	}{
+		{"recoverySteps", &config.RecoverySteps},
+		{"chainPayload", &config.ChainPayload},
+		{"chainTxid", &config.ChainTxid},
+	} {
+		if v := configJS.Get(f.key); !v.IsUndefined() && !v.IsNull() {
+			*f.dst = v.String()
+		}
 	}
 	if ownerRecipient := configJS.Get("ownerRecipient"); !ownerRecipient.IsUndefined() && !ownerRecipient.IsNull() {
 		config.OwnerRecipient = ownerRecipient.String()
