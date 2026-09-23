@@ -184,6 +184,24 @@
 
       <p id="empty-words-warning" class="words-warning hidden" data-i18n="empty_words_warning">You have not written anything for your heirs. The bundle still works. It will not tell them what to do with it.</p>
 
+      <!--
+        The nudge to drill. Said once, never repeated, never blocking.
+        A required gate was rejected on the test-recovery ticket, because
+        people fake a gate to get past it. This is an offer instead.
+      -->
+      <div id="test-nudge" class="test-nudge hidden">
+        <p data-i18n="test_nudge">Never done this before? Do a test run first. It makes throwaway bundles from a sample file, so you can practise a recovery without touching anything real.</p>
+        <button type="button" id="test-nudge-btn" class="btn btn-secondary" data-i18n="test_nudge_btn">Do a test run</button>
+      </div>
+
+      <div id="test-banner" class="test-banner hidden">
+        <p>
+          <strong data-i18n="test_mode_on">TEST RUN</strong>
+          <span data-i18n="test_mode_explain">These bundles are for practice. They are built from a sample file, not yours, and every one is marked TEST. Turn this off before you make the real ones.</span>
+        </p>
+        <button type="button" id="test-off-btn" class="btn btn-secondary" data-i18n="test_mode_off">Turn off the test run</button>
+      </div>
+
       <div class="generate-row">
         <button id="generate-btn" class="btn btn-secondary" disabled>
           <span data-i18n="generate_btn">Generate Bundles</span>

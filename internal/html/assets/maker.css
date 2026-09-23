@@ -262,3 +262,41 @@
       color: var(--text-muted);
       margin-top: 0.25rem;
     }
+
+/* The test run: an offer, then a standing reminder while it is on. */
+.test-nudge {
+  margin: 1rem 0;
+  padding: 0.875rem 1rem;
+  background: var(--surface-alt, rgba(127, 127, 127, 0.06));
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+}
+.test-nudge p {
+  margin: 0 0 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+/* Loud on purpose. While this is on, nothing the maker produces is real. */
+.test-banner {
+  margin: 1rem 0;
+  padding: 0.875rem 1rem;
+  background: var(--warning-bg, rgba(240, 173, 78, 0.12));
+  border: 2px solid var(--warning-border, rgba(240, 173, 78, 0.55));
+  border-radius: 6px;
+}
+.test-banner p {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.test-banner strong {
+  display: inline-block;
+  margin-right: 0.5rem;
+  padding: 0.1rem 0.45rem;
+  background: var(--warning-border, rgba(240, 173, 78, 0.55));
+  border-radius: 3px;
+  color: #1a1a1a;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+}

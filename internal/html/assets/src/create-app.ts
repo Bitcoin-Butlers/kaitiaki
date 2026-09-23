@@ -230,6 +230,105 @@ declare const __SELFHOSTED__: boolean;
     tlockUnit: 'd' as string,
   };
 
+  // ---------------------------------------------------------------------------
+  // The test run
+  //
+  // An owner who has never seen a recovery has no way to tell a good bundle
+  // from a bad one. A test run makes throwaway bundles from a sample file so
+  // they can practise, and marks every one of them so a drill can never be
+  // mistaken for the real thing.
+  //
+  // It is an offer and not a gate. A required gate was rejected on the
+  // test-recovery ticket, because people fake a gate to get past it.
+  // ---------------------------------------------------------------------------
+
+  /** Set once the owner has taken the offer or generated anything. Said once. */
+  const TEST_NUDGE_SEEN_KEY = 'inheritance_test_nudge_seen';
+
+  /**
+   * Carried into the project name, so it reaches the README, the printed PDF
+   * and METADATA.yaml. Those are what a guardian actually reads.
+   */
+  const TEST_PREFIX = 'TEST';
+
+  let testMode = false;
+
+  /** The throwaway payload. Never the owner's own files. */
+  function sampleTestFile(): { name: string; data: Uint8Array } {
+    const text = [
+      'THIS IS A TEST FILE.',
+      '',
+      'It stands in for the files you will really protect: a wallet',
+      'descriptor, cosigner keys, an estate letter.',
+      '',
+      'Practise a recovery with the bundles built around it. When you can',
+      'get this text back, you know the method works, and you can throw',
+      'every test bundle away.',
+      '',
+      'Nothing here is secret and nothing here is yours.',
+      '',
+    ].join('\n');
+    return {
+      name: 'TEST-sample.txt',
+      data: new TextEncoder().encode(text),
+    };
+  }
+
+  function nudgeSeen(): boolean {
+    try {
+      return localStorage.getItem(TEST_NUDGE_SEEN_KEY) === '1';
+    } catch {
+      // A browser that refuses storage simply sees the offer again. That is
+      // better than hiding it from everyone because one browser said no.
+      return false;
+    }
+  }
+
+  function markNudgeSeen(): void {
+    try {
+      localStorage.setItem(TEST_NUDGE_SEEN_KEY, '1');
+    } catch {
+      // Nothing to do. The offer is not important enough to warn about.
+    }
+  }
+
+  /**
+   * The offer, and the way out of it.
+   *
+   * The offer appears once, for an owner who has never generated anything on
+   * this browser. It never blocks the real Generate button beside it.
+   */
+  function wireTestRun(): void {
+    if (!nudgeSeen()) elements.testNudge?.classList.remove('hidden');
+
+    elements.testNudgeBtn?.addEventListener('click', () => {
+      markNudgeSeen();
+      setTestMode(true);
+      elements.testBanner?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    elements.testOffBtn?.addEventListener('click', () => {
+      setTestMode(false);
+    });
+  }
+
+  /**
+   * The name a bundle is saved under. One definition, so the list on screen
+   * and the file that lands in Downloads can never disagree. A test bundle
+   * that looked real in the list would be exactly the mistake the stamp
+   * exists to prevent.
+   */
+  function downloadNameFor(fileName: string): string {
+    return testMode ? `${TEST_PREFIX}-${fileName}` : fileName;
+  }
+
+  function setTestMode(on: boolean): void {
+    testMode = on;
+    elements.testBanner?.classList.toggle('hidden', !on);
+    elements.testNudge?.classList.add('hidden');
+    document.body.classList.toggle('test-run', on);
+  }
+
   // Selfhosted callback for uploading the manifest after bundle generation.
   // Assigned in the __SELFHOSTED__ block; null in standalone builds.
   let onBundlesCreated: ((manifest: Uint8Array, meta: {
@@ -238,6 +337,10 @@ declare const __SELFHOSTED__: boolean;
 
   // DOM elements interface
   interface Elements {
+    testNudge: HTMLElement | null;
+    testNudgeBtn: HTMLButtonElement | null;
+    testBanner: HTMLElement | null;
+    testOffBtn: HTMLButtonElement | null;
     wasmLoadingIndicator: HTMLElement | null;
     modeTabs: HTMLElement | null;
     friendsHint: HTMLElement | null;
@@ -292,6 +395,10 @@ declare const __SELFHOSTED__: boolean;
     filesPreview: document.getElementById('files-preview'),
     filesSummary: document.getElementById('files-summary'),
     generateBtn: document.getElementById('generate-btn') as HTMLButtonElement | null,
+    testNudge: document.getElementById('test-nudge'),
+    testNudgeBtn: document.getElementById('test-nudge-btn') as HTMLButtonElement | null,
+    testBanner: document.getElementById('test-banner'),
+    testOffBtn: document.getElementById('test-off-btn') as HTMLButtonElement | null,
     progressBar: document.getElementById('progress-bar'),
     statusMessage: document.getElementById('status-message'),
     bundlesList: document.getElementById('bundles-list'),
@@ -357,6 +464,7 @@ declare const __SELFHOSTED__: boolean;
     wireAddAnother();
     wireEmptyWordsWarning();
     wireDestination();
+    wireTestRun();
 
     // Add initial 2 friends
     addFriend();
@@ -1029,8 +1137,9 @@ declare const __SELFHOSTED__: boolean;
       }
     }
 
-    // Files validation
-    if (state.files.length === 0) {
+    // Files validation. A test run brings its own sample file, so asking the
+    // owner for theirs would make the practice run harder than the real one.
+    if (!testMode && state.files.length === 0) {
       result.valid = false;
       if (!silent) {
         result.errors.push(t('validation_no_files'));
@@ -1087,11 +1196,26 @@ declare const __SELFHOSTED__: boolean;
     try {
       setProgress(0);
       setStatus(t('generating'));
+      // Whether this run is a test or the real thing, the offer has served
+      // its purpose and must not be repeated.
+      markNudgeSeen();
+      elements.testNudge?.classList.add('hidden');
 
-      const filesForWasm: BundleFile[] = state.files.map(f => ({
-        name: f.name,
-        data: f.data
-      }));
+      // A test run never carries the owner's own files. If it did, a
+      // throwaway bundle would hold real secrets and could not be thrown away.
+      const filesForWasm: BundleFile[] = testMode
+        ? [sampleTestFile()]
+        : state.files.map(f => ({
+            name: f.name,
+            data: f.data
+          }));
+
+      // The stamp. It rides on the project name, which is what the README,
+      // the printed PDF and METADATA.yaml all print, so a guardian holding a
+      // test bundle sees it before anything else.
+      const projectName = testMode
+        ? `${TEST_PREFIX} ${state.projectName}`
+        : state.projectName;
 
       // Create friends array - synthetic names for anonymous mode
       let friends;
@@ -1124,7 +1248,9 @@ declare const __SELFHOSTED__: boolean;
       // a bundle made here matches one made by the command line.
       const archiveResult = window.rememoryCreateArchive(
         filesForWasm,
-        ownersWords.peopleAndPlaces || undefined
+        // Where the keys are is the most sensitive thing an owner writes. It
+        // does not go into a bundle they are about to throw away.
+        testMode ? undefined : ownersWords.peopleAndPlaces || undefined
       );
       if (archiveResult.error || !archiveResult.data) {
         throw new Error(archiveResult.error || 'Failed to create archive');
@@ -1163,7 +1289,7 @@ declare const __SELFHOSTED__: boolean;
       const ownerRecipient = ownerInput?.value.trim() || undefined;
 
       const result = window.rememoryCreateBundlesFromArchive({
-        projectName: state.projectName,
+        projectName: projectName,
         threshold: state.threshold,
         friends: friends,
         archiveData: archiveData,
@@ -1275,7 +1401,7 @@ declare const __SELFHOSTED__: boolean;
         <span class="icon">&#128230;</span>
         <div class="details">
           <div class="name">${t('bundle_for', escapeHtml(bundle.friendName))}</div>
-          <div class="meta">${escapeHtml(bundle.fileName)} (${formatSize(bundle.data.length)})</div>
+          <div class="meta">${escapeHtml(downloadNameFor(bundle.fileName))} (${formatSize(bundle.data.length)})</div>
         </div>
         <button type="button" class="download-btn" data-index="${index}">${t('download')}</button>
       `;
@@ -1294,7 +1420,7 @@ declare const __SELFHOSTED__: boolean;
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = bundle.fileName;
+    a.download = downloadNameFor(bundle.fileName);
     a.click();
     URL.revokeObjectURL(url);
   }
