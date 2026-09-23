@@ -56,6 +56,67 @@ function wireEmptyWordsWarning(): void {
   updateEmptyWordsWarning();
 }
 
+
+/** The chain copy the owner will publish, once they have asked for one. */
+let chainCopy: { text: string; bytes: number } | null = null;
+
+/**
+ * Wire the destination choice, the descriptor field and the live size.
+ *
+ * The label on the recovery-steps group changes with the choice. It said "goes
+ * on the chain and in the bundles" before this existed, which was a promise
+ * the page could not keep for an owner who never asked for a chain copy.
+ *
+ * The size is worked out from the real payload rather than estimated, so the
+ * sat figure is the one the client actually pays. It never blocks: past a
+ * point it says the bundles carry the same words for nothing, and leaves the
+ * decision where it belongs.
+ */
+function wireDestination(): void {
+  const fields = document.getElementById('chain-fields');
+  const descriptor = document.getElementById('chain-descriptor') as HTMLTextAreaElement | null;
+  const sizeEl = document.getElementById('chain-size');
+  const longEl = document.getElementById('chain-long');
+  const pill = document.querySelector('.words-dest-chain');
+  if (!fields || !descriptor || !sizeEl || !longEl) return;
+
+  const wantsChain = (): boolean =>
+    (document.querySelector('input[name="destination"]:checked') as HTMLInputElement | null)?.value === 'both';
+
+  const refresh = (): void => {
+    const on = wantsChain();
+    fields.classList.toggle('hidden', !on);
+    if (pill) pill.textContent = t(on ? 'words_method_dest' : 'words_method_dest_bundles');
+
+    chainCopy = null;
+    sizeEl.textContent = '';
+    longEl.classList.add('hidden');
+    if (!on || !descriptor.value.trim() || typeof window.rememoryEncryptChainCopy !== 'function') return;
+
+    const { recoverySteps } = collectOwnersWords();
+    const result = window.rememoryEncryptChainCopy!({
+      descriptor: descriptor.value.trim(),
+      recoverySteps,
+    });
+    if (result.error) {
+      sizeEl.textContent = result.error;
+      return;
+    }
+    chainCopy = { text: result.text, bytes: result.bytes };
+    sizeEl.textContent = t('chain_size', result.bytes, result.satAt2, result.satAt10);
+    longEl.classList.toggle('hidden', result.bytes <= 1500);
+  };
+
+  document.querySelectorAll('input[name="destination"]').forEach((el) =>
+    el.addEventListener('change', refresh)
+  );
+  descriptor.addEventListener('input', refresh);
+  for (const id of ['words-wallet', 'words-opens', 'words-sign']) {
+    document.getElementById(id)?.addEventListener('input', refresh);
+  }
+  refresh();
+}
+
 function wireAddAnother(): void {
   const button = document.getElementById('words-add-another');
   const list = document.getElementById('words-else-list');
@@ -295,6 +356,7 @@ declare const __SELFHOSTED__: boolean;
     setupTimelock();
     wireAddAnother();
     wireEmptyWordsWarning();
+    wireDestination();
 
     // Add initial 2 friends
     addFriend();
@@ -1112,6 +1174,7 @@ declare const __SELFHOSTED__: boolean;
         tlockUnlock: tlockUnlock,
         ownerRecipient: ownerRecipient,
         recoverySteps: ownersWords.recoverySteps,
+        chainPayload: chainCopy?.text || '',
       });
 
       if (result.error || !result.bundles) {

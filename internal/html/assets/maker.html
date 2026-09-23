@@ -111,6 +111,22 @@
       <h2><span class="step-number pending" id="step-number-3">3</span> <span data-i18n="step3_title">What Your Heirs Need To Know</span></h2>
       <p data-i18n="words_intro">Write these in your own words. Your guardians and your heirs read them, never us.</p>
 
+      <div class="dest-choice">
+        <h3 data-i18n="dest_title">Where these words go</h3>
+        <label><input type="radio" name="destination" value="bundles" checked> <span data-i18n="dest_bundles">Bundles only</span></label>
+        <small data-i18n="dest_bundles_hint">Your guardians hold everything. Nothing is published.</small>
+        <label><input type="radio" name="destination" value="both"> <span data-i18n="dest_both">Bundles and the chain</span></label>
+        <small data-i18n="dest_both_hint">The method also goes on the Bitcoin chain, so it survives if every bundle is lost. This costs a small fee and cannot be undone.</small>
+      </div>
+
+      <div id="chain-fields" class="hidden">
+        <label for="chain-descriptor" data-i18n="descriptor_label">Your wallet's descriptor</label>
+        <textarea id="chain-descriptor" rows="3" spellcheck="false" placeholder="wsh(sortedmulti(2,[abcd1234/48h/0h/0h/2h]xpub.../&lt;0;1&gt;/*,...))"></textarea>
+        <small data-i18n="descriptor_hint">Export it from your coordinator. In Sparrow: Settings, then Export, then Output Descriptor.</small>
+        <p id="chain-size" class="chain-size"></p>
+        <p id="chain-long" class="words-warning hidden" data-i18n="chain_long">That is long for the chain. The bundles carry the same words for nothing, so keep the chain copy to the method a stranger would need.</p>
+      </div>
+
       <div class="words-group">
         <p class="words-dest words-dest-chain" data-i18n="words_method_dest">goes on the chain and in the bundles</p>
         <h3 data-i18n="words_method_group">Recovery steps</h3>

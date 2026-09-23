@@ -407,6 +407,34 @@ friends:
     await creation.expectFriendCount(2);
   });
 
+  test('the chain copy is opt in, and the label never promises more than it does', async ({ page }) => {
+    const creation = new CreationPage(page, htmlPath);
+    await creation.open();
+
+    // Default: bundles only. The label must not claim the chain, because a
+    // page about inheritance cannot make a promise it does not keep.
+    await expect(page.locator('.words-dest-chain')).toHaveText(/bundles only/i);
+    await expect(page.locator('#chain-fields')).toBeHidden();
+
+    await page.check('input[name="destination"][value="both"]');
+    await expect(page.locator('.words-dest-chain')).toHaveText(/chain/i);
+    await expect(page.locator('#chain-fields')).toBeVisible();
+
+    // A real descriptor produces a real size, worked out from the payload
+    // rather than estimated, so the sat figure is what the client pays.
+    await page.fill('#words-wallet', 'A 2 of 3. Any two of the three keys can spend.');
+    await page.fill('#chain-descriptor',
+      'wsh(sortedmulti(2,[73c5da0a/48h/0h/0h/2h]xpub6DkFAXWQ2dHxq2vatrt9qyA3bXYU4ToWQwCHbf5XB2mSTexcHZCeKS1VZYcPoBd5X8yVcbXFHJR9R8UCVpt82VX1VhR28mCyxUFL4r6KFrf/<0;1>/*,[b8688df1/48h/0h/0h/2h]xpub6FQya7zGhR92kacYsNnjreouvnHJMpXYsUXnW6NJJAJRCKsa26TzDy4LdnGhEurr3d6y1J8PJ7EEMKQp74XTqYvmGJNogYXSKDszYHtF8mX/<0;1>/*,[28645006/48h/0h/0h/2h]xpub6DnEBNkSJKBYQmsbhS1sP9cNdtU5c9PLFGCjTJmxicxc13WB8zNNGQazabQpyFAGW5bV9tMko4uBxDxjUKL6dSAcx1tEbgEHtgSqyRsekh6/<0;1>/*))');
+
+    await expect(page.locator('#chain-size')).toContainText(/characters on the chain/i);
+    await expect(page.locator('#chain-size')).toContainText(/sat/i);
+
+    // Going back to bundles only clears it again.
+    await page.check('input[name="destination"][value="bundles"]');
+    await expect(page.locator('.words-dest-chain')).toHaveText(/bundles only/i);
+    await expect(page.locator('#chain-size')).toHaveText('');
+  });
+
   test('warns when the owner has written nothing, and never blocks', async ({ page }) => {
     const creation = new CreationPage(page, htmlPath);
     await creation.open();

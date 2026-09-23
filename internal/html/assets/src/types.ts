@@ -39,6 +39,30 @@ export interface BundleFromArchiveConfig {
   tlockRound?: number;
   tlockUnlock?: string;
   ownerRecipient?: string;
+  /** The owner's method, in the open in both README forms. */
+  recoverySteps?: string;
+  /** The encrypted chain copy, when the owner asked for one. */
+  chainPayload?: string;
+  /** Proof the chain copy landed. Usually blank when bundles are made. */
+  chainTxid?: string;
+}
+
+/** Input for the chain copy an owner publishes. */
+export interface ChainCopyConfig {
+  descriptor: string;
+  recoverySteps?: string;
+}
+
+/** What the chain copy costs, worked out from the real payload. */
+export interface ChainCopyResult {
+  text: string;
+  bytes: number;
+  vbytes: number;
+  satAt2: number;
+  satAt10: number;
+  format: 'threshold' | 'bip138';
+  excluded: string[];
+  error: string | null;
 }
 
 // ============================================
@@ -171,7 +195,8 @@ declare global {
     rememoryAppReady?: boolean;
 
     // Creation functions (create.wasm, used by maker.html)
-    rememoryCreateArchive(files: BundleFile[]): ArchiveCreateResult;
+    rememoryCreateArchive(files: BundleFile[], peopleAndPlaces?: string): ArchiveCreateResult;
+    rememoryEncryptChainCopy?(config: ChainCopyConfig): ChainCopyResult;
     rememoryCreateBundlesFromArchive(config: BundleFromArchiveConfig): BundleCreateResult;
     rememoryParseProjectYAML(yaml: string): ProjectParseResult;
 

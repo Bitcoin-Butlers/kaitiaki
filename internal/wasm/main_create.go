@@ -20,6 +20,7 @@ func main() {
 	js.Global().Set("rememoryCreateArchive", js.FuncOf(createArchiveJS))
 	js.Global().Set("rememoryCreateBundlesFromArchive", js.FuncOf(createBundlesFromArchiveJS))
 	js.Global().Set("rememoryParseProjectYAML", js.FuncOf(parseProjectYAMLJS))
+	js.Global().Set("rememoryEncryptChainCopy", js.FuncOf(encryptChainCopyJS))
 
 	// Signal that WASM is ready
 	js.Global().Set("rememoryReady", true)

@@ -85,6 +85,11 @@ test-xlang:
 test-ts:
 	@if [ ! -d node_modules ]; then echo "Run 'npm install' first"; exit 1; fi
 	@mkdir -p .test-build
+	# Two projects, and both matter. tsconfig.test.json covers the test files
+	# and the crypto they import. tsconfig.json covers everything that actually
+	# ships in a page, including create-app.ts and app.ts. esbuild strips types
+	# without checking them, so nothing else catches those.
+	npx tsc --noEmit --project internal/html/assets/tsconfig.json
 	npx tsc --noEmit --project internal/html/assets/tsconfig.test.json
 	npx esbuild internal/html/assets/src/crypto/descriptor.test.ts --bundle --format=esm --platform=node --outfile=.test-build/descriptor.test.mjs --log-level=warning
 	npx esbuild internal/html/assets/src/crypto/bip138.test.ts --bundle --format=esm --platform=node --outfile=.test-build/bip138.test.mjs --log-level=warning

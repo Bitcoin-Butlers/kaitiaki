@@ -478,9 +478,10 @@ export function decryptBackup(bytes: Uint8Array, pubkey: Uint8Array): ContentIte
     try {
       return decodePayload(payload);
     } catch (cause) {
+      // No { cause } option: this project targets the ES2020 lib, which has
+      // no ErrorOptions overload. The reason is in the message instead.
       throw new Error(
-        `Your key opened this backup, but this page cannot read what is inside it. ${(cause as Error).message}`,
-        { cause }
+        `Your key opened this backup, but this page cannot read what is inside it. ${(cause as Error).message}`
       );
     }
   }
