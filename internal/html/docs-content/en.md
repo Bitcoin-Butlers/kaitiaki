@@ -408,6 +408,22 @@ Neither format is ours to own, and that is the point. A threshold backup uses th
 
 Your estate insert names the tool to use and how to reach it. Someone reads that page after Bitcoin Butlers is gone. Our own test vectors are in the [source repository]({{GITHUB_REPO}}/blob/main/docs/descriptor-backup-vector.md) for anyone who wants to check the formats match, byte for byte.
 
+### The Argument Against This {#descriptor-argument-against}
+
+Serious people think writing a backup onto the chain is the wrong thing to do. Here is their case, in their own words.
+
+Pieter Wuille, who has contributed to Bitcoin Core for over a decade, put it plainly in 2025: "I don't feel like using a globally replicated database for information that just a single person cares about is a good use of the technology. It may appear convenient at times when demand for block space is low, but I would caution against building an expectation that this is a realistic option in the long run."
+
+He is right on both counts. Every node on earth stores your backup forever, and nobody but you needs it. Cheap block space today is a poor thing to build a twenty-year plan on.
+
+Read what he proposed instead, because it matters here: "You need backups for other data anyway, and it ought to be trivial to hide this amount of data in your backups in a plausibly deniable way too."
+
+That is what the guardian bundles are. They are the main path, and every bundle carries the same text the chain does. So the ordinary way your heir recovers has nothing to do with the chain at all.
+
+The chain copy answers one question the bundles cannot: what happens when every bundle is gone. Houses burn, guardians move, drawers get cleared out by people who do not know what they are looking at. Whether that risk is worth a permanent public record is your call, and you can take the bundles alone.
+
+One more thing about Wuille, because half a quotation is worse than none. He argued in favour of dropping Bitcoin Core's limit on this kind of data, and against node operators deciding what belongs in a block. He thinks it is a poor use of the chain. He does not think anyone should stop you.
+
 ### Never Put Seeds Here {#descriptor-no-seeds}
 
 The page takes a descriptor and nothing else. Seeds belong on steel or in a codex32 kit, never on a public chain.

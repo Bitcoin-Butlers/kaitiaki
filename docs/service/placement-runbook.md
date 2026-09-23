@@ -89,6 +89,16 @@ placed. Nothing about this session is technical from the client's side.
    Tell them what the page put on the chain: the wallet's method, never the
    people or the places. Those stayed sealed inside the guardian bundles.
 
+   **Say the argument against it, out loud, before they agree.** Something
+   like: "Some very good Bitcoin engineers think this is the wrong use of
+   the chain. Every node stores it forever and nobody but you needs it.
+   Their alternative is to hide it in backups you keep anyway, and that is
+   what your guardians are holding. This copy is for the day all of those
+   are gone. You can skip it and I will not think less of the plan."
+
+   Then wait. If they skip it, the placement is still complete. A client who
+   was talked into a permanent public record did not consent to it.
+
 5. **Write the transaction id onto every printed README.** Each bundle's
    README.pdf has a blank line for it, because the transaction did not
    exist when the bundles were made. Write the same id on every copy. It
