@@ -115,5 +115,6 @@
   "words_else_label": "Anything else",
   "words_else_eg": "The safe code is my mother's birth year, backwards.",
   "words_add_another": "Add another",
-  "generate_step_title": "Generate Bundles"
+  "generate_step_title": "Generate Bundles",
+  "empty_words_warning": "You have not written anything for your heirs. The bundle still works. It will not tell them what to do with it."
 }

@@ -407,6 +407,31 @@ friends:
     await creation.expectFriendCount(2);
   });
 
+  test('warns when the owner has written nothing, and never blocks', async ({ page }) => {
+    const creation = new CreationPage(page, htmlPath);
+    await creation.open();
+
+    // Visible from the start, because nothing has been written.
+    await expect(page.locator('#empty-words-warning')).toBeVisible();
+
+    // It must never stand between the owner and the button. A gate on a free
+    // tool is satisfied by typing a full stop, and then the heir holds a
+    // bundle that passed the check and still says nothing.
+    await creation.setFriend(0, 'Hannah', 'hannah@test.com');
+    await creation.setFriend(1, 'Sebastian', 'sebastian@test.com');
+    const testFiles = creation.createTestFiles(tmpDir, 'emptywords');
+    await creation.addFiles(testFiles);
+    await expect(page.locator('#generate-btn')).toBeEnabled();
+
+    // One word anywhere clears it.
+    await page.fill('#words-wallet', 'A 2 of 3.');
+    await expect(page.locator('#empty-words-warning')).toBeHidden();
+
+    // Clearing it again brings the warning back.
+    await page.fill('#words-wallet', '');
+    await expect(page.locator('#empty-words-warning')).toBeVisible();
+  });
+
   test("the owner's words land where they were decided to land", async ({ page }, testInfo) => {
     // The one that must never silently regress. A README is built to be
     // forwarded: a guardian's own copy tells them to send it to whoever asks

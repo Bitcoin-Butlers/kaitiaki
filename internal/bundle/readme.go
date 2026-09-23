@@ -125,6 +125,16 @@ func GenerateReadme(data ReadmeData) string {
 		sb.WriteString(strings.TrimRight(data.RecoverySteps, "\n") + "\n\n")
 	}
 
+	// Say so when the owner wrote nothing. An heir holding a bundle with no
+	// instructions cannot otherwise tell whether that was a decision or a lost
+	// file, and at the moment they are reading this, that difference matters.
+	if data.RecoverySteps == "" && data.ChainPayload == "" {
+		sb.WriteString("--------------------------------------------------------------------------------\n")
+		sb.WriteString(fmt.Sprintf("%s\n", t("no_instructions_title")))
+		sb.WriteString("--------------------------------------------------------------------------------\n")
+		sb.WriteString(fmt.Sprintf("%s\n\n", t("no_instructions")))
+	}
+
 	if data.ChainPayload != "" {
 		sb.WriteString("--------------------------------------------------------------------------------\n")
 		sb.WriteString(fmt.Sprintf("%s\n", t("chain_copy_title")))

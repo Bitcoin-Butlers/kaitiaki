@@ -73,5 +73,7 @@
   "chain_copy_intro": "The same instructions are written on the Bitcoin chain, where they cannot be lost. The text below opens with any ONE of the wallet's keys. Keep it even if you never need it.",
   "chain_copy_txid": "Published as transaction:",
   "chain_copy_txid_blank": "(the owner writes the transaction id here after publishing)",
-  "people_places_file_header": "WHERE THE KEYS ARE\n\nThe owner wrote this. It was sealed inside the encrypted archive, so it\nappears only when enough guardians combine their pieces.\n"
+  "people_places_file_header": "WHERE THE KEYS ARE\n\nThe owner wrote this. It was sealed inside the encrypted archive, so it\nappears only when enough guardians combine their pieces.\n",
+  "no_instructions": "The owner did not leave instructions in this bundle. That was their choice. This bundle is not missing a page, and nothing has gone wrong. What it holds is a piece of the recovery key and the names of the other guardians.",
+  "no_instructions_title": "NO INSTRUCTIONS IN THIS BUNDLE"
 }

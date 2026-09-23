@@ -30,6 +30,32 @@ import { createOfflineClient, QUICKNET_GENESIS, QUICKNET_PERIOD, formatTimelockD
  * number of such records may be included and an owner rarely has exactly one
  * extra thing to say.
  */
+
+/**
+ * Show the owner, once, that they have written nothing for their heirs.
+ *
+ * It never blocks. A gate on a free tool is satisfied by typing a full stop,
+ * and then the heir holds a bundle that passed the check and still says
+ * nothing. The bundle itself carries the other half of this: when the boxes
+ * are empty the README says so plainly, so an heir knows the gap was a
+ * decision rather than a lost file.
+ */
+function updateEmptyWordsWarning(): void {
+  const warning = document.getElementById('empty-words-warning');
+  if (!warning) return;
+  const { recoverySteps, peopleAndPlaces } = collectOwnersWords();
+  warning.classList.toggle('hidden', recoverySteps !== '' || peopleAndPlaces !== '');
+}
+
+function wireEmptyWordsWarning(): void {
+  const ids = ['words-wallet', 'words-opens', 'words-sign', 'words-keys', 'words-call'];
+  for (const id of ids) {
+    document.getElementById(id)?.addEventListener('input', updateEmptyWordsWarning);
+  }
+  document.getElementById('words-else-list')?.addEventListener('input', updateEmptyWordsWarning);
+  updateEmptyWordsWarning();
+}
+
 function wireAddAnother(): void {
   const button = document.getElementById('words-add-another');
   const list = document.getElementById('words-else-list');
@@ -268,6 +294,7 @@ declare const __SELFHOSTED__: boolean;
     setupGenerate();
     setupTimelock();
     wireAddAnother();
+    wireEmptyWordsWarning();
 
     // Add initial 2 friends
     addFriend();

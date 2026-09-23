@@ -104,13 +104,18 @@ func TestKeyLocationsGoInTheSealedArchiveFile(t *testing.T) {
 	}
 }
 
-func TestNothingIsAddedWhenTheOwnerWroteNothing(t *testing.T) {
-	// An owner who skips the boxes gets the README they got before this
-	// effort. No empty headings, no blank transaction line.
+func TestNothingIsClaimedWhenTheOwnerWroteNothing(t *testing.T) {
+	// An owner who skips the boxes must not get a heading that says they
+	// wrote something, an empty chain section, or a blank transaction line
+	// for a transaction that does not exist.
+	//
+	// The README DOES gain a note saying no instructions were left, decided
+	// in the empty-bundle ticket, so that an heir can tell a decision from a
+	// lost file. That is asserted separately.
 	got := GenerateReadme(baseData())
 	for _, marker := range []string{"THE CHAIN COPY", "the owner wrote this", "____"} {
 		if strings.Contains(got, marker) {
-			t.Errorf("an empty field must add nothing, found %q", marker)
+			t.Errorf("an empty field must claim nothing, found %q", marker)
 		}
 	}
 }
@@ -135,5 +140,27 @@ func TestBundleParamsCarryTheOwnersTexts(t *testing.T) {
 	plain := GenerateReadme(baseData())
 	if strings.Contains(plain, "THE CHAIN COPY") {
 		t.Error("a project with no chain copy must not grow an empty section")
+	}
+}
+
+func TestAnEmptyBundleSaysSo(t *testing.T) {
+	// An heir holding a bundle with no instructions cannot otherwise tell
+	// whether that was the owner's decision or a lost file. At the moment
+	// they are reading this, that difference matters.
+	got := GenerateReadme(baseData())
+	if !strings.Contains(got, "did not leave instructions") {
+		t.Error("a bundle with no instructions must say so")
+	}
+	if !strings.Contains(got, "not missing a page") {
+		t.Error("the heir must be told nothing has gone wrong")
+	}
+}
+
+func TestABundleWithWordsDoesNotSaySo(t *testing.T) {
+	d := baseData()
+	d.RecoverySteps = steps
+	got := GenerateReadme(d)
+	if strings.Contains(got, "did not leave instructions") {
+		t.Error("a bundle that carries the owner's words must not claim otherwise")
 	}
 }
