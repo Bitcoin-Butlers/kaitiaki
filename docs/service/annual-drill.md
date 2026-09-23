@@ -16,12 +16,27 @@ computer with the Butler directing by voice only.
    the recovery) and confirms README + recover.html open. USB sticks
    rot; this catches it. Rotate media every 5 years or at first read
    error.
-3. **Quorum recovery rehearsal.** k guardians (rotate WHICH k each
-   year) perform a recovery: preferred via recover.html offline on a
-   guardian's own computer; every third year, run the independence
-   path instead, contrib/combine.py + stock age per
-   docs/independent-recovery.md, so the client re-proves the tool
-   is not a dependency.
+3. **Quorum recovery rehearsal. The guardian drives, and you stay
+   silent.** k guardians (rotate WHICH k each year) perform a recovery:
+   preferred via recover.html offline on a guardian's own computer;
+   every third year, run the independence path instead,
+   contrib/combine.py + stock age per docs/independent-recovery.md, so
+   the client re-proves the tool is not a dependency.
+
+   **Hand the keyboard to the least technical guardian present.** You do
+   not touch it. You do not answer a question the first time it is
+   asked, because a real recovery has nobody to ask. Answer on the
+   second ask, and write down that you had to.
+
+   A Butler who drives this step proves the Butler can recover. That is
+   not the thing the client is buying. The client is buying the
+   confidence that these people, on a bad day, without you, can do it.
+
+   **The list of places they hesitated is the drill's real output.**
+   Every pause, every reread, every wrong click. Most of them are fixed
+   by a sentence in the estate insert or a clearer guardian briefing,
+   not by teaching the guardian. If the same pause appears two years
+   running, the document is wrong and the guardian is fine.
 4. **Read the on-chain descriptor back.** Only where the client has one.
    Take the transaction id from the estate insert, open the descriptor
    page's Recover panel, and rebuild the descriptor with the client's own
@@ -50,8 +65,10 @@ computer with the Butler directing by voice only.
 
 ## Pass / fail
 
-PASS: every guardian confirmed AND one quorum recovered the payload AND
-payload matches current wallet reality. Anything less is a FAIL with a
+PASS: every guardian confirmed AND one quorum recovered the payload
+WITH A GUARDIAN DRIVING AND THE BUTLER SILENT AND payload matches
+current wallet reality. A recovery the Butler drove is a demonstration
+and does not count as a pass. Anything less is a FAIL with a
 named repair action and a booked follow-up. A failed drill is the
 service working, say so to the client.
 
