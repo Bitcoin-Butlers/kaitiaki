@@ -114,7 +114,10 @@ placed. Nothing about this session is technical from the client's side.
 
 6. **Place each bundle.** USB stick or archival microSD per guardian,
    labeled with the guardian's name and year only (never "BITCOIN").
-   Record in the estate insert: guardian, location, date, media.
+   Record in the estate insert: guardian, location, date, media. The media
+   column is not bookkeeping. It is the retrieval list the owner needs the day
+   they revise, because a revision replaces every bundle and they have to know
+   what to swap. See `revision-session.md`.
    Bundles that leave the session travel with the client or by the
    guardian's own hand, Butlers never retain a copy. Say this out loud.
 7. **Guardian briefing sheets.** One per guardian (template below):

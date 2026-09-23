@@ -22,6 +22,10 @@ No guardian can read anything alone.
 | ________ | ______________________ | ____ | ____ |
 | ________ | ______________________ | ____ | ____ |
 
+If a row is struck through, that bundle was replaced. It will still open and
+it no longer works with the others, so it counts for nothing. Use the rows
+that are not struck through.
+
 **To recover:** bring the required number of bundles to one computer.
 Open the file called `recover.html` inside any bundle, it works in any
 web browser, with no internet. Follow the on-screen steps. If the page
