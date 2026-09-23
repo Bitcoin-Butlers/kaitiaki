@@ -17,16 +17,18 @@ who thinks they are changing one line is about to replace their whole set.
 
 ## What this session is
 
-Ninety minutes to two hours, priced the way every Butler service is priced:
-the Butler's hourly rate times the session length. It is shorter than a
-placement because the deciding is already done. The quorum worksheet exists,
-the guardians are chosen, and the payload categories are settled. What has to
-happen again is the sealing, the printing, the estate insert, and a live test
-recovery.
+**A placement, run again.** Same length, same price: the Butler's hourly rate
+times three hours, like every other Butler service.
 
-Treat 120 minutes as the length until enough of these have run to say
-otherwise. Record the real elapsed time on the insert each time, so the number
-is set by evidence rather than by guessing.
+It is tempting to sell it short, because the deciding is already done. The
+quorum worksheet exists, the guardians are chosen, the payload categories are
+settled. None of that is the work. The work is sealing every bundle again,
+printing every README again, placing them again, and **test recovering them
+again.** Ben, 2026-09-23: "it's essentially the same as the first one because
+you have to go through and test everything again anyway."
+
+A revision sold as a short visit is a revision where something gets skipped,
+and the thing that gets skipped is the test recovery.
 
 ## What Butlers do, and what the owner does
 
