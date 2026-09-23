@@ -105,6 +105,7 @@
           <p data-i18n="chain_intro">Your bundle's README holds a copy of the wallet's instructions, written on the Bitcoin chain. You do not need the other guardians to read it. You need one of the wallet's own keys.</p>
           <p id="chain-nudge" class="words-warning hidden" data-i18n="chain_nudge">Cannot reach enough guardians? One of the wallet's own keys opens the instructions on its own. No other guardian is needed.</p>
           <p class="note" data-i18n="chain_offline">This works with no internet. Nothing is sent anywhere.</p>
+          <p class="note" data-i18n="chain_may_be_older">The chain copy cannot be changed once it is written, so it may be older than your bundle. If the two disagree, trust your bundle.</p>
 
           <label for="chain-payload" data-i18n="chain_payload_label">The text from your README</label>
           <textarea id="chain-payload" rows="4" spellcheck="false"></textarea>
@@ -117,6 +118,7 @@
           <button id="chain-btn" class="btn btn-secondary" type="button" data-i18n="chain_btn">Read it</button>
           <p id="chain-status" class="status-message" aria-live="polite"></p>
           <textarea id="chain-output" rows="4" readonly class="hidden" spellcheck="false"></textarea>
+          <p id="chain-trust" class="note hidden" data-i18n="chain_trust_bundle">If this differs from what your bundle says, use your bundle. Your bundle is the newer copy, and its date is in its README footer.</p>
         </div>
       </details>
     </div>

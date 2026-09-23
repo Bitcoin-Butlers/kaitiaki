@@ -64,6 +64,44 @@ test.describe('Chain copy reader', () => {
     expect(descriptor).toContain('28645006');
   });
 
+  /**
+   * Which copy wins.
+   *
+   * The chain copy cannot be rewritten, so an owner who revises their
+   * instructions leaves an older copy on the chain for good. An heir holding
+   * a bundle AND a chain copy that disagree needs a rule, and the rule is the
+   * bundle. Decided 2026-09-23.
+   *
+   * The line appears only after a successful read: an heir holding one copy
+   * has nothing to reconcile, and telling them about a conflict they do not
+   * have is noise at the worst possible moment.
+   */
+  test('names the bundle as the copy to trust, only once a copy is read', async ({ page }) => {
+    await page.route('**/*', (route) =>
+      route.request().url().startsWith('file://') ? route.continue() : route.abort()
+    );
+    await page.goto(`file://${htmlPath}`);
+    await page.locator('#chain-reader').evaluate((el: HTMLDetailsElement) => { el.open = true; });
+
+    // The standing warning is there before anything is read.
+    await expect(page.locator('[data-i18n="chain_may_be_older"]')).toBeVisible();
+    // The reconciliation line is not.
+    await expect(page.locator('#chain-trust')).toBeHidden();
+
+    await page.fill('#chain-payload', thresholdText);
+    await page.fill('#chain-keys', `${xpubs[0]}\n${xpubs[2]}`);
+    await page.click('#chain-btn');
+
+    await expect(page.locator('#chain-output')).toBeVisible();
+    await expect(page.locator('#chain-trust')).toBeVisible();
+    await expect(page.locator('#chain-trust')).toContainText('use your bundle');
+
+    // A failed read must not leave the line standing over nothing.
+    await page.fill('#chain-keys', 'xpub-that-is-not-a-key');
+    await page.click('#chain-btn');
+    await expect(page.locator('#chain-trust')).toBeHidden();
+  });
+
 
   // A BIP-138 backup, made by the Go implementation. Any ONE key opens it,
   // which is the difference a client hears about in the placement session.

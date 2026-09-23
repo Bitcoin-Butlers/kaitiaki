@@ -140,6 +140,13 @@ func GenerateReadme(data ReadmeData) string {
 		sb.WriteString(fmt.Sprintf("%s\n", t("chain_copy_title")))
 		sb.WriteString("--------------------------------------------------------------------------------\n")
 		sb.WriteString(fmt.Sprintf("%s\n\n", t("chain_copy_intro")))
+		// Which copy wins, said where a guardian meets the second copy.
+		//
+		// The chain copy cannot be rewritten, so an owner who revises their
+		// instructions leaves an older copy on the chain for good. Decided
+		// 2026-09-23: the bundle wins, and the bundle carries a date, so the
+		// heir has something to check rather than a rule to remember.
+		sb.WriteString(fmt.Sprintf("%s\n\n", t("chain_copy_may_be_older")))
 		sb.WriteString(data.ChainPayload + "\n\n")
 		sb.WriteString(fmt.Sprintf("%s ", t("chain_copy_txid")))
 		if data.ChainTxid != "" {

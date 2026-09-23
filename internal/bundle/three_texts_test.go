@@ -61,6 +61,32 @@ func TestChainCopyAppearsWithABlankTxidLine(t *testing.T) {
 	}
 }
 
+// Which copy wins.
+//
+// The chain copy cannot be rewritten, so an owner who revises their
+// instructions leaves an older copy on the chain for good. A guardian meets
+// the second copy here, in this README, and needs the rule beside it rather
+// than in a document they do not have. Decided 2026-09-23.
+func TestTheReadmeSaysTheBundleWinsOverTheChainCopy(t *testing.T) {
+	d := baseData()
+	d.ChainPayload = payload
+	got := GenerateReadme(d)
+
+	if !strings.Contains(got, "trust this bundle") {
+		t.Error("the README must name the bundle as the copy to trust when the two disagree")
+	}
+	if !strings.Contains(got, "may be older") {
+		t.Error("the README must say the chain copy can be the older of the two")
+	}
+
+	// A bundle with no chain copy has nothing to reconcile, and a rule about
+	// a second copy that does not exist is noise.
+	plain := GenerateReadme(baseData())
+	if strings.Contains(plain, "trust this bundle") {
+		t.Error("a bundle with no chain copy must not discuss which copy wins")
+	}
+}
+
 func TestAKnownTxidReplacesTheBlank(t *testing.T) {
 	d := baseData()
 	d.ChainPayload = payload

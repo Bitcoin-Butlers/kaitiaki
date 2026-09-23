@@ -1689,12 +1689,16 @@ function wireChainReader(): void {
   const outEl = document.getElementById('chain-output') as HTMLTextAreaElement | null;
   const statusEl = document.getElementById('chain-status');
   const button = document.getElementById('chain-btn');
+  // Shown only after a successful read. An heir holding one copy has nothing
+  // to reconcile; an heir holding two does.
+  const trustEl = document.getElementById('chain-trust');
   if (!payloadEl || !keysEl || !outEl || !statusEl || !button) return;
 
   button.addEventListener('click', async () => {
     const text = payloadEl.value.trim();
     const keys = keysEl.value.split('\n').map((k) => k.trim()).filter(Boolean);
     outEl.classList.add('hidden');
+    trustEl?.classList.add('hidden');
     statusEl.textContent = '';
 
     if (!text || keys.length === 0) {
@@ -1724,6 +1728,7 @@ function wireChainReader(): void {
     }
     outEl.value = descriptor;
     outEl.classList.remove('hidden');
+    trustEl?.classList.remove('hidden');
     statusEl.textContent = t('chain_result');
   });
 }

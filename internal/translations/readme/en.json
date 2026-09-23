@@ -75,5 +75,6 @@
   "chain_copy_txid_blank": "(the owner writes the transaction id here after publishing)",
   "people_places_file_header": "WHERE THE KEYS ARE\n\nThe owner wrote this. It was sealed inside the encrypted archive, so it\nappears only when enough guardians combine their pieces.\n",
   "no_instructions": "The owner did not leave instructions in this bundle. That was their choice. This bundle is not missing a page, and nothing has gone wrong. What it holds is a piece of the recovery key and the names of the other guardians.",
-  "no_instructions_title": "NO INSTRUCTIONS IN THIS BUNDLE"
+  "no_instructions_title": "NO INSTRUCTIONS IN THIS BUNDLE",
+  "chain_copy_may_be_older": "This copy cannot be changed once it is written, so it may be older than this bundle. If the two disagree, trust this bundle. Its date is in the footer below. The chain copy is here for the day every bundle is gone."
 }
