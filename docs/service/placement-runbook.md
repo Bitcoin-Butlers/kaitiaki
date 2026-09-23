@@ -68,8 +68,13 @@ placed. Nothing about this session is technical from the client's side.
    **Check the fee rate before you publish.** Open mempool.space. Publish
    when the rate is under 5 sat per vbyte. A chain backup is never urgent,
    so waiting a day costs nothing and it can save several thousand sat.
-   Above about 4 sat per vbyte the publish costs more than the budget
-   below allows.
+
+   You may already know. From 2026-09-23 the site estimates this cost when
+   the client books, and emails Bitcoin Butlers when publishing that day
+   would cost more than 21 US dollars. No alert does not mean go ahead: fees
+   move between the booking and the session, so check mempool.space anyway.
+   The alert warns, it never blocks, and the answer to an expensive day is
+   always the same. Wait.
 
    Butlers pay opreturnbot.com to publish it, with its Private box ticked.
    Take the transaction id, the block height and the block hash.
@@ -136,3 +141,8 @@ placed. Nothing about this session is technical from the client's side.
   that would tie their wallet to their own backup on the chain. Never put
   two clients in one transaction, because that states on the chain that
   they are one set.
+- This rule did not change when other Butlers could run a placement.
+  Confirmed 2026-09-23: Bitcoin Butlers pays, whoever runs the session. The
+  client pays their Butler's hourly rate for the length of the session and
+  nothing else, and no Butler needs sats of their own to take this work.
+  The alert in step 4 exists because Bitcoin Butlers carries the cost.
