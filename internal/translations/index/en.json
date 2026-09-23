@@ -29,9 +29,9 @@
   "trust_7": "Read more about <a href=\"docs.html#cryptography\">what protects your data</a> and <a href=\"docs.html#what-could-go-wrong\">what could go wrong</a>",
   "try_title": "See how it works",
   "try_step_1": "Open <a href=\"maker.html\">Create bundles</a> and add two or three guardians with made-up names.",
-  "try_step_2": "Add one harmless file, then generate and download the bundles.",
-  "try_step_3": "Unzip one bundle and open its recover.html in your browser.",
-  "try_step_4": "Drag the README.txt files from the other bundles onto the page. When enough pieces are in, the file unlocks.",
+  "try_step_2": "Add one harmless file.",
+  "try_step_3": "Write what your heirs need to know. Each box shows you an example.",
+  "try_step_4": "Generate the bundles and download them.",
   "try_note": "This is what a real recovery feels like. Do it once with a test file before you trust the tool with anything important.",
   "whatis_title": "What this is and isn't",
   "whatis_is": "It is:",
@@ -54,5 +54,12 @@
   "anim_split": "Split",
   "anim_combine": "Combine",
   "anim_recovered": "Recovered",
-  "anim_later": "Later: Recovery needed..."
+  "anim_later": "Later: Recovery needed...",
+  "try_step_5": "Unzip one bundle and open its recover.html. Drag the README.txt files from the other bundles onto the page. When enough pieces are in, the file unlocks.",
+  "try_figures_summary": "Show me what each step looks like",
+  "try_fig_1": "Name the people who will hold a piece of your recovery key.",
+  "try_fig_2": "Add the files you want to protect. They never leave your browser.",
+  "try_fig_3": "Two groups of prompts. Each one says where its text goes, and each box shows an example until you start typing.",
+  "try_fig_4": "One bundle per guardian, ready to download.",
+  "try_fig_5": "Pieces arriving. When enough are in, the files unlock on their own."
 }

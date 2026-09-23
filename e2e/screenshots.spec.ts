@@ -275,6 +275,18 @@ for (const lang of LANGUAGES) {
       await snap(page, lang, 'files');
     });
 
+    test(`[${lang}] owners-words`, async ({ page }) => {
+      const creation = new CreationPage(page, makerHtmlPath);
+      await creation.open();
+
+      // The prompts show their examples as placeholder text, so an empty step
+      // is the honest picture: it is what an owner actually sees when they
+      // arrive, and the examples are the point of the figure.
+      await frameCreationStep(page, [2]);
+
+      await snap(page, lang, 'owners-words');
+    });
+
     test(`[${lang}] bundles`, async ({ page }) => {
       const creation = new CreationPage(page, makerHtmlPath);
       await creation.open();

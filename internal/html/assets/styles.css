@@ -1442,3 +1442,38 @@ pre {
   cursor: pointer;
   text-decoration: underline;
 }
+
+/* ---------------------------------------------------------------------------
+   The landing page explainer: each step of the drill with its own picture,
+   folded away until somebody asks for it.
+   --------------------------------------------------------------------------- */
+
+.try-figures {
+  margin-top: 1.25rem;
+}
+
+.try-figures .details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding-top: 1rem;
+}
+
+.try-figures figure {
+  margin: 0;
+}
+
+.try-figures img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.try-figures figcaption {
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
