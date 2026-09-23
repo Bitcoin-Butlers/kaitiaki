@@ -49,17 +49,43 @@ computer with the Butler directing by voice only.
    guardians still has a way in. Open one guardian's README and check the
    text matches what came off the chain. Two reads, not one.
 
-   If they differ, the bundles are older than the chain copy. Say which is
-   current, write it on the insert, and re-issue the bundles at the next
-   placement rather than leaving two answers in the world.
+   **If the two differ, find out WHICH part differs. They are not the same
+   problem.** Corrected 2026-09-23: this step used to assume the bundles were
+   the older copy. It is the other way round. A bundle is re-issued whenever
+   the owner revises anything, and the chain copy can never be re-written, so
+   the chain copy is the one that goes out of date.
 
-   If the wallet changed since the last drill, the chain copy is stale.
-   Publish a new one and write the new id on the insert. The old one stays
-   on the chain forever and that is fine; the insert says which is current.
+   **The words differ, the descriptor matches. Expected. Do nothing.**
+   The owner revised their instructions and the bundles carry the new ones.
+   The chain copy holds the words as they were on the day it was published,
+   and it always will. That is the design, not a fault. Tell the client the
+   bundle is the copy that counts and move on.
+
+   **The descriptor differs. This is the failure.** The chain copy names a
+   wallet that no longer exists, so the day every bundle is gone, it leads an
+   heir to nothing. Publish a new chain copy, write the new transaction id on
+   the insert, and say plainly that the old one stays on the chain forever and
+   is now wrong. This is the only case that triggers a republish, and Bitcoin
+   Butlers pays for it.
+
+   **The chain copy will not read at all.** Not stale. Broken, or the client
+   cannot produce enough keys. Treat it as a failed drill and repair it before
+   you leave.
+
+   Whichever it is, the rule the heir follows never changes and the client
+   should hear it in these words: if the bundle and the chain copy disagree,
+   use the bundle. The bundle is newer and it carries its own date.
 
 5. **Payload freshness.** Has the wallet changed (new cosigner, new
    descriptor, moved funds structure)? Stale payload = failed drill →
    re-seal session.
+
+   A re-seal re-issues EVERY bundle, not the ones that changed. The maker
+   generates a fresh secret and splits it anew, so a guardian's old piece and
+   another guardian's new piece cannot be combined at all. A client left
+   holding a mix has no working plan, and nothing on the outside of the
+   bundles would show it. Collect and destroy the old media in the same
+   session.
 6. **Sign the drill record** in the estate insert: date, guardians
    confirmed, quorum used, recovery verified, payload version.
 
@@ -71,6 +97,11 @@ current wallet reality. A recovery the Butler drove is a demonstration
 and does not count as a pass. Anything less is a FAIL with a
 named repair action and a booked follow-up. A failed drill is the
 service working, say so to the client.
+
+A chain copy whose WORDS are out of date does not fail a drill. It is the
+expected state of a copy that cannot be re-written, and the bundles carry the
+current words. A chain copy whose DESCRIPTOR is out of date does fail it,
+because it points an heir at a wallet that no longer exists.
 
 ## Widow test
 
