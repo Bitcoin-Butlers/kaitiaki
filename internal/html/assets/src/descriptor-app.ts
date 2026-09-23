@@ -303,31 +303,6 @@ async function recover() {
 // ---------------------------------------------------------------------------
 
 function init() {
-  // Recover
-  $('source-choice').addEventListener('change', () => {
-    const source = document.querySelector<HTMLInputElement>('input[name="source"]:checked')?.value;
-    show($('source-text'), source === 'text');
-    show($('source-txid'), source === 'txid');
-  });
-  const recoverInput = $<HTMLTextAreaElement>('recover-input');
-  recoverInput.addEventListener('input', () => {
-    usingPublishedBackup = false;
-    const value = recoverInput.value.trim();
-    if (value) describeBackup(value);
-    else show($('recover-summary'), false);
-  });
-  $<HTMLButtonElement>('fetch-btn').addEventListener('click', async () => {
-    const status = $('fetch-status');
-    status.textContent = 'Asking the explorer...';
-    try {
-      const text = await fetchFromChain($<HTMLInputElement>('txid-input').value, $<HTMLInputElement>('explorer-input').value);
-      recoverInput.value = text;
-      describeBackup(text);
-      status.textContent = `Found ${text.length} characters. Now add your keys below.`;
-    } catch (error) {
-      status.textContent = error instanceof Error ? error.message : String(error);
-    }
-  });
   /**
    * Our own backup, published on Bitcoin mainnet on 2026-09-10 and recorded in
    * docs/descriptor-backup-vector.md. The seeds behind these keys are the
@@ -345,6 +320,37 @@ function init() {
     'xpub6FQya7zGhR92kacYsNnjreouvnHJMpXYsUXnW6NJJAJRCKsa26TzDy4LdnGhEurr3d6y1J8PJ7EEMKQp74XTqYvmGJNogYXSKDszYHtF8mX',
   ];
 
+  // Recover
+  $('source-choice').addEventListener('change', () => {
+    const source = document.querySelector<HTMLInputElement>('input[name="source"]:checked')?.value;
+    show($('source-text'), source === 'text');
+    show($('source-txid'), source === 'txid');
+  });
+  const recoverInput = $<HTMLTextAreaElement>('recover-input');
+  recoverInput.addEventListener('input', () => {
+    usingPublishedBackup = false;
+    const value = recoverInput.value.trim();
+    if (value) describeBackup(value);
+    else show($('recover-summary'), false);
+  });
+  $<HTMLButtonElement>('fetch-btn').addEventListener('click', async () => {
+    const status = $('fetch-status');
+    status.textContent = 'Asking the explorer...';
+    try {
+      const wanted = $<HTMLInputElement>('txid-input').value;
+      const text = await fetchFromChain(wanted, $<HTMLInputElement>('explorer-input').value);
+      // Setting .value fires no input event, so the listener that clears this
+      // flag never runs. Without this line a reader who presses Try it and
+      // then fetches their OWN transaction is told their recovery was a
+      // demonstration.
+      usingPublishedBackup = wanted.trim().toLowerCase() === PUBLISHED_TXID;
+      recoverInput.value = text;
+      describeBackup(text);
+      status.textContent = `Found ${text.length} characters. Now add your keys below.`;
+    } catch (error) {
+      status.textContent = error instanceof Error ? error.message : String(error);
+    }
+  });
   $<HTMLButtonElement>('try-it-btn').addEventListener('click', async () => {
     const status = $('try-it-status');
 

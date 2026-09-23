@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+- The descriptor page can open our own published backup. One button fills the
+  transaction id and two of the three keys from the mainnet backup recorded in
+  `docs/descriptor-backup-vector.md`, fetches it, and leaves the reader one
+  press from the descriptor. It stops there on purpose, because the
+  transaction-id path takes two steps and nothing used to say so. The page now
+  says so, and pressing Rebuild too early names the Fetch button instead of
+  restating the problem. The note explaining what happened appears only for our
+  own backup, so an heir recovering their own wallet is never told it was a
+  demonstration.
+- The maker offers a test run. It makes throwaway bundles from a sample file so
+  an owner can practise a recovery before making the real ones. A test bundle
+  carries none of the owner's own material, neither their files nor the people
+  and places, and every one is stamped TEST in the project name and in the
+  saved filename. The offer appears once, never repeats, and never blocks
+  Generate. Covered by `e2e/test-run.spec.ts`.
+
 - Kaitiaki is now Bitcoin Inheritance. Pages, guide, README, the PDF bundle
   title, and every translation say the new name; short labels such as the page
   logo say Inheritance. The CLI binary is now `inheritance` (`inheritance init`,

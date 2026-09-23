@@ -130,7 +130,7 @@
   "chain_long": "That is long for the chain. The bundles carry the same words for nothing, so keep the chain copy to the method a stranger would need.",
   "chain_excluded": "Some keys in this descriptor have no derivation step, so they were left out.",
   "words_method_dest_bundles": "bundles only",
-  "test_nudge": "Never done this before? Do a test run first. It makes throwaway bundles from a sample file, so you can practise a recovery without touching anything real.",
+  "test_nudge": "Do a test run first. It makes throwaway bundles from a sample file, so you can practise a recovery without touching anything real.",
   "test_nudge_btn": "Do a test run",
   "test_mode_on": "TEST RUN",
   "test_mode_explain": "These bundles are for practice. They are built from a sample file, not yours, and every one is marked TEST. Turn this off before you make the real ones.",

@@ -313,13 +313,19 @@ declare const __SELFHOSTED__: boolean;
   }
 
   /**
-   * The name a bundle is saved under. One definition, so the list on screen
-   * and the file that lands in Downloads can never disagree. A test bundle
-   * that looked real in the list would be exactly the mistake the stamp
-   * exists to prevent.
+   * The names the CURRENT set of bundles is saved under, decided once when
+   * they are generated.
+   *
+   * It used to read `testMode` at click time. Generate a test run, turn the
+   * test run off, then download: the list still said TEST- and the file saved
+   * without it. A test bundle whose filename looks real is exactly the
+   * mistake the stamp exists to prevent, so the name is fixed at the moment
+   * the bytes are made and never recomputed.
    */
+  let bundlesWereStamped = false;
+
   function downloadNameFor(fileName: string): string {
-    return testMode ? `${TEST_PREFIX}-${fileName}` : fileName;
+    return bundlesWereStamped ? `${TEST_PREFIX}-${fileName}` : fileName;
   }
 
   function setTestMode(on: boolean): void {
@@ -1200,6 +1206,8 @@ declare const __SELFHOSTED__: boolean;
       // its purpose and must not be repeated.
       markNudgeSeen();
       elements.testNudge?.classList.add('hidden');
+      // Fix the stamp to what this run is, before any of it is generated.
+      bundlesWereStamped = testMode;
 
       // A test run never carries the owner's own files. If it did, a
       // throwaway bundle would hold real secrets and could not be thrown away.
