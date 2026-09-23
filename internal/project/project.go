@@ -55,6 +55,22 @@ type Project struct {
 	Friends    []Friend `yaml:"friends"`
 	Sealed     *Sealed  `yaml:"sealed,omitempty"`
 
+	// RecoverySteps is the owner's own method, in their own words. It goes in
+	// the open in both README forms, because a lone guardian may safely hold
+	// it and an heir may need it early. Write it as a YAML block, with "|".
+	//
+	// Key locations do NOT belong here. They must be sealed inside the
+	// encrypted archive, so add them as one of the files you seal. A README
+	// is built to be forwarded, and a guardian's own copy tells them to send
+	// it to whoever asks for their piece.
+	RecoverySteps string `yaml:"recovery_steps,omitempty"`
+	// ChainPayload is the encrypted chain copy, if one was made. Ciphertext
+	// locked to the wallet's keys, and an identical copy is public on chain.
+	ChainPayload string `yaml:"chain_payload,omitempty"`
+	// ChainTxid is proof the copy landed. Usually set later with a flag,
+	// because the transaction does not exist when the bundles are made.
+	ChainTxid string `yaml:"chain_txid,omitempty"`
+
 	// Path is the directory containing this project (not serialized)
 	Path string `yaml:"-"`
 }

@@ -33,6 +33,7 @@ func init() {
 	bundleCmd.Flags().String("recovery-url", core.DefaultRecoveryURL, "Base URL for QR code in PDF")
 	bundleCmd.Flags().Bool("no-embed-manifest", false, "Do not embed MANIFEST.age in recover.html (it is embedded by default when 10 MB or less)")
 	bundleCmd.Flags().Bool("pages", false, "Generate a static pages directory (recover.html + MANIFEST.age) for hosting")
+	bundleCmd.Flags().String("chain-txid", "", "Transaction id of the published chain copy. Overrides chain_txid in the project file.")
 	rootCmd.AddCommand(bundleCmd)
 }
 
@@ -65,11 +66,14 @@ func runBundle(cmd *cobra.Command, args []string) error {
 	recoveryURL, _ := cmd.Flags().GetString("recovery-url")
 	noEmbedManifest, _ := cmd.Flags().GetBool("no-embed-manifest")
 
+	chainTxid, _ := cmd.Flags().GetString("chain-txid")
+
 	cfg := bundle.Config{
 		Version:         version,
 		RecoveryURL:     recoveryURL,
 		NoEmbedManifest: noEmbedManifest,
 		TlockEnabled:    p.Sealed.TlockEnabled,
+		ChainTxid:       chainTxid,
 	}
 
 	if err := bundle.GenerateAll(p, cfg); err != nil {

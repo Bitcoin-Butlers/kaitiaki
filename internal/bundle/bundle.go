@@ -24,11 +24,23 @@ type Config struct {
 	RecoveryURL     string // Optional: base URL for QR code (e.g. "https://example.com/recover.html")
 	NoEmbedManifest bool   // If true, do not embed MANIFEST.age in recover.html even when small enough
 	TlockEnabled    bool   // If true, bundles include tlock-js for time-lock decryption
+	// ChainTxid overrides the project's stored transaction id. The id only
+	// exists after the chain copy is published, which is usually after the
+	// bundles were first made, so it arrives as a flag.
+	ChainTxid string
 }
 
 // GenerateAll creates bundles for all friends in the project.
 func GenerateAll(p *project.Project, cfg Config) error {
 	html.SetVersion(cfg.Version)
+
+	// The flag wins, because it is the later fact. A transaction id stored in
+	// the project was true when it was written; one passed on the command line
+	// is being told to us now.
+	chainTxid := p.ChainTxid
+	if cfg.ChainTxid != "" {
+		chainTxid = cfg.ChainTxid
+	}
 
 	if p.Sealed == nil {
 		return fmt.Errorf("project must be sealed before generating bundles")
@@ -146,6 +158,9 @@ func GenerateAll(p *project.Project, cfg Config) error {
 			RecoveryURL:      cfg.RecoveryURL,
 			Language:         lang,
 			TlockEnabled:     cfg.TlockEnabled,
+			RecoverySteps:    p.RecoverySteps,
+			ChainPayload:     p.ChainPayload,
+			ChainTxid:        chainTxid,
 		})
 		if err != nil {
 			return fmt.Errorf("generating bundle for %s: %w", friend.Name, err)
@@ -181,6 +196,12 @@ type BundleParams struct {
 	RecoveryURL      string
 	Language         string // Bundle language for this friend
 	TlockEnabled     bool   // true when manifest uses time-lock encryption
+
+	// The owner's own texts. See project.Project for what each one is and
+	// why key locations are not among them.
+	RecoverySteps string
+	ChainPayload  string
+	ChainTxid     string
 }
 
 // GenerateBundle creates a single bundle ZIP file for one friend.
@@ -202,6 +223,9 @@ func GenerateBundle(params BundleParams) error {
 		Language:         params.Language,
 		ManifestEmbedded: params.ManifestEmbedded,
 		TlockEnabled:     params.TlockEnabled,
+		RecoverySteps:    params.RecoverySteps,
+		ChainPayload:     params.ChainPayload,
+		ChainTxid:        params.ChainTxid,
 	}
 
 	// Generate README.txt
@@ -225,6 +249,9 @@ func GenerateBundle(params BundleParams) error {
 		Language:         params.Language,
 		ManifestEmbedded: params.ManifestEmbedded,
 		TlockEnabled:     params.TlockEnabled,
+		RecoverySteps:    params.RecoverySteps,
+		ChainPayload:     params.ChainPayload,
+		ChainTxid:        params.ChainTxid,
 	})
 	if err != nil {
 		return fmt.Errorf("generating PDF: %w", err)

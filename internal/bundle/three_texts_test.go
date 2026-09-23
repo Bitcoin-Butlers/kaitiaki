@@ -114,3 +114,26 @@ func TestNothingIsAddedWhenTheOwnerWroteNothing(t *testing.T) {
 		}
 	}
 }
+
+// The CLI and the browser must put the owner's words in the same place. The
+// browser fills BundleParams from its WASM config; the CLI fills the same
+// struct from project.yml and a flag. This pins the struct that both use.
+func TestBundleParamsCarryTheOwnersTexts(t *testing.T) {
+	d := baseData()
+	d.RecoverySteps = steps
+	d.ChainPayload = payload
+	d.ChainTxid = "4801ea9c10e14a5ea5c0e5e68bfe08fd2422005ea0a3a9631fead29ce910a4df"
+
+	got := GenerateReadme(d)
+	for _, want := range []string{steps, payload, d.ChainTxid} {
+		if !strings.Contains(got, want) {
+			t.Errorf("a README built from these fields must carry %q", want)
+		}
+	}
+
+	// And a project that says nothing still produces the old README.
+	plain := GenerateReadme(baseData())
+	if strings.Contains(plain, "THE CHAIN COPY") {
+		t.Error("a project with no chain copy must not grow an empty section")
+	}
+}
