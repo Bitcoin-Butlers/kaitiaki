@@ -1272,8 +1272,34 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     }
   }
 
+  /**
+   * Offer the chain copy when the bundle path stalls.
+   *
+   * An heir who cannot reach enough guardians is the exact person the chain
+   * copy exists for, and they meet it at the bottom of the page, below a
+   * dead end. So the moment they have added at least one piece and still do
+   * not have enough, the panel opens itself and says why it is there.
+   *
+   * It never closes again on its own. Somebody who has seen it should not
+   * have it taken away while they are reading.
+   *
+   * Two pieces, not one. A personalized bundle arrives with the holder's own
+   * piece already loaded, so one piece means "I opened my bundle" and says
+   * nothing about whether the guardians can be reached. Two means somebody is
+   * actively gathering and coming up short.
+   */
+  function offerChainCopyIfStalled(): void {
+    if (state.shares.length < 2 || sharesReady()) return;
+    const panel = document.getElementById('chain-reader') as HTMLDetailsElement | null;
+    const nudge = document.getElementById('chain-nudge');
+    if (!panel || panel.open) return;
+    panel.open = true;
+    nudge?.classList.remove('hidden');
+  }
+
   function checkRecoverReady(): void {
     const ready = state.manifest !== null && (sharesReady() || ownerReady());
+    offerChainCopyIfStalled();
 
     if (elements.recoverBtn) {
       elements.recoverBtn.disabled = !ready;

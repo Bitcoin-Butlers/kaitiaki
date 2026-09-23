@@ -120,5 +120,7 @@
   "chain_btn": "Read it",
   "chain_result": "Here is the wallet's descriptor. Load it into your wallet software.",
   "chain_fail_keys": "Those keys do not open this text. Try another of the wallet's keys.",
-  "chain_fail_text": "That does not look like a backup. Copy the whole block from your README, with nothing missing from either end."
+  "chain_fail_text": "That does not look like a backup. Copy the whole block from your README, with nothing missing from either end.",
+  "two_ways_in": "There are two ways in. Gather enough pieces from the guardians, or use one of the wallet's own keys to read the instructions written on the chain.",
+  "chain_nudge": "Cannot reach enough guardians? One of the wallet's own keys opens the instructions on its own. No other guardian is needed."
 }

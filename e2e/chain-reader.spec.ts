@@ -2,6 +2,8 @@ import { test, expect } from './fixtures';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import AdmZip from 'adm-zip';
+import { execFileSync } from 'child_process';
 import { getRememoryBin, generateStandaloneHTML } from './helpers';
 
 /**
@@ -99,6 +101,32 @@ test.describe('Chain copy reader', () => {
 
     await expect(page.locator('#chain-output')).toBeHidden();
     await expect(page.locator('#chain-status')).toContainText(/keys/i);
+  });
+
+  test('offers itself when the heir cannot gather enough guardians', async ({ page }) => {
+    // The heir this exists for: one bundle, not enough pieces. They must not
+    // have to find a collapsed panel underneath a dead end.
+    const projectDir = path.join(tmpDir, 'stall');
+    const bin = getRememoryBin();
+    execFileSync(bin, ['demo', projectDir], { stdio: 'ignore' });
+
+    const bundlesDir = path.join(projectDir, 'output', 'bundles');
+    const oneBundle = path.join(tmpDir, 'one');
+    fs.mkdirSync(oneBundle, { recursive: true });
+    new AdmZip(path.join(bundlesDir, 'bundle-alice.zip')).extractAllTo(oneBundle, true);
+
+    await page.goto(`file://${path.join(oneBundle, 'recover.html')}`);
+
+    // Closed to begin with.
+    await expect(page.locator('#chain-reader')).not.toHaveAttribute('open', /.*/);
+
+    // Add a second guardian's piece. The demo needs three, so this stalls.
+    const second = path.join(tmpDir, 'two');
+    fs.mkdirSync(second, { recursive: true });
+    new AdmZip(path.join(bundlesDir, 'bundle-bob.zip')).extractAllTo(second, true);
+    await page.locator('#share-file-input').setInputFiles(path.join(second, 'README.txt'));
+    await expect(page.locator('#chain-reader')).toHaveAttribute('open', /.*/);
+    await expect(page.locator('#chain-nudge')).toBeVisible();
   });
 
   test('says the text is wrong when the text is wrong', async ({ page }) => {

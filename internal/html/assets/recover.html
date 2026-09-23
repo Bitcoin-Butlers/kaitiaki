@@ -2,6 +2,7 @@
       <h1 data-i18n="title">Recover Files</h1>
       <p class="subtitle" data-i18n="subtitle">Bring together the pieces your guardians kept safe.</p>
       <p class="summary" data-i18n="page_description">Each guardian received a bundle with one piece of the key. Gather enough pieces below, add the encrypted archive, and your files will be decrypted here in the browser. Nothing leaves your device.</p>
+      <p class="summary" data-i18n="two_ways_in">There are two ways in. Gather enough pieces from the guardians, or use one of the wallet's own keys to read the instructions written on the chain.</p>
     </div>
 
     <!-- Step 1: Collect Shares -->
@@ -102,6 +103,7 @@
         <summary data-i18n="chain_title">Read the chain copy</summary>
         <div class="details-content">
           <p data-i18n="chain_intro">Your bundle's README holds a copy of the wallet's instructions, written on the Bitcoin chain. You do not need the other guardians to read it. You need one of the wallet's own keys.</p>
+          <p id="chain-nudge" class="words-warning hidden" data-i18n="chain_nudge">Cannot reach enough guardians? One of the wallet's own keys opens the instructions on its own. No other guardian is needed.</p>
           <p class="note" data-i18n="chain_offline">This works with no internet. Nothing is sent anywhere.</p>
 
           <label for="chain-payload" data-i18n="chain_payload_label">The text from your README</label>
