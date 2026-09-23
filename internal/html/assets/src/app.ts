@@ -6,6 +6,8 @@
 
 // BarcodeDetector polyfill - provides QR scanning in browsers without native support
 import { registerPolyfill } from './barcode-detector';
+import { decryptDescriptor as decryptBip138Descriptor } from './crypto/bip138';
+import { decryptDescriptor as decryptThresholdDescriptor } from './crypto/descriptor';
 registerPolyfill();
 
 import type {
@@ -1642,6 +1644,64 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   // Global Exports & Startup
   // ============================================
 
+
+/**
+ * The chain copy: a second way in that needs no other guardian.
+ *
+ * An heir holding one bundle and one of the wallet's own keys can read the
+ * instructions here, with no internet and with nothing of ours alive. The
+ * bundle's README carries the text, so there is nothing to fetch.
+ *
+ * The reader ships in every bundle, not only in bundles made when a chain copy
+ * already existed. A bundle made today must still read a copy published in
+ * five years, because re-issuing bundles to guardians is the most expensive
+ * thing in this system.
+ */
+function wireChainReader(): void {
+  const payloadEl = document.getElementById('chain-payload') as HTMLTextAreaElement | null;
+  const keysEl = document.getElementById('chain-keys') as HTMLTextAreaElement | null;
+  const outEl = document.getElementById('chain-output') as HTMLTextAreaElement | null;
+  const statusEl = document.getElementById('chain-status');
+  const button = document.getElementById('chain-btn');
+  if (!payloadEl || !keysEl || !outEl || !statusEl || !button) return;
+
+  button.addEventListener('click', async () => {
+    const text = payloadEl.value.trim();
+    const keys = keysEl.value.split('\n').map((k) => k.trim()).filter(Boolean);
+    outEl.classList.add('hidden');
+    statusEl.textContent = '';
+
+    if (!text || keys.length === 0) {
+      statusEl.textContent = t('chain_fail_text');
+      return;
+    }
+
+    // Two formats are in the world. A threshold backup keeps the descriptor
+    // skeleton in front of its ciphertext, so it starts with the policy. A
+    // BIP-138 backup is base64 of bytes that begin with the text BIP138.
+    let descriptor: string | undefined;
+    try {
+      if (/^[a-z_]*\(/i.test(text)) {
+        const r = await decryptThresholdDescriptor(text, keys);
+        descriptor = r.descriptor;
+      } else {
+        descriptor = decryptBip138Descriptor(text, keys[0]);
+      }
+    } catch {
+      statusEl.textContent = t('chain_fail_keys');
+      return;
+    }
+
+    if (!descriptor) {
+      statusEl.textContent = t('chain_fail_keys');
+      return;
+    }
+    outEl.value = descriptor;
+    outEl.classList.remove('hidden');
+    statusEl.textContent = t('chain_result');
+  });
+}
+
   window.rememoryUpdateUI = function(): void {
     updateSharesUI();
     updateContactList();
@@ -1649,6 +1709,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
 
   document.addEventListener('DOMContentLoaded', async () => {
     await init();
+    wireChainReader();
 
     elements.ownerIdentity?.addEventListener('input', () => checkRecoverReady());
 

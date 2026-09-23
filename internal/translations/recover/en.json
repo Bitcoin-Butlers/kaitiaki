@@ -109,5 +109,16 @@
   "owner_explain": "If your bundles were made with an owner key, you can recover alone, without the other pieces. Drop any one bundle above, then paste your secret owner key here.",
   "owner_loaded": "OWNER.age found in the bundle. Paste your owner key to recover.",
   "owner_bad_key": "This owner key does not open OWNER.age. Check for typos and make sure it belongs to this backup.",
-  "recovering_owner": "Opening OWNER.age with the owner key..."
+  "recovering_owner": "Opening OWNER.age with the owner key...",
+  "chain_title": "Read the chain copy",
+  "chain_intro": "Your bundle's README holds a copy of the wallet's instructions, written on the Bitcoin chain. You do not need the other guardians to read it. You need one of the wallet's own keys.",
+  "chain_offline": "This works with no internet. Nothing is sent anywhere.",
+  "chain_payload_label": "The text from your README",
+  "chain_payload_hint": "Paste the long block of letters and numbers, or scan the QR code from the printed page.",
+  "chain_keys_label": "One of the wallet's public keys",
+  "chain_keys_hint": "An xpub, one per line. A threshold backup needs more than one. This page never asks for a seed.",
+  "chain_btn": "Read it",
+  "chain_result": "Here is the wallet's descriptor. Load it into your wallet software.",
+  "chain_fail_keys": "Those keys do not open this text. Try another of the wallet's keys.",
+  "chain_fail_text": "That does not look like a backup. Copy the whole block from your README, with nothing missing from either end."
 }
