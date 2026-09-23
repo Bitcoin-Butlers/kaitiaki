@@ -217,6 +217,12 @@ function describeBackup(text: string) {
   }
 }
 
+/**
+ * True while the page holds the backup we published, rather than a reader's
+ * own. Set by the try-it button and cleared the moment they type over it.
+ */
+let usingPublishedBackup = false;
+
 async function recover() {
   const errorBox = $('recover-error');
   const result = $('recover-result');
@@ -230,7 +236,20 @@ async function recover() {
     .filter(Boolean);
 
   if (!text) {
-    fail(errorBox, new Error('Paste the backup text, or fetch it by transaction id.'));
+    // The old message stated the position rather than pointing at the way out.
+    // A reader on the transaction-id path has a Fetch button two cards up and
+    // no reason to know it must be pressed first.
+    const source = document.querySelector<HTMLInputElement>(
+      'input[name="source"]:checked'
+    )?.value;
+    fail(
+      errorBox,
+      new Error(
+        source === 'txid'
+          ? 'Press "Fetch it" in step 1 first. That pulls the backup text off the chain, and this button then opens it.'
+          : 'Paste the backup text into step 1 first.'
+      )
+    );
     return;
   }
   if (xpubs.length === 0) {
@@ -270,6 +289,10 @@ async function recover() {
     $('recover-detail').textContent = detail;
     $<HTMLTextAreaElement>('recover-output').value = descriptor;
     show(result, true);
+    // Only when this was our own published backup. A real heir recovering
+    // their own wallet should not be told it was a demonstration.
+    const demoNote = document.getElementById('try-it-done');
+    if (demoNote) demoNote.hidden = !usingPublishedBackup;
   } catch (error) {
     fail(errorBox, error);
   }
@@ -288,6 +311,7 @@ function init() {
   });
   const recoverInput = $<HTMLTextAreaElement>('recover-input');
   recoverInput.addEventListener('input', () => {
+    usingPublishedBackup = false;
     const value = recoverInput.value.trim();
     if (value) describeBackup(value);
     else show($('recover-summary'), false);
@@ -304,6 +328,57 @@ function init() {
       status.textContent = error instanceof Error ? error.message : String(error);
     }
   });
+  /**
+   * Our own backup, published on Bitcoin mainnet on 2026-09-10 and recorded in
+   * docs/descriptor-backup-vector.md. The seeds behind these keys are the
+   * BIP-39 test vectors that every wallet ships with, so nothing here is
+   * secret and nothing here holds coins.
+   *
+   * Two keys, not three: the backup is a 2-of-3, and using exactly the
+   * threshold shows the reader that it opens with the minimum rather than
+   * needing every key.
+   */
+  const PUBLISHED_TXID =
+    '4801ea9c10e14a5ea5c0e5e68bfe08fd2422005ea0a3a9631fead29ce910a4df';
+  const PUBLISHED_XPUBS = [
+    'xpub6DkFAXWQ2dHxq2vatrt9qyA3bXYU4ToWQwCHbf5XB2mSTexcHZCeKS1VZYcPoBd5X8yVcbXFHJR9R8UCVpt82VX1VhR28mCyxUFL4r6KFrf',
+    'xpub6FQya7zGhR92kacYsNnjreouvnHJMpXYsUXnW6NJJAJRCKsa26TzDy4LdnGhEurr3d6y1J8PJ7EEMKQp74XTqYvmGJNogYXSKDszYHtF8mX',
+  ];
+
+  $<HTMLButtonElement>('try-it-btn').addEventListener('click', async () => {
+    const status = $('try-it-status');
+
+    // Switch to the transaction-id path and fill it, so the reader sees the
+    // real route rather than a shortcut that skips the chain.
+    const txidRadio = document.querySelector<HTMLInputElement>(
+      'input[name="source"][value="txid"]'
+    );
+    if (txidRadio) {
+      txidRadio.checked = true;
+      txidRadio.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    $<HTMLInputElement>('txid-input').value = PUBLISHED_TXID;
+    $<HTMLTextAreaElement>('xpubs-input').value = PUBLISHED_XPUBS.join('\n');
+
+    status.textContent = 'Fetching our backup off the chain...';
+    try {
+      const text = await fetchFromChain(
+        PUBLISHED_TXID,
+        $<HTMLInputElement>('explorer-input').value
+      );
+      recoverInput.value = text;
+      describeBackup(text);
+      $('fetch-status').textContent = `Found ${text.length} characters.`;
+      usingPublishedBackup = true;
+      status.textContent =
+        'Found it, and filled in two of the three keys. Now press "Rebuild my descriptor" in step 3.';
+    } catch (error) {
+      status.textContent = `Could not reach the explorer: ${
+        error instanceof Error ? error.message : String(error)
+      }. The transaction id and the keys are filled in, so you can press "Fetch it" yourself.`;
+    }
+  });
+
   $<HTMLButtonElement>('recover-btn').addEventListener('click', recover);
   $<HTMLButtonElement>('copy-recovered').addEventListener('click', (event) =>
     copyToClipboard($<HTMLTextAreaElement>('recover-output').value, event.currentTarget as HTMLButtonElement)

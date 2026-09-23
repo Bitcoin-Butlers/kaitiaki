@@ -183,6 +183,23 @@
       color: var(--text-muted);
       font-size: 0.875rem;
     }
+    /* The demo. Set apart, because it is an offer rather than a step. */
+    .try-it {
+      margin-bottom: 1.25rem;
+      padding: 0.875rem 1rem;
+      background: var(--surface-alt, rgba(127, 127, 127, 0.06));
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+    }
+    .try-it p {
+      margin: 0 0 0.75rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .try-it .note {
+      margin-top: 0.5rem;
+    }
 
     /* Publishing */
     #protect-result h3 {
