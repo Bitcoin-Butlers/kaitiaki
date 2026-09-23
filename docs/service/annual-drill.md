@@ -29,6 +29,15 @@ computer with the Butler directing by voice only.
    the right id, the client can still produce enough keys, and the chain
    copy still reads. It costs nothing and it takes two minutes.
 
+   **Then read the bundle's copy too, and compare.** Every bundle carries
+   the chain copy in its own README, so an heir who cannot gather enough
+   guardians still has a way in. Open one guardian's README and check the
+   text matches what came off the chain. Two reads, not one.
+
+   If they differ, the bundles are older than the chain copy. Say which is
+   current, write it on the insert, and re-issue the bundles at the next
+   placement rather than leaving two answers in the world.
+
    If the wallet changed since the last drill, the chain copy is stale.
    Publish a new one and write the new id on the insert. The old one stays
    on the chain forever and that is fine; the insert says which is current.

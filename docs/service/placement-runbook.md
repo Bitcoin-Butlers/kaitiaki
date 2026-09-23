@@ -41,6 +41,16 @@ placed. Nothing about this session is technical from the client's side.
 1. **Assemble the payload together.** Client drags files into
    manifest/. Read the manifest back aloud, what is here, what is
    deliberately not (no seeds).
+
+   **Then ask them what their heirs need to know.** The maker asks this in
+   its own step: the method in one group, the people and places in another.
+   Do not write it for them. Read each example aloud, then let them answer
+   in their own words. This is the part that dies with them, and it is the
+   reason they are in the room.
+
+   Say where each half goes, because the page says it and they should hear
+   it too: the method travels to the chain and into every bundle, the
+   people and places stay sealed inside the encrypted archive.
 2. **Seal.** `inheritance init` (k, n, guardian names) → `seal`. Show the
    client the bundles appearing; open one METADATA.yaml and read it , 
    this is the transparency moment.
@@ -53,9 +63,16 @@ placed. Nothing about this session is technical from the client's side.
    with the client. Paste their descriptor, and read back what the page
    says it is (2 of 3, and the derivation path) before going on. Let the
    client choose who can open it: their wallet's own threshold, or any one
-   of their keys. Explain the difference in one sentence each. Butlers pay
-   opreturnbot.com to publish it, with its Private box ticked. Take the
-   transaction id, the block height and the block hash.
+   of their keys. Explain the difference in one sentence each.
+
+   **Check the fee rate before you publish.** Open mempool.space. Publish
+   when the rate is under 5 sat per vbyte. A chain backup is never urgent,
+   so waiting a day costs nothing and it can save several thousand sat.
+   Above about 4 sat per vbyte the publish costs more than the budget
+   below allows.
+
+   Butlers pay opreturnbot.com to publish it, with its Private box ticked.
+   Take the transaction id, the block height and the block hash.
 
    **Then read it back, in front of them.** Open the page's Recover panel,
    paste the transaction id, add the client's keys, and watch the
@@ -63,19 +80,32 @@ placed. Nothing about this session is technical from the client's side.
    the four details onto the estate insert.
 
    Say the tradeoff plainly: this copy is public and permanent. Anyone can
-   see that a wallet backup exists. Only their keys can open it. That is
-   what makes it outlive Bitcoin Butlers and outlive the guardians.
+   see that a wallet backup exists. Say who can open it in the same breath,
+   because "only their keys" sounds like "only you" and is not the same
+   thing. If they chose any-one-key, ANY one of their keys opens it, now or
+   in twenty years, including a key they later stop using. That is the
+   price of a copy that outlives Bitcoin Butlers and outlives the guardians.
 
-5. **Place each bundle.** USB stick or archival microSD per guardian,
+   Tell them what the page put on the chain: the wallet's method, never the
+   people or the places. Those stayed sealed inside the guardian bundles.
+
+5. **Write the transaction id onto every printed README.** Each bundle's
+   README.pdf has a blank line for it, because the transaction did not
+   exist when the bundles were made. Write the same id on every copy. It
+   is proof the chain copy landed, and it is never the way in: the bundle
+   already carries the chain copy itself, so a missing or mistyped id
+   costs the heir nothing.
+
+6. **Place each bundle.** USB stick or archival microSD per guardian,
    labeled with the guardian's name and year only (never "BITCOIN").
    Record in the estate insert: guardian, location, date, media.
    Bundles that leave the session travel with the client or by the
    guardian's own hand, Butlers never retain a copy. Say this out loud.
-6. **Guardian briefing sheets.** One per guardian (template below):
+7. **Guardian briefing sheets.** One per guardian (template below):
    what they hold, what it cannot do alone, what to do when contacted,
    and that the recovery page inside works offline in any browser.
-7. **Estate insert into the client's documents.** Where the will lives.
-8. **Book the first annual drill before leaving.**
+8. **Estate insert into the client's documents.** Where the will lives.
+9. **Book the first annual drill before leaving.**
 
 ## Rules that make it a Butlers service
 
@@ -88,7 +118,10 @@ placed. Nothing about this session is technical from the client's side.
 - If the client wants a Butler as a guardian: decline; offer to help
   them choose a professional (lawyer/accountant) instead.
 - Butlers pay for the on-chain descriptor copy through opreturnbot.com,
-  from the Butlers account. Never fund it from a client's coins, because
+  from the Butlers account. Budget about 2,700 sat for a 2-of-3 carrying
+  250 bytes of method, AT 2 SAT PER VBYTE. State the rate whenever you
+  state the budget: the same transaction costs about 13,500 sat at 10 sat
+  per vbyte, which is why the fee check in step 4 exists. Never fund it from a client's coins, because
   that would tie their wallet to their own backup on the chain. Never put
   two clients in one transaction, because that states on the chain that
   they are one set.

@@ -46,6 +46,10 @@ bitcoinbutlers.com/tools/inheritance/descriptor.html, choose Recover, and
 enter the transaction id above. Then enter the wallet's public keys, which
 any of the signing devices can produce. The page rebuilds the descriptor.
 
+You do not have to find the transaction at all. Every bundle your guardians
+hold carries the same text in its README. The transaction id below is proof
+the copy landed, and a second way in. It is not the only way in.
+
 If that page is gone, the same text can be read from any Bitcoin block
 explorer by searching the transaction id, and decrypted at
 multisigbackup.com. Nothing about this depends on Bitcoin Butlers still
