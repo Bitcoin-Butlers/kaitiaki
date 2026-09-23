@@ -59,11 +59,11 @@ placed. Nothing about this session is technical from the client's side.
    client watches their own files come back. Never skip this; it is the
    product.
 4. **Put the wallet's descriptor on the chain.** Only for a client with a
-   multisig wallet. Open bitcoinbutlers.com/tools/inheritance/descriptor.html
-   with the client. Paste their descriptor, and read back what the page
-   says it is (2 of 3, and the derivation path) before going on. Let the
-   client choose who can open it: their wallet's own threshold, or any one
-   of their keys. Explain the difference in one sentence each.
+   multisig wallet. In Create Bundles, where you already are, set the
+   destination to "Bundles and the chain" and paste their descriptor. Read
+   back what the page says it is (2 of 3, and the derivation path) before
+   going on. The page picks the format: their words on the chain means any
+   ONE of their keys opens it. Say that out loud.
 
    **Check the fee rate before you publish.** Open mempool.space. Publish
    when the rate is under 5 sat per vbyte. A chain backup is never urgent,
@@ -74,7 +74,8 @@ placed. Nothing about this session is technical from the client's side.
    Butlers pay opreturnbot.com to publish it, with its Private box ticked.
    Take the transaction id, the block height and the block hash.
 
-   **Then read it back, in front of them.** Open the page's Recover panel,
+   **Then read it back, in front of them.** Open
+   bitcoinbutlers.com/tools/inheritance/descriptor.html,
    paste the transaction id, add the client's keys, and watch the
    descriptor come back. A backup nobody has read back is a guess. Write
    the four details onto the estate insert.

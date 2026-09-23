@@ -1,158 +1,38 @@
     <div class="page-intro">
-      <h1>Descriptor Backup</h1>
-      <p class="subtitle">Put your wallet's map on Bitcoin, so your keys are always enough.</p>
+      <h1>Read a Descriptor Backup</h1>
+      <p class="subtitle">Rebuild a wallet's map from the copy written on Bitcoin.</p>
       <p>
         A multisig wallet needs two things to spend: enough keys, and the
         descriptor that says how those keys fit together. Lose one key and the
         descriptor together, and the keys you still hold cannot rebuild the
-        wallet, even when they are enough to sign. This page encrypts the
-        descriptor so that your own keys unlock it, and gives you a line of
-        text to write onto the chain. After that, your keys are enough.
+        wallet, even when they are enough to sign. This page takes the backup
+        and your keys, and gives the descriptor back.
+      </p>
+      <p>
+        Every guardian bundle already carries this text, and
+        <a href="recover.html">the recovery page</a> reads it there with no
+        internet at all. Use this page when you have a transaction id and no
+        bundle.
+      </p>
+      <p>
+        To MAKE a backup, use <a href="maker.html">Create Bundles</a>. It asks
+        what your heirs need to know and can put the method on the chain
+        beside the descriptor.
       </p>
 
-      <details class="how-secure-intro-details">
+      <details>
         <summary>How this works and how to use it safely</summary>
         <div class="details-content">
-          <ul>
-            <li><strong>Everything happens on this device.</strong> The descriptor is encrypted in your browser. Only the encrypted text leaves this page, and only when you publish it.</li>
-            <li><strong>What goes on the chain is public and permanent.</strong> Anyone can read the encrypted text. Only your keys can decrypt it. Treat this as a one-way decision.</li>
-            <li><strong>What stays readable depends on the format.</strong> In the threshold format the script type, the threshold and the derivation paths stay in plain text. Whoever recovers needs them to know which keys to derive. In the one-key format the whole descriptor is encrypted. Only a marker and a padded list of entries stay readable.</li>
-            <li><strong>Never put seed words here.</strong> Seeds belong on steel or in a codex32 kit. This page takes a descriptor and nothing else.</li>
-            <li><strong>Recovery does not need us.</strong> The text this page produces can be decrypted by other tools. See the recover step for how.</li>
-          </ul>
+          <p><strong>Everything happens on this device.</strong> The backup is decrypted in your browser. Your keys never leave this page.</p>
+          <p><strong>Any ONE of the wallet's keys opens a one-key backup</strong>, now or in twenty years, including a key the owner later stopped using. A threshold backup needs the same number of keys it takes to spend.</p>
+          <p><strong>What stays readable depends on the format.</strong> In the threshold format the script type, the threshold and the derivation paths stay in plain text. Whoever recovers needs them to know which keys to derive. In the one-key format the whole descriptor is encrypted. Only a marker and a padded list of entries stay readable.</p>
+          <p><strong>Never type seed words here.</strong> This page takes extended public keys and nothing else.</p>
+          <p><strong>Recovery does not need us.</strong> The text this page reads can be decrypted by other tools. See the last step for how.</p>
         </div>
       </details>
     </div>
 
-    <div class="mode-tabs descriptor-tabs" id="descriptor-tabs">
-      <button type="button" class="mode-tab active" data-panel="protect">Protect a descriptor</button>
-      <button type="button" class="mode-tab" data-panel="recover">Recover a descriptor</button>
-    </div>
-
-    <!-- ------------------------------------------------------------------ -->
-    <section id="panel-protect">
-      <div class="card">
-        <h2><span class="step-number">1</span> Your descriptor</h2>
-        <textarea id="descriptor-input" rows="5" spellcheck="false"
-          placeholder="wsh(sortedmulti(2,[abcd1234/48h/0h/0h/2h]xpub.../&lt;0;1&gt;/*,...))"></textarea>
-        <small>Export it from your coordinator. In Sparrow: Settings, then Export, then Output Descriptor.</small>
-        <div id="descriptor-summary" class="descriptor-summary hidden"></div>
-      </div>
-
-      <div class="card">
-        <h2><span class="step-number">2</span> Who can open it</h2>
-        <div class="choice-list" id="scheme-choice">
-          <label class="choice">
-            <input type="radio" name="scheme" value="threshold" checked>
-            <span class="choice-body">
-              <strong>My wallet's threshold</strong>
-              <span class="choice-note">The same number of keys it takes to spend. A 2 of 3 wallet needs 2 keys to open the backup. Matches your wallet exactly, so the backup is never harder to open than the money is to spend.</span>
-            </span>
-          </label>
-          <label class="choice">
-            <input type="radio" name="scheme" value="any">
-            <span class="choice-body">
-              <strong>Any one of my keys</strong>
-              <span class="choice-note">One key opens it. Easier to recover, and easier for anyone who gets hold of a single key. Follows the draft BIP-138 format, which other wallets are starting to read.</span>
-            </span>
-          </label>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2><span class="step-number">3</span> The text to publish</h2>
-        <button type="button" class="btn btn-primary" id="protect-btn">Encrypt my descriptor</button>
-        <div id="protect-error" class="alert-error hidden"></div>
-        <div id="protect-result" class="hidden">
-          <div class="result-meta" id="protect-meta"></div>
-          <textarea id="protect-output" rows="6" readonly spellcheck="false"></textarea>
-          <div class="button-row">
-            <button type="button" class="btn btn-secondary" id="copy-output">Copy the text</button>
-            <button type="button" class="btn btn-secondary" id="download-output">Save it as a file</button>
-          </div>
-
-          <h3>Put it on the chain</h3>
-          <p class="publish-intro">
-            Two ways: pay opreturnbot.com to publish it, or send it from your
-            own Bitcoin Core node. Both put the same text into one OP_RETURN
-            output. Keep the transaction id afterwards, and write it on your
-            estate insert.
-          </p>
-
-          <details class="publish-option" open>
-            <summary>Pay someone to publish it</summary>
-            <div class="details-content">
-              <p>
-                <a href="https://opreturnbot.com" target="_blank" rel="noopener">opreturnbot.com</a>
-                takes the text and publishes it for you. You pay on chain or
-                over Lightning. You need no node and no wallet software.
-              </p>
-              <ol class="publish-steps">
-                <li>Paste the text into its Message box.</li>
-                <li><strong>Tick Private.</strong> Without it the site
-                  announces your backup on social media. Your backup is public
-                  either way, but there is no reason to advertise it.</li>
-                <li>Pay on chain or over Lightning.</li>
-                <li>Copy the transaction id and bring it back to step 4 here.</li>
-              </ol>
-              <button type="button" class="btn btn-primary" id="open-bot">Copy the text and open the site</button>
-              <p class="note">
-                The transaction comes from their wallet, so your own coins are
-                never linked to your backup.
-              </p>
-            </div>
-          </details>
-
-          <details class="publish-option">
-            <summary>Publish it yourself with Bitcoin Core</summary>
-            <div class="details-content">
-              <p>Run this against your own node. It builds, signs and broadcasts in one step.</p>
-              <pre><code id="core-command"></code></pre>
-              <button type="button" class="btn btn-secondary" id="copy-command">Copy the command</button>
-              <p class="note">Needs Bitcoin Core 30 or newer, with a funded wallet loaded. It prints the transaction id; bring that back to step 4.</p>
-            </div>
-          </details>
-
-          <div class="drill-note">
-            <strong>Not finished yet.</strong> Publishing is not proof. Come
-            back here with the transaction id and let this page read your
-            backup off the chain. A backup nobody has read back is a guess.
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="confirm-card">
-        <h2><span class="step-number">4</span> Prove it landed</h2>
-        <p class="note">
-          Paste the transaction id from whoever published it. This page reads
-          the bytes back off the chain and opens them with the keys already in
-          your descriptor, so you have to type nothing else. Come back any
-          time: leave, return with the transaction id, put your descriptor
-          back in step 1, and this still works.
-        </p>
-        <label for="confirm-txid">Transaction id</label>
-        <input type="text" id="confirm-txid" spellcheck="false" placeholder="64 hexadecimal characters">
-        <label for="confirm-explorer">Explorer (optional)</label>
-        <input type="text" id="confirm-explorer" spellcheck="false" placeholder="Leave empty for mempool.space, or point at your own node">
-        <button type="button" class="btn btn-primary" id="confirm-btn">Check it on the chain</button>
-        <div id="confirm-error" class="alert-error hidden"></div>
-        <div id="confirm-result" class="hidden">
-          <div class="verification-status">
-            <div class="verification-header"><span>&#10003;</span> <span>Verified on the chain</span></div>
-            <div class="verification-details" id="confirm-detail"></div>
-          </div>
-          <h3>For your estate insert</h3>
-          <p class="note">Copy this onto the page that lives with your will.</p>
-          <textarea id="estate-block" rows="7" readonly spellcheck="false"></textarea>
-          <div class="button-row">
-            <button type="button" class="btn btn-secondary" id="copy-estate">Copy it</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ------------------------------------------------------------------ -->
-    <section id="panel-recover" class="hidden">
+    <section id="panel-recover">
       <div class="card">
         <h2><span class="step-number">1</span> Find the backup</h2>
         <div class="choice-list" id="source-choice">

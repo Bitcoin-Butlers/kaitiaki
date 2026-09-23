@@ -27,7 +27,7 @@ Recovery is opening one file in a browser. It needs no server, no account and no
 This site has two tools:
 
 - The **guardian bundles**, made on the [Create Bundles](maker.html) page and opened on the [Recover](recover.html) page. They hold files: your estate letter, your wallet descriptor, where your steel backups are, who to call.
-- The **descriptor backup**, on the [Descriptor Backup](descriptor.html) page. It is for multisig wallets only. It puts an encrypted copy of your wallet's descriptor on the Bitcoin chain, where nobody can lose it. See [Descriptor Backup on Bitcoin](#descriptor-backup).
+- The **descriptor backup**, made in [Create Bundles](maker.html) and read back on the [Read a Descriptor Backup](descriptor.html) page. It is for multisig wallets only. It puts an encrypted copy of your wallet's descriptor on the Bitcoin chain, where nobody can lose it. See [Descriptor Backup on Bitcoin](#descriptor-backup).
 
 Both tools are free and run in your browser. Bitcoin Butlers also offers them with a Butler on a video call. A [placement session](https://www.bitcoinbutlers.com/concierge/inheritance) ends with a tested recovery and a completed estate insert. An [annual drill](https://www.bitcoinbutlers.com/concierge/inheritance/drill) rehearses the recovery every year. A [descriptor backup](https://www.bitcoinbutlers.com/concierge/inheritance/descriptor) puts a multisig descriptor on the chain while you watch. The Butler guides. Your files stay on your machine, and no Butler ever holds a bundle.
 
@@ -369,7 +369,7 @@ This tool is for multisig wallets, and it solves a different problem from the bu
 
 A multisig wallet needs two things to spend: enough keys, and its **descriptor**. The descriptor lists every key in the wallet and says how they fit together. If you still hold every key, the descriptor can be rebuilt with some work. Lose one key and the descriptor together, and the keys you still hold cannot rebuild the wallet, even when they are enough to sign. A 2 of 3 with two keys and no descriptor is locked.
 
-The [Descriptor Backup](descriptor.html) page encrypts the descriptor so that your own keys open it. Then it gives you one line of text to put into one OP_RETURN output on the chain. After that, your keys are enough again. The text stays on the chain as long as Bitcoin does, and nobody can delete it.
+[Create Bundles](maker.html) encrypts the descriptor so that your own keys open it, when you choose to put your words on the chain. Then it gives you one line of text to put into one OP_RETURN output on the chain. After that, your keys are enough again. The text stays on the chain as long as Bitcoin does, and nobody can delete it.
 
 ### How to Make One {#descriptor-make}
 

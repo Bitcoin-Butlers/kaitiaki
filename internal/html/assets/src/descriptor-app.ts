@@ -10,52 +10,17 @@
  */
 
 import {
-  encryptDescriptor as encryptThreshold,
   decryptDescriptor as decryptThreshold,
   parseDescriptor,
   parseEncryptedDescriptor,
 } from './crypto/descriptor';
 import {
-  encryptDescriptor as encryptAnyKey,
   decryptDescriptor as decryptAnyKey,
 } from './crypto/bip138';
 
-type Scheme = 'threshold' | 'any';
-
-/**
- * Overhead of a 1-input 2-output P2WPKH transaction around the data, measured
- * on Bitcoin Core v31.1: vsize is the data length plus 137, across every size
- * from 345 to 99,000 bytes.
- */
-const TX_OVERHEAD_VBYTES = 137;
-
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
-/**
- * What the protect step produced this session, if it ran. Step 4 does not
- * depend on it: the page tells people to come back later with a transaction
- * id, and after a reload there is nothing in memory. It is used only to add
- * "these are the exact bytes this page made" when we happen to know.
- */
-let produced: { text: string } | null = null;
 
-/** A descriptor is the same descriptor with or without its checksum. */
-function withoutChecksum(descriptor: string): string {
-  return descriptor.split('#')[0].trim();
-}
-
-/** Testnet keys need a testnet explorer, or every lookup 404s. */
-function isTestnetDescriptor(descriptor: string): boolean {
-  return /[tuvUV]pub[a-zA-Z0-9]{107}/.test(descriptor);
-}
-
-function explorerFor(descriptor: string): string {
-  const chosen = $<HTMLInputElement>('confirm-explorer').value.trim();
-  if (chosen) return chosen;
-  return isTestnetDescriptor(descriptor)
-    ? 'https://mempool.space/testnet4/api'
-    : 'https://mempool.space/api';
-}
 
 function show(el: HTMLElement, visible: boolean) {
   el.classList.toggle('hidden', !visible);
@@ -122,16 +87,6 @@ function displayPaths(descriptor: string): string[] {
   return [...new Set([...origins].map((m) => m[1]).filter(Boolean))];
 }
 
-/**
- * The extended public keys written in the descriptor itself.
- *
- * This is what lets the confirm step decrypt the backup without asking the
- * reader for anything. They already handed us the keys when they pasted the
- * descriptor, so requiring them again would be theatre.
- */
-function keysIn(descriptor: string): string[] {
-  return [...new Set(descriptor.match(/[xyztuvUVYZ]pub[a-zA-Z0-9]{107}/g) ?? [])];
-}
 
 function describe(descriptor: string): Shape {
   const { multisigs } = parseDescriptor(descriptor);
@@ -162,192 +117,17 @@ function renderShape(target: HTMLElement, shape: Shape, extra = '') {
 // Protect
 // ---------------------------------------------------------------------------
 
-function selectedScheme(): Scheme {
-  const checked = document.querySelector<HTMLInputElement>('input[name="scheme"]:checked');
-  return (checked?.value as Scheme) ?? 'threshold';
-}
 
-function coreCommand(text: string): string {
-  const hex = Array.from(new TextEncoder().encode(text))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-  return `bitcoin-cli -named send outputs='{"data":"${hex}"}' fee_rate=2`;
-}
 
-async function protect() {
-  const errorBox = $('protect-error');
-  const result = $('protect-result');
-  show(errorBox, false);
-  show(result, false);
-
-  const descriptor = $<HTMLTextAreaElement>('descriptor-input').value.trim();
-  if (!descriptor) {
-    fail(errorBox, new Error('Paste your descriptor first.'));
-    return;
-  }
-
-  try {
-    const scheme = selectedScheme();
-    let text: string;
-    let opens: string;
-
-    let missingXfps = false;
-    if (scheme === 'threshold') {
-      const out = await encryptThreshold(descriptor);
-      text = out.encryptedText;
-      missingXfps = out.missingXfps;
-      const shape = describe(descriptor);
-      opens = `Any ${shape.threshold} of your ${shape.keys} keys can open this.`;
-    } else {
-      const { text: encoded, excluded } = encryptAnyKey(descriptor);
-      text = encoded;
-      opens = 'Any one of your keys can open this.';
-      if (excluded.length > 0) {
-        opens += ` ${excluded.length} key expression could not be used, so that cosigner cannot open it.`;
-      }
-    }
-
-    if (scheme === 'threshold' && missingXfps) {
-      opens +=
-        ' Your descriptor omits some master fingerprints, so this backup carries no search tags. It can only be found again by its transaction id, so keep that safe.';
-    }
-
-    const bytes = new TextEncoder().encode(text).length;
-    const vbytes = bytes + TX_OVERHEAD_VBYTES;
-    const meta = $('protect-meta');
-    meta.innerHTML = '';
-    for (const line of [
-      opens,
-      `${bytes} bytes on the chain. About ${vbytes * 2} sat at 2 sat per vbyte, or ${vbytes * 10} sat at 10.`,
-    ]) {
-      const p = document.createElement('p');
-      p.textContent = line;
-      meta.appendChild(p);
-    }
-
-    $<HTMLTextAreaElement>('protect-output').value = text;
-    $('core-command').textContent = coreCommand(text);
-    produced = { text };
-    show(result, true);
-    show($('confirm-result'), false);
-    show($('confirm-error'), false);
-  } catch (error) {
-    fail(errorBox, error);
-  }
-}
 
 /**
  * Reads the published backup back off the chain and proves three things:
  * the bytes are the ones we made, they decrypt, and what comes out is the
  * descriptor we started from. Anything less is not proof.
  */
-async function confirmOnChain() {
-  const errorBox = $('confirm-error');
-  const result = $('confirm-result');
-  show(errorBox, false);
-  show(result, false);
 
-  const descriptor = $<HTMLTextAreaElement>('descriptor-input').value.trim();
-  if (!descriptor) {
-    fail(errorBox, new Error('Paste your descriptor in step 1 first, so this page knows what to check against.'));
-    return;
-  }
-
-  const txid = $<HTMLInputElement>('confirm-txid').value.trim().toLowerCase();
-  const base = explorerFor(descriptor);
-  try {
-    const onChain = await fetchFromChain(txid, base);
-
-    // The proof is that the thing on the chain gives back this descriptor.
-    // Byte equality with what we made this session is a nice extra when we
-    // have it, and no kind of failure when we do not: a backup published on
-    // an earlier visit is just as valid.
-    const keys = keysIn(descriptor);
-    let recovered: string | undefined;
-    if (looksLikeBip138(onChain)) {
-      for (const key of keys) {
-        try {
-          recovered = decryptAnyKey(onChain, key);
-          break;
-        } catch {
-          // Some key expressions are not eligible for this format. Next.
-        }
-      }
-    } else {
-      recovered = (await decryptThreshold(onChain, keys)).descriptor;
-    }
-
-    // The encrypted form drops the checksum, so the rebuilt descriptor never
-    // carries one. Sparrow exports with a checksum, and comparing raw text
-    // would condemn a perfectly good backup.
-    if (!recovered || withoutChecksum(recovered) !== withoutChecksum(descriptor)) {
-      throw new Error(
-        'That transaction did not give back the descriptor in step 1. Check the transaction id, and check the descriptor is the same one you backed up.'
-      );
-    }
-
-    const status = await fetchStatus(txid, base);
-    const detail = $('confirm-detail');
-    detail.innerHTML = '';
-    const lines = [
-      'The backup on the chain opens with the keys in your own descriptor, and gives it back exactly.',
-      status.confirmed
-        ? `Confirmed in block ${status.block_height}.`
-        : 'Still in the mempool. It is readable now and will confirm shortly.',
-    ];
-    if (produced && produced.text === onChain) {
-      lines.unshift('These are the exact bytes this page produced.');
-    }
-    for (const line of lines) {
-      const p = document.createElement('p');
-      p.textContent = line;
-      detail.appendChild(p);
-    }
-
-    $<HTMLTextAreaElement>('estate-block').value = estateBlock(
-      txid,
-      status,
-      looksLikeBip138(onChain) ? 'any' : 'threshold'
-    );
-    show(result, true);
-  } catch (error) {
-    fail(errorBox, error);
-  }
-}
-
-interface TxStatus {
-  confirmed: boolean;
-  block_height?: number;
-  block_hash?: string;
-}
-
-async function fetchStatus(txid: string, base: string): Promise<TxStatus> {
-  const response = await fetch(`${base.replace(/\/$/, '')}/tx/${txid}/status`);
-  if (!response.ok) return { confirmed: false };
-  return (await response.json()) as TxStatus;
-}
 
 /** The lines that go onto the page kept with the will. */
-function estateBlock(txid: string, status: TxStatus, scheme: Scheme): string {
-  const opens =
-    scheme === 'threshold'
-      ? 'the same number of keys it takes to spend'
-      : 'any one of the wallet keys';
-  return [
-    'OUR WALLET DESCRIPTOR IS ON BITCOIN',
-    '',
-    `Transaction id: ${txid}`,
-    `Block height:   ${status.block_height ?? 'pending, check the transaction id'}`,
-    `Block hash:     ${status.block_hash ?? 'pending, check the transaction id'}`,
-    `Written on:     ${new Date().toISOString().slice(0, 10)}`,
-    `Opens with:     ${opens}`,
-    '',
-    'To read it: open bitcoinbutlers.com/tools/inheritance/descriptor.html,',
-    'choose Recover, enter the transaction id, then enter the wallet keys.',
-    'If that page is gone, any block explorer shows the same text, and the',
-    'format is public, so any technical person can rebuild the descriptor.',
-  ].join('\n');
-}
 
 // ---------------------------------------------------------------------------
 // Recover
@@ -500,51 +280,6 @@ async function recover() {
 // ---------------------------------------------------------------------------
 
 function init() {
-  // Panels
-  const tabs = $('descriptor-tabs');
-  tabs.addEventListener('click', (event) => {
-    const tab = (event.target as HTMLElement).closest('.mode-tab') as HTMLElement | null;
-    if (!tab) return;
-    tabs.querySelectorAll('.mode-tab').forEach((t) => t.classList.remove('active'));
-    tab.classList.add('active');
-    const wanted = tab.dataset.panel;
-    show($('panel-protect'), wanted === 'protect');
-    show($('panel-recover'), wanted === 'recover');
-  });
-
-  // Protect
-  const descriptorInput = $<HTMLTextAreaElement>('descriptor-input');
-  descriptorInput.addEventListener('input', () => {
-    const value = descriptorInput.value.trim();
-    if (!value) {
-      show($('descriptor-summary'), false);
-      return;
-    }
-    try {
-      renderShape($('descriptor-summary'), describe(value));
-    } catch {
-      show($('descriptor-summary'), false);
-    }
-  });
-  $<HTMLButtonElement>('protect-btn').addEventListener('click', protect);
-  $<HTMLButtonElement>('copy-output').addEventListener('click', (event) =>
-    copyToClipboard($<HTMLTextAreaElement>('protect-output').value, event.currentTarget as HTMLButtonElement)
-  );
-  $<HTMLButtonElement>('copy-command').addEventListener('click', (event) =>
-    copyToClipboard($('core-command').textContent ?? '', event.currentTarget as HTMLButtonElement)
-  );
-  $<HTMLButtonElement>('download-output').addEventListener('click', () =>
-    saveFile($<HTMLTextAreaElement>('protect-output').value, 'descriptor-backup.txt')
-  );
-  $<HTMLButtonElement>('open-bot').addEventListener('click', (event) => {
-    copyToClipboard($<HTMLTextAreaElement>('protect-output').value, event.currentTarget as HTMLButtonElement);
-    window.open('https://opreturnbot.com', '_blank', 'noopener');
-  });
-  $<HTMLButtonElement>('confirm-btn').addEventListener('click', confirmOnChain);
-  $<HTMLButtonElement>('copy-estate').addEventListener('click', (event) =>
-    copyToClipboard($<HTMLTextAreaElement>('estate-block').value, event.currentTarget as HTMLButtonElement)
-  );
-
   // Recover
   $('source-choice').addEventListener('change', () => {
     const source = document.querySelector<HTMLInputElement>('input[name="source"]:checked')?.value;
