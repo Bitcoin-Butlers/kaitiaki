@@ -103,12 +103,36 @@ Drag in the files or the folder you want to protect.
 <strong>Files that change often do not belong here.</strong> Bundles hold things you set once and leave. When a file changes, you make new bundles.
 </div>
 
-### Step 3: Generate Bundles {#step3}
+### Step 3: What Your Heirs Need To Know {#step3}
+
+A bundle full of files tells your heirs nothing about what to do with them. This step is where you write that down, in your own words.
+
+<figure class="screenshot">
+<img src="screenshots/en/owners-words.png" alt="Writing what your heirs need to know, in Step 3">
+<figcaption>Six prompts in two groups, and where each group travels</figcaption>
+</figure>
+
+The page asks six questions in two groups.
+
+**How the wallet works.** What kind of wallet it is, how many keys it takes to spend, which software opens it. This is the method.
+
+**Where the keys are.** Which drawer, which safe, which person holds one. This is the part that dies with you, and it is the reason your heirs are stuck without it.
+
+The two groups are kept apart on purpose, because they do not travel the same way.
+
+- **The method** goes into every bundle, and onto the chain if you ask for it.
+- **Where the keys are** goes into the bundle only, in a file called `WHERE-THE-KEYS-ARE.txt`, sealed inside the encrypted archive. It never goes on the chain. A list of where your keys live is the last thing that should be public and permanent.
+
+Under the questions you choose where the method goes: **bundles only**, which is the default, or **the bundles and the chain**. Choosing the chain opens a box for your wallet's descriptor and shows you what it will cost, in characters and in sats, as you type.
+
+You can leave all of it blank. The bundles still work. They will not tell anyone what to do with them.
+
+### Step 4: Generate Bundles {#step4}
 
 Click **Generate Bundles**. The page encrypts your files and makes one bundle for each guardian.
 
 <figure class="screenshot">
-<img src="screenshots/en/bundles.png" alt="Generating bundles in Step 3">
+<img src="screenshots/en/bundles.png" alt="Generating bundles in Step 4">
 <figcaption>Download each bundle, or all at once</figcaption>
 </figure>
 
@@ -373,12 +397,16 @@ A multisig wallet needs two things to spend: enough keys, and its **descriptor**
 
 ### How to Make One {#descriptor-make}
 
-1. Paste your descriptor into step 1. The page reads it back to you: the threshold and the derivation path. Check that they match your wallet.
-1. In step 2, choose who can open the backup. See [Who Can Open It](#descriptor-who).
-1. Click **Encrypt my descriptor**. Step 3 shows the text to publish. Copy it, or save it as a file.
-1. Put it on the chain, in one of two ways. Pay opreturnbot.com to publish it. Or send it from your own Bitcoin Core node, with the command the page writes for you. Both put the same text into one OP_RETURN output. On opreturnbot.com, tick **Private**. Without it, the site announces the transaction in public.
-1. In step 4, **Prove it landed**, paste the transaction id. The page reads the text back off the chain and opens it with the keys already in your descriptor. Publishing alone proves nothing. This step proves that the backup landed.
-1. Copy the block under **For your estate insert**. It holds the transaction id, the block height, the block hash and who can open it. Write it on your estate insert.
+The descriptor backup is made in [Create Bundles](maker.html), in the same step where you write what your heirs need to know. It is not a separate page any more. [Read a Descriptor Backup](descriptor.html) only reads one back.
+
+1. Work through steps 1 and 2 as normal: guardians, then files.
+1. In step 3, answer the questions about your wallet, then choose **the bundles and the chain** as the destination.
+1. Paste your descriptor into the box that appears. The page reads it back: the threshold and the derivation path. Check that they match your wallet. It also shows the size and what the chain fee will cost at two fee rates.
+1. Generate the bundles. Each one carries the encrypted chain copy in its README, and the page gives you the same text to publish.
+1. Put it on the chain, in one of two ways. Pay opreturnbot.com to publish it, ticking **Private**, or send it from your own Bitcoin Core node. Both put the same text into one OP_RETURN output.
+1. **Read it back.** Open [Read a Descriptor Backup](descriptor.html), paste the transaction id, add your keys, and watch the descriptor come back. Publishing alone proves nothing. This step proves the backup landed.
+
+If you have never seen this work, that page has a button that does the whole read-back with our own published backup. It costs nothing and moves no coins.
 
 ### Who Can Open It {#descriptor-who}
 
@@ -460,11 +488,20 @@ More than one copy, in more than one form: paper plus a card, or paper plus the 
 
 Once a year, contact every guardian. Confirm that they still have their bundle, that it still opens, and that their contact details are current.
 
-When your files change, make new bundles and hand them out. Old bundles cannot open the new archive, so leaving them around costs nothing. Still, ask each guardian to replace theirs.
+**Any change means new bundles for everyone.** Not for the guardians affected. For all of them.
 
-When the guardians change, do the same: new bundles, and ask everyone to delete the old ones.
+Each time you generate, the page makes a brand new recovery key and splits it again. One guardian's old piece and another guardian's new piece cannot be combined at all. So if three of your five guardians swap their bundle and two do not, you no longer have a 3 of 5. You have a 3 of 3, and nothing on the outside of any bundle shows it.
 
-A multisig wallet changes too: a new cosigner, a new device, a moved wallet. When it does, the descriptor in the bundles and the copy on the chain are stale. Make new bundles, publish a new descriptor backup, and write the new transaction id on the estate insert.
+An old bundle still opens. It still looks right. It counts for nothing. That is why the swap matters more than it sounds.
+
+Write down who holds what and when they got it, so that the day you revise you know exactly what to collect. The estate insert has a column for it.
+
+**The chain copy is different, because it cannot be changed.** Once your descriptor is on the chain it is there for good. That is the point of it.
+
+- If your **words** changed and the wallet did not, do nothing on the chain. Your new bundles carry the new words, and the chain copy still tells the truth about the method.
+- If your **wallet** changed, a new cosigner or a new device, the chain copy now names a wallet that no longer exists. Publish a new one and write the new transaction id on the estate insert. The old one stays on the chain forever and that is fine, as long as the insert says which is current.
+
+**If a bundle and the chain copy ever disagree, use the bundle.** The bundle is the newer copy, and it carries its own date. The chain copy is for the day every bundle is gone.
 
 ### Recovery Drills {#recovery-drills}
 
