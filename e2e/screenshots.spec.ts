@@ -282,6 +282,8 @@ for (const lang of LANGUAGES) {
       // The prompts show their examples as placeholder text, so an empty step
       // is the honest picture: it is what an owner actually sees when they
       // arrive, and the examples are the point of the figure.
+      //
+      // Index 2 is correct here: this IS step 3.
       await frameCreationStep(page, [2]);
 
       await snap(page, lang, 'owners-words');
@@ -309,8 +311,12 @@ for (const lang of LANGUAGES) {
       await expect(page.locator('#status-message.success')).toBeAttached({ timeout: 120000 });
       await expect(page.locator('#generate-btn.btn-secondary')).toBeAttached({ timeout: 5000 });
 
-      // Frame: only Step 3 (bundles), hide progress bar
-      await frameCreationStep(page, [2]);
+      // Frame: only Step 4, Generate Bundles. Hide the progress bar.
+      //
+      // Index 3, not 2. Step 3 became "What Your Heirs Need To Know" on
+      // 2026-09-22 and Generate moved down one. Until 2026-09-23 this framed
+      // index 2 and photographed the wrong card.
+      await frameCreationStep(page, [3]);
       await hide(page, '#progress-bar');
 
       await snap(page, lang, 'bundles');
@@ -327,8 +333,12 @@ for (const lang of LANGUAGES) {
       // Wait for the date preview to appear
       await expect(page.locator('#timelock-date-preview')).not.toBeEmpty();
 
-      // Frame: only Step 3 (generate bundles with tlock panel)
-      await frameCreationStep(page, [2]);
+      // Frame: only Step 4, Generate Bundles, where the time lock panel is.
+      //
+      // Index 3, not 2. This framed index 2 and produced a picture BYTE
+      // IDENTICAL to owners-words.png, so the guide showed the wrong card
+      // under the time lock heading.
+      await frameCreationStep(page, [3]);
 
       await snap(page, lang, 'tlock-setup');
     });

@@ -203,6 +203,14 @@ Each bundle is a ZIP file with these files inside:
 Each bundle is made for its guardian. Your piece is already inside your <code>recover.html</code>, and the contact list shows who else holds one. When the encrypted archive is 10 MB or smaller, it is inside your <code>recover.html</code>, and the bundle has no separate <code>MANIFEST.age</code>.
 </p>
 
+<p style="margin-top: 1rem;">
+<code>README.txt</code> also carries what the owner wrote in <a href="#step3">Step 3</a>, when they wrote anything. How the wallet works, and the chain copy if they chose to put the descriptor on Bitcoin. Both sit in the open, so a guardian can read them without any other guardian.
+</p>
+
+<p style="margin-top: 1rem;">
+<strong>Where the keys are is not in the bundle's files.</strong> It is inside the encrypted archive, in a file called <code>WHERE-THE-KEYS-ARE.txt</code>, so it appears only after enough guardians combine their pieces. A guardian holding one bundle cannot read it, and neither can anyone the bundle is forwarded to.
+</p>
+
 ### Path A: I Have the Bundle ZIP {#recovery-bundle}
 
 The simplest path. You have the bundle ZIP, or the files from it.
