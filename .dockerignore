@@ -1,0 +1,11 @@
+.git
+node_modules
+dist
+demo-recovery
+demo-tlock
+test-results
+playwright-report
+inheritance
+inheritance-cjk
+inheritance-data
+*.zip

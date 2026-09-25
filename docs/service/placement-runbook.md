@@ -45,9 +45,16 @@ placed. Nothing about this session is technical from the client's side.
 
    Decided 2026-09-24: the browser makes the bundles, always. The command
    line makes the same bundles and is there for whoever wants it, but a
-   placement does not mix the two. A session that starts in the page and
-   seals on the command line cannot carry the transaction id, because the
-   page is where it is entered.
+   placement never mixes the two, and this is why.
+
+   The page's Save project.yml writes four things: name, threshold,
+   language and the guardian list. The command line's `seal` reads the
+   owner's texts from three OTHER fields in that file, `recovery_steps`,
+   `chain_payload` and `chain_txid`, which the page never writes. Seal
+   skips an empty field, so bundles sealed that way come out with no
+   `HOW-THE-WALLET-WORKS.txt` and no `CHAIN-COPY.txt` at all. Not a
+   missing transaction id. The owner's words and the whole chain copy,
+   gone, in bundles that otherwise look finished.
 
    **Then ask them what their heirs need to know.** The maker asks this in
    its own step: the method in one group, the people and places in another.

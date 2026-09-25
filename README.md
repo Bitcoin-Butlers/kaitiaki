@@ -28,7 +28,9 @@ ReMemory protects your files and divides the key among people you choose. You de
 
 Each person receives a bundle containing `recover.html` — a browser-based recovery tool. No servers. No dependencies. No need for this project to exist when recovery happens.
 
-**[Download demo bundles](https://github.com/eljojo/rememory/releases/latest/download/demo-bundles.zip)** to try the recovery process yourself.
+Run `make demo` to make a set of demo bundles and try the recovery yourself.
+Upstream publishes a demo zip; do not use it here, because it is built from a
+version whose bundles still name every guardian.
 
 ```mermaid
 graph TB
@@ -70,8 +72,8 @@ Create bundles in your browser — no installation required.
 
 | | |
 |---|---|
-| **Create Bundles** | [eljojo.github.io/rememory/maker.html](https://eljojo.github.io/rememory/maker.html) |
-| **Documentation** | [eljojo.github.io/rememory/docs.html](https://eljojo.github.io/rememory/docs.html) |
+| **Create Bundles** | [bitcoinbutlers.com/tools/inheritance/maker.html](https://www.bitcoinbutlers.com/tools/inheritance/maker.html) |
+| **Documentation** | [bitcoinbutlers.com/tools/inheritance/docs.html](https://www.bitcoinbutlers.com/tools/inheritance/docs.html) |
 
 Everything runs locally. Your files never leave your device.
 
@@ -81,24 +83,26 @@ Everything runs locally. Your files never leave your device.
 
 For automation, scripting, or if you prefer the terminal.
 
+**Build it from this repository.** We publish no binaries and no container
+image, and you should not install upstream's: `eljojo/rememory` is a different
+build, and bundles made by it still name every guardian in every README, with
+their contact details.
+
 ```bash
-# macOS (Homebrew)
-brew install eljojo/rememory/rememory
+# Binary
+npm install && make build      # needs Go and Node
+./inheritance --help
 
-# Linux (x86_64)
-curl -Lo rememory https://github.com/eljojo/rememory/releases/latest/download/rememory-linux-amd64
-chmod +x rememory
-sudo mv rememory /usr/local/bin/
-
-# Docker (self-hosted)
+# Docker (self-hosted server)
+docker build -t inheritance:local .
 docker run -d \
-  --name rememory \
-  -p 8080:8080 \
-  -v rememory-data:/data \
-  ghcr.io/eljojo/rememory:latest
+  --name inheritance \
+  -p 127.0.0.1:8080:8080 \
+  -v inheritance-data:/data \
+  inheritance:local
 
 # Nix
-nix run github:eljojo/rememory
+nix develop -c make build
 ```
 
 See the **[Self-Hosted Guide](docs/selfhosted.md)**. The command line has no guide of
@@ -111,7 +115,7 @@ browser is the documented path, and its guide is the one the tool links to.
 
 Before protecting real secrets, try the recovery process:
 
-1. **[Download demo bundles](https://github.com/eljojo/rememory/releases/latest/download/demo-bundles.zip)** (5 friends, any 3 can recover)
+1. Run `make demo` to build a set in `demo-recovery/output/bundles/` (5 guardians, any 3 can recover)
 2. Open `bundle-alice/recover.html` in your browser
 3. Alice's piece is pre-loaded — drag two more README files onto the page. Dragging an entire bundle works too.
 4. When enough pieces are combined, the files unlock
@@ -229,8 +233,8 @@ You can set a waiting period when creating bundles. Even with enough pieces, the
 
 This uses the [League of Entropy](https://www.cloudflare.com/en-ca/leagueofentropy/) (drand), a distributed randomness beacon run by organizations around the world. At recovery time, a brief internet connection is needed — not to send data, but to verify that enough time has passed.
 
-**CLI:** `rememory seal --timelock 30d` (or `6m`, `1y`, `2027-06-15T00:00:00Z`)
-**Web:** Enable under "Advanced options" in the [bundle creator](https://eljojo.github.io/rememory/maker.html).
+**CLI:** `inheritance seal --timelock 30d` (or `6m`, `1y`, `2027-06-15T00:00:00Z`)
+**Web:** Enable under "Advanced options" in the [bundle creator](https://www.bitcoinbutlers.com/tools/inheritance/maker.html).
 
 **Important caveats:**
 - Recovery requires internet access (to check the drand beacon)
@@ -314,7 +318,7 @@ ReMemory isn't the first tool to use Shamir's Secret Sharing. Its focus is makin
 
 - Most tools only handle **text or passphrases** — [eljojo/rememory](https://github.com/eljojo/rememory), both horcrux projects, [henrysdev/Haystack](https://github.com/henrysdev/Haystack), [cyphar/paperback](https://github.com/cyphar/paperback), [MinorGlitch/ethernity](https://github.com/MinorGlitch/ethernity), and [msolomon/keybearer](https://github.com/msolomon/keybearer) are the few that handle actual files.
 - Only [eljojo/rememory](https://github.com/eljojo/rememory) generates a **self-contained recovery tool** (`recover.html`) bundled with each piece — no installation, no internet, no CLI needed.
-- Only [eljojo/rememory](https://github.com/eljojo/rememory) includes **contact details** in each bundle so friends know how to reach each other during recovery.
+- [eljojo/rememory](https://github.com/eljojo/rememory) includes **contact details** for every other holder in each bundle, so they can reach each other during recovery. **This fork removed that**, on 2026-09-24: a bundle that names the other guardians also tells whoever holds it who to approach, and a README is built to be forwarded. Who holds a piece belongs in the owner's will.
 - [paritytech/banana_split](https://github.com/paritytech/banana_split) and [cyphar/paperback](https://github.com/cyphar/paperback) output **QR codes** for printing, which is great for paper-based backups of short secrets.
 - **Bitwarden Emergency Access** is fundamentally different — it delegates vault access to one trusted person (not M-of-N splitting) and requires an online service.
 - **Apple Digital Legacy** only activates after death (requires proof of death documents) — it does not cover incapacity, memory loss, or other scenarios. Limited to Apple ecosystem (iCloud data, not Keychain passwords). Access expires after 3 years.

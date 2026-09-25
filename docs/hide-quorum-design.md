@@ -2,7 +2,7 @@
 
 ## What ships now
 
-`rememory init --hide-quorum` stores `hide_quorum: true` in
+`inheritance init --hide-quorum` stores `hide_quorum: true` in
 `project.yml`. On seal:
 
 - Share headers omit `Total:` and `Threshold:` (encoded as 0
@@ -13,7 +13,7 @@
 - `project.yml` keeps the real values. It stays outside the bundles,
   so the owner still knows the quorum.
 
-CLI recovery works by try-decrypt: `rememory recover` combines the
+CLI recovery works by try-decrypt: `inheritance recover` combines the
 shares you give it and attempts decryption. With too few shares the
 combined passphrase is garbage and age rejects it (proven in the
 2026-08-18 evaluation). Add a share and try again.
@@ -38,7 +38,7 @@ privacy; most users should not hide it.
    not the quorum. A future format bump could drop the fields.
 
 3. **`verify` command and translated templates.** Audit
-   `rememory verify` / `verify-bundle` output and the non-English
+   `inheritance verify` / `verify-bundle` output and the non-English
    readme strings for stray "N of M" phrasing with zero values.
 
 4. **Tests.** Add an e2e test: init --hide-quorum, seal, assert no

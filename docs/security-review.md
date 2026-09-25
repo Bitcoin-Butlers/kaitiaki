@@ -186,7 +186,7 @@ grep -rn "math/rand" --include="*.go" . | grep -v _test.go
 
 The CLI makes zero network requests during seal and bundle operations. The only networking code is in:
 - `internal/core/tlock.go` — drand beacon fetching for tlock decryption (CLI `recover` command with tlock bundles)
-- `internal/serve/` — the optional self-hosted server (`rememory serve`)
+- `internal/serve/` — the optional self-hosted server (`inheritance serve`)
 
 **Enforced by tests, not just grep.** The test suite blocks all network access at the transport level and fails if any unexpected connection is attempted:
 

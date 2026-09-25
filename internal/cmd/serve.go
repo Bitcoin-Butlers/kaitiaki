@@ -54,10 +54,10 @@ func flagOrEnv(cmd *cobra.Command, flagName, envName string) string {
 }
 
 func runServe(cmd *cobra.Command, args []string) error {
-	port := flagOrEnv(cmd, "port", "REMEMORY_PORT")
-	host := flagOrEnv(cmd, "host", "REMEMORY_HOST")
-	dataDir := flagOrEnv(cmd, "data", "REMEMORY_DATA")
-	maxSizeStr := flagOrEnv(cmd, "max-manifest-size", "REMEMORY_MAX_MANIFEST_SIZE")
+	port := flagOrEnv(cmd, "port", "INHERITANCE_PORT")
+	host := flagOrEnv(cmd, "host", "INHERITANCE_HOST")
+	dataDir := flagOrEnv(cmd, "data", "INHERITANCE_DATA")
+	maxSizeStr := flagOrEnv(cmd, "max-manifest-size", "INHERITANCE_MAX_MANIFEST_SIZE")
 
 	maxSize, err := parseSize(maxSizeStr)
 	if err != nil {
