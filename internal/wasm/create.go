@@ -11,13 +11,13 @@ import (
 	"syscall/js"
 	"time"
 
-	"github.com/eljojo/rememory/internal/bundle"
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/crypto"
-	"github.com/eljojo/rememory/internal/html"
-	"github.com/eljojo/rememory/internal/pdf"
-	"github.com/eljojo/rememory/internal/project"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/bundle"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/crypto"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/pdf"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 
 	"gopkg.in/yaml.v3"
 )

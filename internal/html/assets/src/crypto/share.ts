@@ -17,22 +17,32 @@ export interface ParsedShare {
 }
 
 // PEM format markers
-const PEM_BEGIN = '-----BEGIN REMEMORY SHARE-----';
-const PEM_END = '-----END REMEMORY SHARE-----';
+// These are the on-disk share format, and they exist in Go too
+// (internal/core/share.go). Both copies must agree, and both must keep
+// reading the pre-2026-09-24 markers: a guardian's README is not reissued
+// because the project was renamed.
+const PEM_BEGIN = '-----BEGIN INHERITANCE SHARE-----';
+const PEM_END = '-----END INHERITANCE SHARE-----';
+const LEGACY_PEM_BEGIN = '-----BEGIN REMEMORY SHARE-----';
+const LEGACY_PEM_END = '-----END REMEMORY SHARE-----';
 
 /**
  * Parse a share from PEM format.
  */
 export async function parseShare(content: string): Promise<ParsedShare> {
   // Extract PEM block
-  const beginIdx = content.indexOf(PEM_BEGIN);
-  const endIdx = content.indexOf(PEM_END);
+  const usesLegacy =
+    content.indexOf(PEM_BEGIN) === -1 && content.indexOf(LEGACY_PEM_BEGIN) !== -1;
+  const begin = usesLegacy ? LEGACY_PEM_BEGIN : PEM_BEGIN;
+  const end = usesLegacy ? LEGACY_PEM_END : PEM_END;
+  const beginIdx = content.indexOf(begin);
+  const endIdx = content.indexOf(end);
 
   if (beginIdx === -1 || endIdx === -1) {
     throw new Error('invalid share format: missing PEM markers');
   }
 
-  const pemContent = content.slice(beginIdx + PEM_BEGIN.length, endIdx).trim();
+  const pemContent = content.slice(beginIdx + begin.length, endIdx).trim();
 
   // Parse headers and data
   const lines = pemContent.split('\n');
@@ -105,8 +115,10 @@ export async function parseShare(content: string): Promise<ParsedShare> {
   };
 }
 
-// Compact format: RM{version}:{index}:{total}:{threshold}:{base64url}:{check}
-const COMPACT_REGEX = /^RM(\d+):(\d+):(\d+):(\d+):([A-Za-z0-9_-]+):([0-9a-f]{4})$/;
+// Compact format: IH{version}:{index}:{total}:{threshold}:{base64url}:{check}
+// RM is the pre-2026-09-24 prefix and is still accepted, for the same
+// reason the legacy PEM markers are.
+const COMPACT_REGEX = /^(?:IH|RM)(\d+):(\d+):(\d+):(\d+):([A-Za-z0-9_-]+):([0-9a-f]{4})$/;
 
 /**
  * Parse a share from compact format.
@@ -152,5 +164,5 @@ export async function encodeCompact(share: ParsedShare): Promise<string> {
   const dataB64 = bytesToBase64(share.data);
   const fullHash = await hashBytes(share.data);
   const shortCheck = fullHash.slice(7, 11);
-  return `RM${share.version}:${share.index}:${share.total}:${share.threshold}:${dataB64}:${shortCheck}`;
+  return `IH${share.version}:${share.index}:${share.total}:${share.threshold}:${dataB64}:${shortCheck}`;
 }

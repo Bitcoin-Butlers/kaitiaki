@@ -97,10 +97,10 @@ function wireDestination(): void {
     chainCopy = null;
     sizeEl.textContent = '';
     longEl.classList.add('hidden');
-    if (!on || !descriptor.value.trim() || typeof window.rememoryEncryptChainCopy !== 'function') return;
+    if (!on || !descriptor.value.trim() || typeof window.inheritanceEncryptChainCopy !== 'function') return;
 
     const { recoverySteps } = collectOwnersWords();
-    const result = window.rememoryEncryptChainCopy!({
+    const result = window.inheritanceEncryptChainCopy!({
       descriptor: descriptor.value.trim(),
       recoverySteps,
     });
@@ -186,7 +186,7 @@ declare const __SELFHOSTED__: boolean;
   'use strict';
 
   // Import shared utilities
-  const { escapeHtml, formatSize, toast } = window.rememoryUtils;
+  const { escapeHtml, formatSize, toast } = window.inheritanceUtils;
 
   // Sample names for placeholders
   const sampleNames = [
@@ -430,8 +430,8 @@ declare const __SELFHOSTED__: boolean;
     const buildDate = window.BUILD_DATE;
     if (!buildDate || buildDate === 'dev' || buildDate === '') return;
 
-    // Don't show on GitHub Pages (always up to date)
-    if (window.location.hostname === 'eljojo.github.io') return;
+    // Don't show on our own site: the hosted copy is rebuilt with the tool.
+    if (window.location.hostname.endsWith('bitcoinbutlers.com')) return;
 
     // Don't show on selfhosted (server operator manages updates)
     if (__SELFHOSTED__) return;
@@ -452,7 +452,9 @@ declare const __SELFHOSTED__: boolean;
         id: 'check-updates',
         label: t('update_nudge_action'),
         primary: true,
-        onClick: () => window.open('https://github.com/eljojo/rememory/releases/latest', '_blank'),
+        // Our own tool. Never upstream's releases: that build is a
+        // different tool, and its bundles still name every guardian.
+        onClick: () => window.open('https://www.bitcoinbutlers.com/tools/inheritance/maker.html', '_blank'),
       }],
     });
   }
@@ -485,14 +487,14 @@ declare const __SELFHOSTED__: boolean;
         reject(new Error('WASM load timed out'));
       }, 15000);
       const check = (): void => {
-        if (window.rememoryReady) {
+        if (window.inheritanceReady) {
           clearTimeout(timeout);
           state.wasmReady = true;
           // Freeze WASM functions so they can't be intercepted by injected scripts
           if (typeof Object.freeze === 'function') {
-            Object.freeze(window.rememoryCreateBundlesFromArchive);
-            Object.freeze(window.rememoryCreateArchive);
-            Object.freeze(window.rememoryParseProjectYAML);
+            Object.freeze(window.inheritanceCreateBundlesFromArchive);
+            Object.freeze(window.inheritanceCreateArchive);
+            Object.freeze(window.inheritanceParseProjectYAML);
           }
           elements.wasmLoadingIndicator?.classList.add('hidden');
           checkGenerateReady();
@@ -519,7 +521,7 @@ declare const __SELFHOSTED__: boolean;
         return;
       }
 
-      const result = window.rememoryParseProjectYAML(yaml);
+      const result = window.inheritanceParseProjectYAML(yaml);
       if (result.error || !result.project) {
         showError(
           t('import_error', result.error || 'Unknown error'),
@@ -1175,7 +1177,7 @@ declare const __SELFHOSTED__: boolean;
       // Every text the owner writes goes INSIDE the archive, so it opens only
       // when enough guardians combine. Go names each file and writes its
       // header, so a bundle made here matches one made by the command line.
-      const archiveResult = window.rememoryCreateArchive(filesForWasm, {
+      const archiveResult = window.inheritanceCreateArchive(filesForWasm, {
         // Where the keys are is the most sensitive thing an owner writes. It
         // does not go into a bundle they are about to throw away.
         peopleAndPlaces: testMode ? undefined : ownersWords.peopleAndPlaces || undefined,
@@ -1222,7 +1224,7 @@ declare const __SELFHOSTED__: boolean;
       const ownerInput = document.getElementById('owner-recipient') as HTMLInputElement | null;
       const ownerRecipient = ownerInput?.value.trim() || undefined;
 
-      const result = window.rememoryCreateBundlesFromArchive({
+      const result = window.inheritanceCreateBundlesFromArchive({
         projectName: projectName,
         threshold: state.threshold,
         friends: friends,
@@ -1248,7 +1250,7 @@ declare const __SELFHOSTED__: boolean;
       state.bundles = result.bundles;
 
       // Expose bundles for testing
-      (window as unknown as { rememoryBundles?: GeneratedBundle[] }).rememoryBundles = result.bundles;
+      (window as unknown as { inheritanceBundles?: GeneratedBundle[] }).inheritanceBundles = result.bundles;
 
       renderBundlesList();
 
@@ -1495,7 +1497,7 @@ declare const __SELFHOSTED__: boolean;
   // Global Exports
   // ============================================
 
-  window.rememoryUpdateUI = function(): void {
+  window.inheritanceUpdateUI = function(): void {
     renderFriendsList();
     renderFilesPreview();
     if (state.generationComplete) {

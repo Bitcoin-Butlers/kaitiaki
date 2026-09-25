@@ -503,16 +503,16 @@ Since the previous audit, the recovery path has moved from WASM to native JavaSc
 
 | Function | Direction | Validates? |
 |----------|-----------|-----------|
-| `rememoryParseShare` | string → share object | Argument count; checksum verified in Go |
-| `rememoryCombineShares` | share array → passphrase | Argument count; version consistency |
-| `rememoryDecryptManifest` | Uint8Array + string → Uint8Array | Argument count |
-| `rememoryExtractArchive` | Uint8Array → file array | Argument count; path traversal + size limits |
-| `rememoryExtractBundle` | Uint8Array → share + manifest | Argument count; checksum verified |
-| `rememoryParseCompactShare` | string → share object | Format + checksum validated |
-| `rememoryDecodeWords` | string array → data + index | Checksum validated |
-| `rememoryCreateArchive` | file list → ZIP bytes | Filename validation |
-| `rememoryCreateBundlesFromArchive` | archive + config → bundles | Config validation |
-| `rememoryParseProjectYAML` | string → config | YAML parsing |
+| `inheritanceParseShare` | string → share object | Argument count; checksum verified in Go |
+| `inheritanceCombineShares` | share array → passphrase | Argument count; version consistency |
+| `inheritanceDecryptManifest` | Uint8Array + string → Uint8Array | Argument count |
+| `inheritanceExtractArchive` | Uint8Array → file array | Argument count; path traversal + size limits |
+| `inheritanceExtractBundle` | Uint8Array → share + manifest | Argument count; checksum verified |
+| `inheritanceParseCompactShare` | string → share object | Format + checksum validated |
+| `inheritanceDecodeWords` | string array → data + index | Checksum validated |
+| `inheritanceCreateArchive` | file list → ZIP bytes | Filename validation |
+| `inheritanceCreateBundlesFromArchive` | archive + config → bundles | Config validation |
+| `inheritanceParseProjectYAML` | string → config | YAML parsing |
 
 **Data marshaling:** Binary data crosses the boundary as `Uint8Array` using `js.CopyBytesToGo()` / `js.CopyBytesToJS()` — these are memory copies, not shared references. The passphrase is returned as a JavaScript string from `combineSharesJS`.
 

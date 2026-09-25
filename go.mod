@@ -1,4 +1,4 @@
-module github.com/eljojo/rememory
+module github.com/Bitcoin-Butlers/kaitiaki
 
 go 1.25.7
 

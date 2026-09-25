@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 // Everything the owner writes is sealed inside the encrypted archive, so it

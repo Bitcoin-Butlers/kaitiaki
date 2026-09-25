@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/eljojo/rememory/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
 	"github.com/spf13/cobra"
 )
 

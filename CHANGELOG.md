@@ -71,7 +71,10 @@
   bitcoinbutlers.com/tools/inheritance/recover.html, which the site redirects
   to permanently from the old path. Only the repository name keeps the old word.
 
-All notable changes to ReMemory are documented here.
+All notable changes to Bitcoin Inheritance are documented here. Entries below
+the 2026 fork describe releases of ReMemory, the project this one is built
+from, and name its binary and commands as they were at the time. They are a
+record, not instructions.
 
 ## Unreleased
 

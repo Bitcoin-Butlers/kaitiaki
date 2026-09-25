@@ -49,8 +49,8 @@ func TestAllJSONFilesParseCorrectly(t *testing.T) {
 }
 
 func TestAllLanguagesHaveSameKeys(t *testing.T) {
-	if os.Getenv("REMEMORY_CHECK_TRANSLATIONS") == "" {
-		t.Skip("Skipping translation parity check (set REMEMORY_CHECK_TRANSLATIONS=1 or run 'make check-translations')")
+	if os.Getenv("INHERITANCE_CHECK_TRANSLATIONS") == "" {
+		t.Skip("Skipping translation parity check (set INHERITANCE_CHECK_TRANSLATIONS=1 or run 'make check-translations')")
 	}
 	for _, component := range []string{"recover", "maker", "readme", "index", "common"} {
 		t.Run(component, func(t *testing.T) {

@@ -8,11 +8,11 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/eljojo/rememory/internal/bundle"
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/crypto"
-	"github.com/eljojo/rememory/internal/manifest"
-	"github.com/eljojo/rememory/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/bundle"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/crypto"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/manifest"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
 	"github.com/spf13/cobra"
 )
 

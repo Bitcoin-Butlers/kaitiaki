@@ -1,12 +1,12 @@
 import { test, expect } from './fixtures';
 import * as fs from 'fs';
-import { getRememoryBin, getDocsHtml } from './helpers';
+import { getInheritanceBin, getDocsHtml } from './helpers';
 
 test.describe('Documentation Page', () => {
   let docsPath: string;
 
   test.beforeAll(async () => {
-    if (!fs.existsSync(getRememoryBin())) {
+    if (!fs.existsSync(getInheritanceBin())) {
       test.skip();
       return;
     }

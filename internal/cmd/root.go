@@ -47,7 +47,7 @@ func checkBuildAge() {
 		return
 	}
 	fmt.Fprintf(os.Stderr, "\n%s You're running version %s, from %s.\n", yellow("A newer version may be available."), version, buildDate)
-	fmt.Fprintf(os.Stderr, "  Check https://github.com/eljojo/rememory/releases/latest\n\n")
+	fmt.Fprintf(os.Stderr, "  Check https://github.com/Bitcoin-Butlers/kaitiaki/releases/latest\n\n")
 }
 
 // Color helpers (ANSI escape codes)

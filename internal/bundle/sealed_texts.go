@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // The texts an owner may write, and the one rule they share: every one of them

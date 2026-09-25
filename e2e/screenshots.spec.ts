@@ -10,7 +10,7 @@
  *
  * Usage:
  *   make screenshots          # or:
- *   REMEMORY_BIN=./rememory npx playwright test e2e/screenshots.spec.ts --project=chromium
+ *   INHERITANCE_BIN=./inheritance npx playwright test e2e/screenshots.spec.ts --project=chromium
  */
 
 import { test, expect, Page } from './fixtures';
@@ -20,7 +20,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import {
-  getRememoryBin,
+  getInheritanceBin,
   generateStandaloneHTML,
   extractBundle,
   extractWordsFromReadme,
@@ -153,14 +153,14 @@ let standaloneRecoverHtml: string;
 const langBundlesDirs: Partial<Record<Lang, string>> = {};
 
 test.beforeAll(async () => {
-  const bin = getRememoryBin();
+  const bin = getInheritanceBin();
   if (!fs.existsSync(bin)) {
     test.skip();
     return;
   }
 
   // Create a project with 5 friends for richer screenshots.
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-screenshots-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-screenshots-'));
   projectDir = path.join(tmpDir, 'screenshot-project');
 
   execFileSync(bin, [
@@ -185,7 +185,7 @@ test.beforeAll(async () => {
 
   // Create per-language projects so word screenshots show translated BIP39 words
   for (const lang of LANGUAGES) {
-    const langTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), `rememory-ss-${lang}-`));
+    const langTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), `inheritance-ss-${lang}-`));
     const langProjectDir = path.join(langTmpDir, `words-${lang}`);
     execFileSync(bin, [
       'init', langProjectDir, '--name', 'Words',
@@ -201,7 +201,7 @@ test.beforeAll(async () => {
   }
 
   // Generate standalone HTML files
-  const htmlTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-ss-html-'));
+  const htmlTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-ss-html-'));
   makerHtmlPath = generateStandaloneHTML(htmlTmpDir, 'create');
   standaloneRecoverHtml = generateStandaloneHTML(htmlTmpDir, 'recover');
 });

@@ -46,7 +46,7 @@ function render() {
   el.innerHTML = html;
 }
 
-window.rememoryUpdateUI = render;
+window.inheritanceUpdateUI = render;
 
 function toggleDelete(btn) {
   var card = btn.closest('.bundle-card');

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 func testReadmeData() ReadmeData {
@@ -19,7 +19,7 @@ func testReadmeData() ReadmeData {
 		Threshold:        2,
 		Total:            3,
 		Version:          "v0.0.1-test",
-		GitHubReleaseURL: "https://github.com/eljojo/rememory/releases",
+		GitHubReleaseURL: "https://github.com/Bitcoin-Butlers/kaitiaki/releases",
 		ManifestChecksum: "sha256:abcdef1234567890",
 		RecoverChecksum:  "sha256:0987654321fedcba",
 		Created:          time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
@@ -110,7 +110,7 @@ func TestWordGridNotSplitAcrossPages(t *testing.T) {
 		Threshold:        3,
 		Total:            5,
 		Version:          "v0.0.1-test",
-		GitHubReleaseURL: "https://github.com/eljojo/rememory/releases",
+		GitHubReleaseURL: "https://github.com/Bitcoin-Butlers/kaitiaki/releases",
 		ManifestChecksum: "sha256:abcdef1234567890",
 		RecoverChecksum:  "sha256:0987654321fedcba",
 		Created:          time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
@@ -212,7 +212,7 @@ func TestPDFContainsAppendedShare(t *testing.T) {
 	}
 
 	// The share should be appended after the PDF
-	shareMarker := "-----BEGIN REMEMORY SHARE-----"
+	shareMarker := core.ShareBegin
 	if !bytes.Contains(pdfBytes, []byte(shareMarker)) {
 		t.Error("PDF doesn't contain appended share")
 	}

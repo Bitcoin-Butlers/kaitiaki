@@ -1,6 +1,6 @@
 import { test, expect } from './fixtures';
 import * as fs from 'fs';
-import { getRememoryBin, getDescriptorHtml } from './helpers';
+import { getInheritanceBin, getDescriptorHtml } from './helpers';
 import vector from '../internal/html/assets/src/crypto/testdata/descriptor-vector.json';
 
 /**
@@ -23,7 +23,7 @@ test.describe('Descriptor page', () => {
   let pagePath: string;
 
   test.beforeAll(async () => {
-    if (!fs.existsSync(getRememoryBin())) {
+    if (!fs.existsSync(getInheritanceBin())) {
       test.skip();
       return;
     }

@@ -203,17 +203,17 @@ export interface ToastOptions {
 declare global {
   interface Window {
     // WASM ready flag (used by maker.html)
-    rememoryReady: boolean;
-    rememoryAppReady?: boolean;
+    inheritanceReady: boolean;
+    inheritanceAppReady?: boolean;
 
     // Creation functions (create.wasm, used by maker.html)
-    rememoryCreateArchive(files: BundleFile[], texts?: SealedTexts): ArchiveCreateResult;
-    rememoryEncryptChainCopy?(config: ChainCopyConfig): ChainCopyResult;
-    rememoryCreateBundlesFromArchive(config: BundleFromArchiveConfig): BundleCreateResult;
-    rememoryParseProjectYAML(yaml: string): ProjectParseResult;
+    inheritanceCreateArchive(files: BundleFile[], texts?: SealedTexts): ArchiveCreateResult;
+    inheritanceEncryptChainCopy?(config: ChainCopyConfig): ChainCopyResult;
+    inheritanceCreateBundlesFromArchive(config: BundleFromArchiveConfig): BundleCreateResult;
+    inheritanceParseProjectYAML(yaml: string): ProjectParseResult;
 
     // Shared utilities (exposed by shared.ts)
-    rememoryUtils: {
+    inheritanceUtils: {
       escapeHtml: (str: string | null | undefined) => string;
       formatSize: (bytes: number) => string;
       toast: ToastManager;
@@ -222,7 +222,7 @@ declare global {
     };
 
     // UI update callback
-    rememoryUpdateUI?: () => void;
+    inheritanceUpdateUI?: () => void;
 
     // Personalization data (embedded in recover.html)
     PERSONALIZATION?: PersonalizationData | null;
@@ -237,7 +237,7 @@ declare global {
     README_NAMES?: string[];
 
     // Selfhosted mode (only present in selfhosted builds, eliminated in static builds)
-    rememoryLoadManifest?: (data: Uint8Array, name?: string) => void;
+    inheritanceLoadManifest?: (data: Uint8Array, name?: string) => void;
     SELFHOSTED_CONFIG?: SelfhostedConfig | null;
 
     // Go WASM runtime (used by maker.html)

@@ -224,7 +224,7 @@ export function clearInlineError(targetElement: HTMLElement): void {
 // Export to global scope for use by app.ts and create-app.ts
 // ============================================
 
-window.rememoryUtils = {
+window.inheritanceUtils = {
   escapeHtml,
   formatSize,
   toast,

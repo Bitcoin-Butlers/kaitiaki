@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
 )
 
 func (s *Server) handleRoot(w http.ResponseWriter, r *http.Request) {

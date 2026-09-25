@@ -11,8 +11,8 @@ import (
 	qrcode "github.com/skip2/go-qrcode"
 	"golang.org/x/text/unicode/norm"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // ReadmeData contains all data needed to generate README.pdf

@@ -13,13 +13,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eljojo/rememory/internal/bundle"
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/crypto"
-	"github.com/eljojo/rememory/internal/html"
-	"github.com/eljojo/rememory/internal/manifest"
-	"github.com/eljojo/rememory/internal/project"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/bundle"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/crypto"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/manifest"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // TestFullWorkflow tests the complete init -> seal -> recover pipeline
@@ -494,10 +494,10 @@ func verifyBundle(t *testing.T, bundlePath string, friend project.Friend, allFri
 	}
 
 	// Verify README.txt contains the share
-	if !strings.Contains(readmeContent, "-----BEGIN REMEMORY SHARE-----") {
+	if !strings.Contains(readmeContent, core.ShareBegin) {
 		t.Error("README.txt missing share block")
 	}
-	if !strings.Contains(readmeContent, "-----END REMEMORY SHARE-----") {
+	if !strings.Contains(readmeContent, core.ShareEnd) {
 		t.Error("README.txt missing share end block")
 	}
 
@@ -999,10 +999,10 @@ func TestManifestEmbedding(t *testing.T) {
 }
 
 // TestTlockFullWorkflow tests the complete seal-with-timelock and recover pipeline.
-// Gated by REMEMORY_TEST_TLOCK=1 because it requires internet access (drand network).
+// Gated by INHERITANCE_TEST_TLOCK=1 because it requires internet access (drand network).
 func TestTlockFullWorkflow(t *testing.T) {
-	if os.Getenv("REMEMORY_TEST_TLOCK") != "1" {
-		t.Skip("set REMEMORY_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
+	if os.Getenv("INHERITANCE_TEST_TLOCK") != "1" {
+		t.Skip("set INHERITANCE_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
 	}
 
 	baseDir := t.TempDir()
@@ -1136,10 +1136,10 @@ func TestTlockFullWorkflow(t *testing.T) {
 
 // TestTlockFutureRoundCannotDecrypt encrypts to a far-future drand round and
 // confirms decryption fails with ErrTooEarly.
-// Gated by REMEMORY_TEST_TLOCK=1 because it requires internet access (drand network).
+// Gated by INHERITANCE_TEST_TLOCK=1 because it requires internet access (drand network).
 func TestTlockFutureRoundCannotDecrypt(t *testing.T) {
-	if os.Getenv("REMEMORY_TEST_TLOCK") != "1" {
-		t.Skip("set REMEMORY_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
+	if os.Getenv("INHERITANCE_TEST_TLOCK") != "1" {
+		t.Skip("set INHERITANCE_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
 	}
 
 	futureRound := core.RoundForTime(time.Now().Add(365 * 24 * time.Hour))

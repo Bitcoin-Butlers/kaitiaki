@@ -7,7 +7,7 @@ LDFLAGS := -ldflags "-s -w -X main.version=$(VERSION) -X main.buildDate=$(BUILD_
 
 # Build WASM module first, then the main binary
 build: wasm
-	go build $(LDFLAGS) -o $(BINARY) ./cmd/rememory
+	go build $(LDFLAGS) -o $(BINARY) ./cmd/inheritance
 
 # Compile TypeScript to JavaScript (bundled as IIFE for inline use)
 # Uses --loader:.txt=text to bundle BIP39 wordlists as strings
@@ -59,12 +59,12 @@ wasm-cjk: ts
 
 # Build CLI that generates CJK-capable maker.html (requires 'make wasm-cjk' first).
 # The resulting binary produces a ~21 MB maker.html with Chinese/Japanese/Korean support.
-# Usage: make wasm-cjk && make build-cjk && ./rememory-cjk html create > maker-cjk.html
+# Usage: make wasm-cjk && make build-cjk && ./inheritance-cjk html create > maker-cjk.html
 build-cjk: wasm-cjk
-	go build $(LDFLAGS) -tags cjk -o $(BINARY)-cjk ./cmd/rememory
+	go build $(LDFLAGS) -tags cjk -o $(BINARY)-cjk ./cmd/inheritance
 
 install: wasm
-	go install $(LDFLAGS) ./cmd/rememory
+	go install $(LDFLAGS) ./cmd/inheritance
 
 test:
 	@test -f internal/html/assets/app.js && test -f $(BINARY) || $(MAKE) build
@@ -102,18 +102,18 @@ test-cover:
 # Run Playwright e2e tests (requires npm install first)
 test-e2e: build
 	@if [ ! -d node_modules ]; then echo "Run 'npm install' first"; exit 1; fi
-	REMEMORY_BIN=./$(BINARY) npx playwright test
+	INHERITANCE_BIN=./$(BINARY) npx playwright test
 
 # Run e2e tests with visible browser
 test-e2e-headed: build
 	@if [ ! -d node_modules ]; then echo "Run 'npm install' first"; exit 1; fi
-	REMEMORY_BIN=./$(BINARY) npx playwright test --headed
+	INHERITANCE_BIN=./$(BINARY) npx playwright test --headed
 
 # Run tlock integration tests (requires internet; drand network access)
 test-tlock: build
-	REMEMORY_TEST_TLOCK=1 go test -v -run TestTlock ./...
+	INHERITANCE_TEST_TLOCK=1 go test -v -run TestTlock ./...
 	@if [ ! -d node_modules ]; then echo "Run 'npm install' first"; exit 1; fi
-	REMEMORY_TEST_TLOCK=1 REMEMORY_BIN=./$(BINARY) npx playwright test
+	INHERITANCE_TEST_TLOCK=1 INHERITANCE_BIN=./$(BINARY) npx playwright test
 
 # Clean rebuild + all tests (unit + e2e + tlock)
 full: clean build test test-ts test-e2e test-tlock lint
@@ -134,7 +134,7 @@ clean:
 man: build
 	@mkdir -p man
 	./$(BINARY) doc man
-	@echo "View with: man ./man/rememory.1"
+	@echo "View with: man ./man/$(BINARY).1"
 
 # Generate standalone HTML files for static hosting
 html: build
@@ -159,7 +159,7 @@ demo-tlock: build
 
 # Check that all languages have the same translation keys as English
 check-translations:
-	REMEMORY_CHECK_TRANSLATIONS=1 go test -v -run TestAllLanguagesHaveSameKeys ./internal/translations/
+	INHERITANCE_CHECK_TRANSLATIONS=1 go test -v -run TestAllLanguagesHaveSameKeys ./internal/translations/
 
 # Regenerate golden test fixtures (one-time, output is committed)
 generate-fixtures:
@@ -168,11 +168,11 @@ generate-fixtures:
 # Cross-compile for all platforms (used by CI)
 build-all: wasm
 	@mkdir -p dist
-	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o dist/rememory-linux-amd64 ./cmd/rememory
-	GOOS=linux GOARCH=arm64 go build $(LDFLAGS) -o dist/rememory-linux-arm64 ./cmd/rememory
-	GOOS=darwin GOARCH=amd64 go build $(LDFLAGS) -o dist/rememory-darwin-amd64 ./cmd/rememory
-	GOOS=darwin GOARCH=arm64 go build $(LDFLAGS) -o dist/rememory-darwin-arm64 ./cmd/rememory
-	GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o dist/rememory-windows-amd64.exe ./cmd/rememory
+	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o dist/inheritance-linux-amd64 ./cmd/inheritance
+	GOOS=linux GOARCH=arm64 go build $(LDFLAGS) -o dist/inheritance-linux-arm64 ./cmd/inheritance
+	GOOS=darwin GOARCH=amd64 go build $(LDFLAGS) -o dist/inheritance-darwin-amd64 ./cmd/inheritance
+	GOOS=darwin GOARCH=arm64 go build $(LDFLAGS) -o dist/inheritance-darwin-arm64 ./cmd/inheritance
+	GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o dist/inheritance-windows-amd64.exe ./cmd/inheritance
 
 # Stamp CHANGELOG, update VERSION, commit. Asks which bump type.
 release:
@@ -228,4 +228,4 @@ update-pdf-png: build
 # Generate localized guide screenshots via Playwright (en, es, de, fr)
 screenshots: build
 	@if [ ! -d node_modules ]; then echo "Run 'npm install' first"; exit 1; fi
-	REMEMORY_BIN=./$(BINARY) REMEMORY_TEST_SCREENSHOTS=1 npx playwright test --project=chromium
+	INHERITANCE_BIN=./$(BINARY) INHERITANCE_TEST_SCREENSHOTS=1 npx playwright test --project=chromium

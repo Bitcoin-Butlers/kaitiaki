@@ -3,19 +3,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 
-function getRememoryBin(): string {
-  const binEnv = process.env.REMEMORY_BIN || './inheritance';
+function getInheritanceBin(): string {
+  const binEnv = process.env.INHERITANCE_BIN || './inheritance';
   return path.resolve(binEnv);
 }
 
 async function globalSetup() {
-  const bin = getRememoryBin();
+  const bin = getInheritanceBin();
   if (!fs.existsSync(bin)) {
-    console.log('Global setup: rememory binary not found, skipping shared resource creation');
+    console.log('Global setup: inheritance binary not found, skipping shared resource creation');
     return;
   }
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-global-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-e2e-global-'));
 
   // --- Projects ---
 
@@ -72,7 +72,7 @@ async function globalSetup() {
 <head><meta charset="utf-8"><title>Crypto Test</title></head>
 <body>
   <script>${cryptoJs}</script>
-  <script>window.rememoryCrypto = RememoryCrypto; window.testReady = true;</script>
+  <script>window.inheritanceCrypto = RememoryCrypto; window.testReady = true;</script>
 </body>
 </html>`);
 
@@ -91,7 +91,7 @@ async function globalSetup() {
 
   const setupPath = path.join(tmpDir, 'setup.json');
   fs.writeFileSync(setupPath, JSON.stringify(setup, null, 2));
-  process.env.REMEMORY_E2E_SETUP = setupPath;
+  process.env.INHERITANCE_E2E_SETUP = setupPath;
 }
 
 export default globalSetup;

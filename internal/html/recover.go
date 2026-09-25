@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // MaxEmbeddedManifestSize is the maximum size of MANIFEST.age that will be
@@ -144,7 +144,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
 	var scripts strings.Builder
 
 	// Translations
-	// Translations (docs link rewriting + rememoryUpdateUI are handled by core i18n.js)
+	// Translations (docs link rewriting + inheritanceUpdateUI are handled by core i18n.js)
 	scripts.WriteString(i18nScript(I18nScriptOptions{
 		Component:           "recover",
 		UseNonce:            true,

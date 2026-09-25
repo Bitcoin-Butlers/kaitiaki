@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/eljojo/rememory/internal/project"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 	"github.com/spf13/cobra"
 )
 

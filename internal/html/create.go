@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 // tlockTabsHTML is the Simple/Advanced tab switcher injected into maker.html step 3.
@@ -105,7 +105,7 @@ func GenerateMakerHTML(createWASMBytes []byte, opts MakerHTMLOptions) string {
 	// Build all scripts
 	var scripts strings.Builder
 
-	// Translations (docs link rewriting + rememoryUpdateUI are handled by core i18n.js)
+	// Translations (docs link rewriting + inheritanceUpdateUI are handled by core i18n.js)
 	scripts.WriteString(i18nScript(I18nScriptOptions{
 		Component: "maker",
 		UseNonce:  true,

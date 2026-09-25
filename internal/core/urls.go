@@ -1,7 +1,7 @@
 package core
 
 // GitHubRepo is the canonical repository URL of this fork.
-// Attribution links to the upstream project (eljojo/rememory) are written
+// Upstream attribution lives in NOTICE, which Apache-2.0 requires. Pages are written
 // out in full where they appear; they do not go through this constant.
 const GitHubRepo = "https://github.com/Bitcoin-Butlers/kaitiaki"
 

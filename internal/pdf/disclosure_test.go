@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 // The printed page is the easiest of the three surfaces to photograph and pass

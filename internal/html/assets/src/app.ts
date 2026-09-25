@@ -52,7 +52,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   'use strict';
 
   // Import shared utilities
-  const { escapeHtml, formatSize, toast, showInlineError, clearInlineError } = window.rememoryUtils;
+  const { escapeHtml, formatSize, toast, showInlineError, clearInlineError } = window.inheritanceUtils;
 
   // Tlock recovery functions — conditionally required so esbuild eliminates
   // tlock-js + drand-client HTTP code from the offline variant (app.js).
@@ -160,11 +160,15 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   const personalization: PersonalizationData | null =
     (typeof window.PERSONALIZATION !== 'undefined') ? window.PERSONALIZATION : null;
 
-  // Share regex to extract from README.txt content
-  const shareRegex = /-----BEGIN REMEMORY SHARE-----([\s\S]*?)-----END REMEMORY SHARE-----/;
+  // Share regex to extract from README.txt content. Both spellings, because
+  // a guardian's README is not reissued when the project is renamed. This is
+  // the THIRD copy of these markers: the others are crypto/share.ts and
+  // internal/core/share.go. All three must accept both.
+  const shareRegex =
+    /-----BEGIN (?:INHERITANCE|REMEMORY) SHARE-----([\s\S]*?)-----END (?:INHERITANCE|REMEMORY) SHARE-----/;
 
-  // Compact share format regex: RM{version}:{index}:{total}:{threshold}:{base64url}:{check}
-  const compactShareRegex = /^RM\d+:\d+:\d+:\d+:[A-Za-z0-9_-]+:[0-9a-f]{4}$/;
+  // Compact share format: IH{version}:{index}:{total}:{threshold}:{base64url}:{check}
+  const compactShareRegex = /^(?:IH|RM)\d+:\d+:\d+:\d+:[A-Za-z0-9_-]+:[0-9a-f]{4}$/;
 
   // ============================================
   // Error Handlers
@@ -300,7 +304,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     // render here. Removed 2026-09-24 with the roster itself.
 
     // Native crypto is always ready
-    window.rememoryAppReady = true;
+    window.inheritanceAppReady = true;
 
     // Load personalization data
     if (personalization) {
@@ -1599,7 +1603,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   }
 
   // Expose public manifest loading API for programmatic use (used by auto-fetch below)
-  window.rememoryLoadManifest = function(data: Uint8Array, name?: string): void {
+  window.inheritanceLoadManifest = function(data: Uint8Array, name?: string): void {
     state.manifest = data;
     showManifestLoaded(name || 'MANIFEST.age', data.length, 'server');
     checkRecoverReady();
@@ -1672,7 +1676,7 @@ function wireChainReader(): void {
   });
 }
 
-  window.rememoryUpdateUI = function(): void {
+  window.inheritanceUpdateUI = function(): void {
     updateSharesUI();
   };
 
@@ -1690,7 +1694,7 @@ function wireChainReader(): void {
         if (resp.ok) {
           const data = new Uint8Array(await resp.arrayBuffer());
           if (data.length > 0 && !state.manifest) {
-            window.rememoryLoadManifest!(data, 'MANIFEST.age');
+            window.inheritanceLoadManifest!(data, 'MANIFEST.age');
           }
         }
       } catch {

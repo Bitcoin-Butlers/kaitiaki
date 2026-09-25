@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import {
-  getRememoryBin,
+  getInheritanceBin,
   createTestProject,
   cleanupProject,
   extractBundle,
@@ -21,8 +21,8 @@ test.describe('Browser Recovery Tool', () => {
   let mismatchBundlesDir: string;
 
   test.beforeAll(async () => {
-    // Skip if rememory binary not available
-    const bin = getRememoryBin();
+    // Skip if inheritance binary not available
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
@@ -296,7 +296,7 @@ test.describe('Generic recover.html (no personalization)', () => {
   let tmpDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
@@ -306,7 +306,7 @@ test.describe('Generic recover.html (no personalization)', () => {
     bundlesDir = path.join(projectDir, 'output', 'bundles');
     noEmbedProjectDir = createTestProject({ noEmbedManifest: true });
     noEmbedBundlesDir = path.join(noEmbedProjectDir, 'output', 'bundles');
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-generic-e2e-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-generic-e2e-'));
     standaloneRecoverHtml = generateStandaloneHTML(tmpDir, 'recover');
   });
 
@@ -443,7 +443,7 @@ test.describe('--no-embed-manifest flag', () => {
   let noEmbedBundlesDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
@@ -492,7 +492,7 @@ test.describe('PDF Share Import', () => {
   let bundlesDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
@@ -575,7 +575,7 @@ test.describe('ZIP Bundle Import', () => {
 
   test('dropping a bundle ZIP on standalone recover.html extracts manifest from inner recover.html', async ({ page }) => {
     // Use a truly standalone recover.html (no personalization, no manifest)
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-standalone-'));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-e2e-standalone-'));
     const standaloneHtml = generateStandaloneHTML(tmpDir, 'recover');
     const recovery = new RecoveryPage(page, tmpDir);
     await recovery.openFile(standaloneHtml);
@@ -601,7 +601,7 @@ test.describe('ZIP Bundle Import', () => {
 
   test('manifest replacement via second ZIP does not corrupt recovery', async ({ page }) => {
     // Use a standalone recover.html (no personalization, no manifest)
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-manifest-replace-'));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-e2e-manifest-replace-'));
     const standaloneHtml = generateStandaloneHTML(tmpDir, 'recover');
     const recovery = new RecoveryPage(page, tmpDir);
     await recovery.openFile(standaloneHtml);

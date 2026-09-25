@@ -5,7 +5,7 @@ package main
 import (
 	"syscall/js"
 
-	db "github.com/eljojo/rememory/internal/descriptorbackup"
+	db "github.com/Bitcoin-Butlers/kaitiaki/internal/descriptorbackup"
 )
 
 // TxOverheadVBytes is what a one-output OP_RETURN transaction costs before the

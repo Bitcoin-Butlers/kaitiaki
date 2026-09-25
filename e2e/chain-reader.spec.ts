@@ -4,7 +4,7 @@ import * as os from 'os';
 import * as path from 'path';
 import AdmZip from 'adm-zip';
 import { execFileSync } from 'child_process';
-import { getRememoryBin, generateStandaloneHTML } from './helpers';
+import { getInheritanceBin, generateStandaloneHTML } from './helpers';
 
 /**
  * The chain copy is the second way in. An heir holding one bundle and one of
@@ -31,7 +31,7 @@ test.describe('Chain copy reader', () => {
   ];
 
   test.beforeAll(() => {
-    if (!fs.existsSync(getRememoryBin())) {
+    if (!fs.existsSync(getInheritanceBin())) {
       test.skip();
       return;
     }
@@ -145,7 +145,7 @@ test.describe('Chain copy reader', () => {
     // The heir this exists for: one bundle, not enough pieces. They must not
     // have to find a collapsed panel underneath a dead end.
     const projectDir = path.join(tmpDir, 'stall');
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     execFileSync(bin, ['demo', projectDir], { stdio: 'ignore' });
 
     const bundlesDir = path.join(projectDir, 'output', 'bundles');

@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/eljojo/rememory/docs"
-	"github.com/eljojo/rememory/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/docs"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
 )
 
 // Config holds the configuration for the server.

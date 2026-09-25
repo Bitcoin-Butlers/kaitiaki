@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import AdmZip from 'adm-zip';
-import { getRememoryBin, generateStandaloneHTML, CreationPage } from './helpers';
+import { getInheritanceBin, generateStandaloneHTML, CreationPage } from './helpers';
 
 /**
  * The test run.
@@ -28,12 +28,12 @@ test.describe('Test run', () => {
   const SECRET = 'SAFE-BEHIND-THE-PAINTING-42';
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
     }
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-testrun-e2e-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-testrun-e2e-'));
     htmlPath = generateStandaloneHTML(tmpDir, 'create');
   });
 

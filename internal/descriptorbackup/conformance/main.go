@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"os"
 
-	db "github.com/eljojo/rememory/internal/descriptorbackup"
+	db "github.com/Bitcoin-Butlers/kaitiaki/internal/descriptorbackup"
 	"golang.org/x/crypto/chacha20poly1305"
 )
 

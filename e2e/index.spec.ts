@@ -1,12 +1,12 @@
 import { test, expect } from './fixtures';
 import * as fs from 'fs';
-import { getRememoryBin, getIndexHtml } from './helpers';
+import { getInheritanceBin, getIndexHtml } from './helpers';
 
 test.describe('Landing Page', () => {
   let indexPath: string;
 
   test.beforeAll(async () => {
-    if (!fs.existsSync(getRememoryBin())) {
+    if (!fs.existsSync(getInheritanceBin())) {
       test.skip();
       return;
     }

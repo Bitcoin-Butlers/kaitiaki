@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import AdmZip from 'adm-zip';
 import {
-  getRememoryBin,
+  getInheritanceBin,
   CreationPage,
   RecoveryPage,
   generateStandaloneHTML
@@ -16,15 +16,15 @@ test.describe('Browser Bundle Creation Tool', () => {
   let tmpDir: string;
 
   test.beforeAll(async () => {
-    // Skip if rememory binary not available
-    const bin = getRememoryBin();
+    // Skip if inheritance binary not available
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
     }
 
     // Generate standalone maker.html for testing
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-create-e2e-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-create-e2e-'));
     htmlPath = generateStandaloneHTML(tmpDir, 'create');
   });
 
@@ -382,7 +382,7 @@ friends:
     // the bug this test is here for.
     const out = path.join(dir, 'recovered');
     fs.mkdirSync(out, { recursive: true });
-    execFileSync(getRememoryBin(), [
+    execFileSync(getInheritanceBin(), [
       'recover',
       path.join(first, 'README.txt'),
       path.join(second, 'README.txt'),

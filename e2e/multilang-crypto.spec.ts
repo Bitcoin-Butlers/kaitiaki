@@ -66,7 +66,7 @@ test.describe('Multi-language BIP39 Support', () => {
       const words = generateTestWords(code);
 
       const result = await page.evaluate(async (words: string[]) => {
-        const crypto = (window as any).rememoryCrypto;
+        const crypto = (window as any).inheritanceCrypto;
         try {
           const decoded = crypto.decodeWords(words);
           return { success: true, length: decoded.length };
@@ -85,7 +85,7 @@ test.describe('Multi-language BIP39 Support', () => {
     await page.waitForFunction(() => (window as any).testReady);
 
     const result = await page.evaluate(async () => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       try {
         const idx = crypto.lookupWord('ábaco');
         return { index: idx };
@@ -103,7 +103,7 @@ test.describe('Multi-language BIP39 Support', () => {
     await page.waitForFunction(() => (window as any).testReady);
 
     const result = await page.evaluate(async () => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       try {
         // "abend" is word index 4 in the German wordlist
         const idx = crypto.lookupWordInLang('de', 'abend');
@@ -122,7 +122,7 @@ test.describe('Multi-language BIP39 Support', () => {
     await page.waitForFunction(() => (window as any).testReady);
 
     const result = await page.evaluate(async () => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       try {
         // "abend" is German-only
         const idx = crypto.lookupWord('abend');
@@ -151,7 +151,7 @@ test.describe('Language Auto-detection', () => {
     const words = generateTestWords('es');
 
     const result = await page.evaluate(async (words: string[]) => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       if (typeof crypto.detectLanguage !== 'function') {
         return { error: 'detectLanguage function not implemented' };
       }
@@ -174,7 +174,7 @@ test.describe('Language Auto-detection', () => {
     const words = generateTestWords('fr');
 
     const result = await page.evaluate(async (words: string[]) => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       if (typeof crypto.detectLanguage !== 'function') {
         return { error: 'detectLanguage function not implemented' };
       }
@@ -197,7 +197,7 @@ test.describe('Language Auto-detection', () => {
     const words = generateTestWords('de');
 
     const result = await page.evaluate(async (words: string[]) => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       if (typeof crypto.detectLanguage !== 'function') {
         return { error: 'detectLanguage function not implemented' };
       }
@@ -220,7 +220,7 @@ test.describe('Language Auto-detection', () => {
     const words = generateTestWords('es');
 
     const result = await page.evaluate(async (words: string[]) => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       try {
         const decoded = crypto.decodeWords(words);
         return { success: true, length: decoded.length };
@@ -248,7 +248,7 @@ test.describe('Word Normalization', () => {
     await page.waitForFunction(() => (window as any).testReady);
 
     const result = await page.evaluate(async () => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
 
       if (typeof crypto.lookupWordInLang !== 'function') {
         try {
@@ -277,7 +277,7 @@ test.describe('Word Normalization', () => {
     await page.waitForFunction(() => (window as any).testReady);
 
     const result = await page.evaluate(async () => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
 
       if (typeof crypto.lookupWordInLang !== 'function') {
         return { error: 'lookupWordInLang not implemented' };
@@ -300,7 +300,7 @@ test.describe('Word Normalization', () => {
     await page.waitForFunction(() => (window as any).testReady);
 
     const result = await page.evaluate(async () => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       try {
         const idx = crypto.lookupWord('ABANDON');
         return { index: idx };

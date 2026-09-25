@@ -14,4 +14,4 @@ jobs:
     steps:
       - uses: eljojo/no-autopilot@v1
         with:
-          guidelines-url: 'https://github.com/eljojo/rememory/blob/main/AGENTS.md'
+          guidelines-url: 'https://github.com/Bitcoin-Butlers/kaitiaki/blob/main/AGENTS.md'

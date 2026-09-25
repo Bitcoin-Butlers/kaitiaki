@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/crypto"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/crypto"
 )
 
 // sealSecret encrypts secret with a fresh v2 passphrase and splits the raw

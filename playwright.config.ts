@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const tlockOnly = process.env.REMEMORY_TEST_TLOCK === '1';
-const screenshotsOnly = process.env.REMEMORY_TEST_SCREENSHOTS === '1';
+const tlockOnly = process.env.INHERITANCE_TEST_TLOCK === '1';
+const screenshotsOnly = process.env.INHERITANCE_TEST_SCREENSHOTS === '1';
 
 export default defineConfig({
   testDir: './e2e',

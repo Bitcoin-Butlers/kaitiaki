@@ -21,7 +21,7 @@ let _sharedSetup: SharedSetup | null | undefined;
 
 function getSharedSetup(): SharedSetup | null {
   if (_sharedSetup === undefined) {
-    const setupPath = process.env.REMEMORY_E2E_SETUP;
+    const setupPath = process.env.INHERITANCE_E2E_SETUP;
     if (setupPath && fs.existsSync(setupPath)) {
       _sharedSetup = JSON.parse(fs.readFileSync(setupPath, 'utf8'));
     } else {
@@ -36,7 +36,7 @@ let _fallbackTmpDir: string | null = null;
 
 function getFallbackTmpDir(): string {
   if (!_fallbackTmpDir) {
-    _fallbackTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-fallback-'));
+    _fallbackTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-e2e-fallback-'));
   }
   return _fallbackTmpDir;
 }
@@ -58,7 +58,7 @@ function buildCryptoTestHtml(tmpDir: string): string {
 <head><meta charset="utf-8"><title>Crypto Test</title></head>
 <body>
   <script>${cryptoJs}</script>
-  <script>window.rememoryCrypto = RememoryCrypto; window.testReady = true;</script>
+  <script>window.inheritanceCrypto = RememoryCrypto; window.testReady = true;</script>
 </body>
 </html>`);
 
@@ -84,10 +84,10 @@ function getOrBuild(field: keyof SharedSetup, build: (tmpDir: string) => string)
   return built;
 }
 
-/** Helper to build an HTML resource via the rememory CLI. */
+/** Helper to build an HTML resource via the inheritance CLI. */
 function buildHtmlResource(tmpDir: string, filename: string, args: string[]): string {
   const htmlPath = path.join(tmpDir, filename);
-  execFileSync(getRememoryBin(), ['html', ...args, '-o', htmlPath], { stdio: 'inherit' });
+  execFileSync(getInheritanceBin(), ['html', ...args, '-o', htmlPath], { stdio: 'inherit' });
   return htmlPath;
 }
 
@@ -109,9 +109,9 @@ export function getDescriptorHtml(): string {
   );
 }
 
-// Get absolute path to rememory binary
-export function getRememoryBin(): string {
-  const binEnv = process.env.REMEMORY_BIN || './inheritance';
+// Get absolute path to inheritance binary
+export function getInheritanceBin(): string {
+  const binEnv = process.env.INHERITANCE_BIN || './inheritance';
   return path.resolve(binEnv);
 }
 
@@ -128,7 +128,7 @@ export function generateStandaloneHTML(tmpDir: string, type: 'recover' | 'create
     }
   }
 
-  const bin = getRememoryBin();
+  const bin = getInheritanceBin();
   const htmlPath = path.join(tmpDir, type === 'create' ? 'maker.html' : 'recover.html');
 
   execFileSync(bin, ['html', type, '-o', htmlPath, ...extraFlags], { stdio: 'inherit' });
@@ -178,9 +178,9 @@ export function createTestProject(options: TestProjectOptions = {}): string {
     }
   }
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-e2e-'));
   const projectDir = path.join(tmpDir, 'test-project');
-  const bin = getRememoryBin();
+  const bin = getInheritanceBin();
 
   const friends = options.friends || [
     { name: 'Alice', email: 'alice@test.com' },
@@ -328,7 +328,7 @@ export class RecoveryPage {
   async open(): Promise<void> {
     await this.page.goto(`file://${path.join(this.bundleDir, 'recover.html')}`);
     await this.page.waitForFunction(
-      () => (window as any).rememoryAppReady === true,
+      () => (window as any).inheritanceAppReady === true,
       { timeout: 30000 }
     );
   }
@@ -337,7 +337,7 @@ export class RecoveryPage {
   async openFile(htmlPath: string): Promise<void> {
     await this.page.goto(`file://${htmlPath}`);
     await this.page.waitForFunction(
-      () => (window as any).rememoryAppReady === true,
+      () => (window as any).inheritanceAppReady === true,
       { timeout: 30000 }
     );
   }
@@ -487,7 +487,7 @@ export class CreationPage {
   async open(): Promise<void> {
     await this.page.goto(`file://${this.htmlPath}`);
     await this.page.waitForFunction(
-      () => (window as any).rememoryReady === true,
+      () => (window as any).inheritanceReady === true,
       { timeout: 30000 }
     );
   }
@@ -625,7 +625,7 @@ export class CreationPage {
   async downloadBundle(index: number): Promise<Uint8Array | null> {
     // Get bundle data from the page's state
     const data = await this.page.evaluate((idx) => {
-      const state = (window as any).rememoryBundles;
+      const state = (window as any).inheritanceBundles;
       if (!state || !state[idx]) return null;
       return Array.from(state[idx].data as Uint8Array);
     }, index);
