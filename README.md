@@ -1,26 +1,11 @@
 # Bitcoin Inheritance
 
-Bitcoin Inheritance is a Bitcoin Butlers fork of
-[Rememory](https://github.com/eljojo/rememory) by
-[eljojo](https://github.com/eljojo). Rememory does the heavy lifting;
-this fork adds a small set of changes for our recovery service. See
-the `NOTICE` file for the list of changes and full attribution
-(Apache-2.0).
-
-Fork additions:
-- [docs/independent-recovery.md](docs/independent-recovery.md) — recover with stock `age` and `contrib/combine.py`, no project code.
-- `METADATA.yaml` in every bundle ZIP.
-- `--hide-quorum` on `init` (see [docs/hide-quorum-design.md](docs/hide-quorum-design.md)).
-
-The original Rememory README follows.
-
----
-
-# 🧠 ReMemory
-
 **A digital safe with multiple keys, held by people you trust.**
 
-ReMemory protects your files and divides the key among people you choose. You decide how many must come together to open it. Each person gets a self-contained recovery tool that works offline, in any browser.*
+<sub>Built by Bitcoin Butlers. A modified derivative of
+[Rememory](https://github.com/eljojo/rememory), Apache-2.0. See [NOTICE](NOTICE).</sub>
+
+Bitcoin Inheritance protects your files and divides the key among people you choose. You decide how many must come together to open it. Each person gets a self-contained recovery tool that works offline, in any browser.*
 
 <sub>* [Time-locked](#time-delayed-recovery-experimental) archives need a brief internet connection at recovery time.</sub>
 
@@ -64,7 +49,7 @@ The number of people and the threshold are up to you: 2-of-3 for a small circle,
 
 ---
 
-## Two Ways to Use ReMemory
+## Two Ways to Use It
 
 ### 🌐 Web UI (recommended)
 
@@ -160,7 +145,7 @@ A README is built to be forwarded: it tells its holder to send it to whoever ask
 ## FAQ
 
 <details>
-<summary>Why ReMemory?</summary>
+<summary>Why this tool?</summary>
 
 We all have digital secrets that matter: password manager recovery codes, cryptocurrency seeds, important documents, instructions for loved ones. What happens to these if you're suddenly unavailable?
 
@@ -170,7 +155,7 @@ Traditional approaches fail:
 - **Use a password manager's emergency access** → Relies on company existing
 - **Write it in a will** → Becomes public record, slow legal process
 
-ReMemory takes a different approach:
+Bitcoin Inheritance takes a different approach:
 - **No single point of failure** — requires multiple people to cooperate
 - **No trust in any one person** — even your most trusted friend can't access secrets alone
 - **Offline and self-contained** — recovery works without internet or servers*
@@ -179,30 +164,17 @@ ReMemory takes a different approach:
 </details>
 
 <details>
-<summary>Why I Built This</summary>
-
-Two things drove me to create ReMemory.
-
-First, I watched [a documentary about Clive Wearing](https://www.youtube.com/watch?v=k_P7Y0-wgos), a man who has lived with a 7-second memory since 1985. Seeing how fragile memory can be made me think about what would happen to my digital life if something similar happened to me.
-
-Second, I've had several concussions from cycling accidents. Each time, I've been lucky to recover fully. But each time, I've been reminded that our brains are more fragile than we like to think.
-
-ReMemory is my answer: a way to ensure the people I trust can access what matters, even if I can't help them.
-
-</details>
-
-<details>
 <summary>Threat Model</summary>
 
-ReMemory assumes:
+Bitcoin Inheritance assumes:
 - Your friends will only cooperate when needed
 - At least *threshold* friends will keep their bundle safe
 - Your device is trusted when you create bundles
 - The browser used for recovery is not compromised
 
-ReMemory does NOT rely on:
+Bitcoin Inheritance does NOT rely on:
 - Any server or cloud service
-- Any ReMemory website or infrastructure
+- Any Bitcoin Butlers website or infrastructure
 - Any long-term availability of this project
 - The internet during recovery
 
@@ -250,7 +222,7 @@ This uses the [League of Entropy](https://www.cloudflare.com/en-ca/leagueofentro
 |------------|--------|
 | A friend loses their bundle? | Fine, as long as threshold friends remain |
 | A friend leaks their piece publicly? | Harmless without threshold-1 other pieces |
-| ReMemory disappears in 10 years? | `recover.html` still works — it's self-contained |
+| Bitcoin Butlers disappears in 10 years? | `recover.html` still works — it's self-contained |
 | Browsers change dramatically? | Pure JavaScript with no external dependencies |
 | You forget how this works? | Each bundle's README.txt explains everything |
 | Some friends can't be reached? | That's why you set threshold below total friends |
@@ -285,7 +257,7 @@ make serve        # Serves at http://localhost:8000
 <details>
 <summary>Other Similar Tools</summary>
 
-ReMemory isn't the first tool to use Shamir's Secret Sharing. Its focus is making recovery possible for non-technical people, without installing anything.
+This is not the first tool to use Shamir's Secret Sharing. Our focus is making recovery possible for non-technical people, without installing anything.
 
 #### Shamir's Secret Sharing tools
 
