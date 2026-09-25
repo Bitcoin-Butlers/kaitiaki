@@ -289,6 +289,23 @@ for (const lang of LANGUAGES) {
       await snap(page, lang, 'owners-words');
     });
 
+    // The chain step, with a transaction id in it. Publishing happens BEFORE
+    // generating, and nothing in the guide had a picture of that.
+    test(`[${lang}] chain-copy`, async ({ page }) => {
+      const creation = new CreationPage(page, makerHtmlPath);
+      await creation.open();
+
+      await page.check('input[name="destination"][value="both"]');
+      await page.fill('#words-wallet', 'A 2 of 3. Any two of the three keys can spend.');
+      await page.fill('#chain-descriptor',
+        'wsh(sortedmulti(2,[73c5da0a/48h/0h/0h/2h]xpub6DkFAXWQ2dHxq2vatrt9qyA3bXYU4ToWQwCHbf5XB2mSTexcHZCeKS1VZYcPoBd5X8yVcbXFHJR9R8UCVpt82VX1VhR28mCyxUFL4r6KFrf/<0;1>/*,[b8688df1/48h/0h/0h/2h]xpub6FQya7zGhR92kacYsNnjreouvnHJMpXYsUXnW6NJJAJRCKsa26TzDy4LdnGhEurr3d6y1J8PJ7EEMKQp74XTqYvmGJNogYXSKDszYHtF8mX/<0;1>/*,[28645006/48h/0h/0h/2h]xpub6DnEBNkSJKBYQmsbhS1sP9cNdtU5c9PLFGCjTJmxicxc13WB8zNNGQazabQpyFAGW5bV9tMko4uBxDxjUKL6dSAcx1tEbgEHtgSqyRsekh6/<0;1>/*))');
+      await expect(page.locator('#chain-size')).toContainText(/sat/i);
+      await page.fill('#chain-txid', '4801ea9c10e14a5ea5c0e5e68bfe08fd2422005ea0a3a9631fead29ce910a4df');
+
+      await frameCreationStep(page, [2]);
+      await snap(page, lang, 'chain-copy');
+    });
+
     test(`[${lang}] bundles`, async ({ page }) => {
       const creation = new CreationPage(page, makerHtmlPath);
       await creation.open();
@@ -390,6 +407,48 @@ for (const lang of LANGUAGES) {
       await frameRecoveryStep(page, [2]);
 
       await snap(page, lang, 'recovery-2');
+    });
+
+    // What the guardians actually get back. Every other recovery figure uses
+    // a fixture with no owner texts, so nothing in the guide showed the
+    // sealed files by name, which is the whole point of sealing them.
+    test(`[${lang}] sealed-files`, async ({ page }, testInfo) => {
+      testInfo.setTimeout(120000);
+      const creation = new CreationPage(page, makerHtmlPath);
+      await creation.open();
+
+      await creation.setFriend(0, 'Alice', 'alice@example.com');
+      await creation.setFriend(1, 'Bob', 'bob@example.com');
+      await page.fill('#words-wallet', 'A 2 of 3. Any two of the three keys can spend.');
+      await page.fill('#words-keys', 'Key 1: the safe at home. Key 2: Hannah has it.');
+
+      const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-sealed-'));
+      const files = creation.createTestFiles(tmp, 'sealed');
+      await creation.addFiles(files);
+      await creation.generate();
+      await creation.expectGenerationComplete();
+
+      const dirs: string[] = [];
+      for (let i = 0; i < 2; i++) {
+        const data = await creation.downloadBundle(i);
+        const zipPath = path.join(tmp, `b${i}.zip`);
+        fs.writeFileSync(zipPath, data!);
+        const out = path.join(tmp, `b${i}`);
+        fs.mkdirSync(out, { recursive: true });
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const AdmZip = require('adm-zip');
+        new AdmZip(zipPath).extractAllTo(out, true);
+        dirs.push(out);
+      }
+
+      const recovery = new RecoveryPage(page, dirs[0]);
+      await recovery.open();
+      await recovery.addShares(dirs[1]);
+      await expect(page.locator('#status-message.success')).toBeAttached({ timeout: 60000 });
+      await page.waitForTimeout(500);
+
+      await frameRecoveryStep(page, [2]);
+      await snap(page, lang, 'sealed-files');
     });
 
     test(`[${lang}] tlock-waiting`, async ({ page }) => {

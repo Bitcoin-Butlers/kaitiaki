@@ -1300,6 +1300,44 @@ pre {
   color: var(--success-text);
 }
 
+/* The chain fields. These had no rules at all, so the label, the descriptor
+   box and its hint ran together on one line as prose. Found 2026-09-24 by
+   photographing the step for the guide. Matches .words-group deliberately:
+   it is the same kind of form, in the same card. */
+#chain-fields label {
+  display: block;
+  margin: 0.875rem 0 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--sage);
+}
+
+#chain-fields textarea,
+#chain-fields input[type="text"] {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--paper-light);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+#chain-fields textarea {
+  resize: vertical;
+}
+
+#chain-fields small,
+#chain-fields .chain-size {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
 .words-group label {
   display: block;
   margin: 0.875rem 0 0.25rem;

@@ -227,7 +227,11 @@ Each bundle is made for its guardian. Your piece is already inside your <code>re
 <p style="margin-top: 1rem;">
 A guardian holding one bundle reads none of these, and neither does anyone the bundle is forwarded to. The <code>README.txt</code> says only whether the owner wrote anything at all.
 </p>
-</p>
+
+<figure class="screenshot">
+<img src="screenshots/en/sealed-files.png" alt="The recovery page after enough guardians combined, listing the owner's sealed files alongside their own">
+<figcaption>What the guardians see together. The owner's own files, and the words they wrote, which no single bundle would open.</figcaption>
+</figure>
 
 
 
@@ -433,6 +437,11 @@ The descriptor backup is made in [Create Bundles](maker.html), in the same step 
 1. Put it on the chain, in one of two ways. Pay opreturnbot.com to publish it, ticking **Private**, or send it from your own Bitcoin Core node. Both put the same text into one OP_RETURN output.
 1. **Paste the transaction id back into the page, then generate.** Publishing before you generate is the only way the id reaches your guardians. The archive is encrypted and its key is split among them the moment you generate, so an id you find afterwards can never be added to it. Write it on your estate page as well, because the copy inside the archive needs enough guardians to open.
 1. **Read it back.** Open [Read a Descriptor Backup](descriptor.html), paste the transaction id, add your keys, and watch the descriptor come back. Publishing alone proves nothing. This step proves the backup landed.
+
+<figure class="screenshot">
+<img src="screenshots/en/chain-copy.png" alt="Step 3 with the chain destination chosen, the descriptor pasted, its size and fee shown, and the transaction id filled in">
+<figcaption>The chain step. Publish the text first, then paste the transaction id here and generate.</figcaption>
+</figure>
 
 If you have never seen this work, that page has a button that does the whole read-back with our own published backup. It costs nothing and moves no coins.
 
