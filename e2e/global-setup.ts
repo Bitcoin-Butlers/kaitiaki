@@ -43,17 +43,6 @@ async function globalSetup() {
   execFileSync(bin, ['seal', '--no-embed-manifest'], { cwd: noEmbedProject, stdio: 'inherit' });
   execFileSync(bin, ['bundle', '--no-embed-manifest'], { cwd: noEmbedProject, stdio: 'inherit' });
 
-  // Anonymous test project (3 shares, threshold 2)
-  const anonymousProject = path.join(tmpDir, 'anonymous-project');
-  execFileSync(bin, [
-    'init', anonymousProject, '--name', 'Anonymous E2E Test', '--anonymous', '--shares', '3', '--threshold', '2',
-  ], { stdio: 'inherit' });
-  const anonManifest = path.join(anonymousProject, 'manifest');
-  fs.writeFileSync(path.join(anonManifest, 'secret.txt'), 'Anonymous secret: correct-horse-battery-staple');
-  fs.writeFileSync(path.join(anonManifest, 'notes.txt'), 'Anonymous notes!');
-  execFileSync(bin, ['seal'], { cwd: anonymousProject, stdio: 'inherit' });
-  execFileSync(bin, ['bundle'], { cwd: anonymousProject, stdio: 'inherit' });
-
   // --- Standalone HTML files ---
 
   const makerHtml = path.join(tmpDir, 'maker.html');
@@ -93,7 +82,6 @@ async function globalSetup() {
     tmpDir,
     standardProject,
     noEmbedProject,
-    anonymousProject,
     makerHtml,
     recoverHtml,
     docsHtml,

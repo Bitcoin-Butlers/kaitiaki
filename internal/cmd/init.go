@@ -34,9 +34,7 @@ var (
 	initName       string
 	initThreshold  int
 	initFriends    []string
-	initAnonymous  bool
 	initHideQuorum bool
-	initShares     int
 	initLanguage   string
 )
 
@@ -53,9 +51,7 @@ func init() {
 	initCmd.Flags().StringVar(&initName, "name", "", "Project name (defaults to directory name)")
 	initCmd.Flags().IntVar(&initThreshold, "threshold", 0, "Number of shares needed to recover")
 	initCmd.Flags().StringArrayVar(&initFriends, "friend", nil, "Friend in format 'Name' or 'Name,contact info' (repeatable)")
-	initCmd.Flags().BoolVar(&initAnonymous, "anonymous", false, "Anonymous mode (no contact info for shareholders)")
 	initCmd.Flags().BoolVar(&initHideQuorum, "hide-quorum", false, "Omit total/threshold from shares and bundle documents")
-	initCmd.Flags().IntVar(&initShares, "shares", 0, "Number of shares (for anonymous mode)")
 	initCmd.Flags().StringVar(&initLanguage, "language", "", "Default bundle language (en)")
 }
 
@@ -101,59 +97,8 @@ func runInit(cmd *cobra.Command, args []string) error {
 
 	var friends []project.Friend
 	var threshold int
-	var anonymous bool
 
-	// Anonymous mode
-	if initAnonymous {
-		anonymous = true
-		reader := bufio.NewReader(os.Stdin)
-
-		numShares := initShares
-		if numShares == 0 {
-			fmt.Print("How many shares? [5]: ")
-			numStr, _ := reader.ReadString('\n')
-			numStr = strings.TrimSpace(numStr)
-			numShares = 5
-			if numStr != "" {
-				n, err := strconv.Atoi(numStr)
-				if err != nil || n < 2 {
-					return fmt.Errorf("invalid number of shares (minimum 2)")
-				}
-				numShares = n
-			}
-		}
-
-		threshold = initThreshold
-		if threshold == 0 {
-			defaultThreshold := (numShares + 1) / 2
-			if defaultThreshold < 2 {
-				defaultThreshold = 2
-			}
-			fmt.Printf("How many shares needed to recover? [%d]: ", defaultThreshold)
-			threshStr, _ := reader.ReadString('\n')
-			threshStr = strings.TrimSpace(threshStr)
-			threshold = defaultThreshold
-			if threshStr != "" {
-				t, err := strconv.Atoi(threshStr)
-				if err != nil || t < 2 || t > numShares {
-					return fmt.Errorf("invalid threshold (must be 2-%d)", numShares)
-				}
-				threshold = t
-			}
-		}
-
-		if threshold < 2 || threshold > numShares {
-			return fmt.Errorf("invalid threshold: must be between 2 and %d", numShares)
-		}
-
-		// Generate synthetic friends
-		friends = make([]project.Friend, numShares)
-		for i := 0; i < numShares; i++ {
-			friends[i] = project.Friend{Name: fmt.Sprintf("Share %d", i+1)}
-		}
-
-		fmt.Printf("\nAnonymous mode: %d shares, threshold %d of %d\n\n", numShares, threshold, numShares)
-	} else if len(initFriends) > 0 {
+	if len(initFriends) > 0 {
 		// Non-interactive mode: use flags
 		friends, err = parseFriendFlags(initFriends)
 		if err != nil {
@@ -255,7 +200,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 	}
 
 	// Create the project
-	p, err := project.NewWithOptions(dir, name, threshold, friends, anonymous)
+	p, err := project.New(dir, name, threshold, friends)
 	if err != nil {
 		return fmt.Errorf("creating project: %w", err)
 	}

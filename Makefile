@@ -219,13 +219,11 @@ bump:
 update-pdf-png: build
 	@rm -rf demo-recovery
 	./$(BINARY) demo
-	@mkdir -p docs/screenshots/demo-pdf docs/screenshots/demo-pdf-es
-	@rm -f docs/screenshots/demo-pdf/*.png docs/screenshots/demo-pdf-es/*.png
+	@mkdir -p docs/screenshots/demo-pdf
+	@rm -f docs/screenshots/demo-pdf/*.png
 	@unzip -o demo-recovery/output/bundles/bundle-alice.zip README.pdf -d demo-recovery/output/bundles/bundle-alice/
-	@unzip -o demo-recovery/output/bundles/bundle-camila.zip LEEME.pdf -d demo-recovery/output/bundles/bundle-camila/
 	pdftoppm -png -r 200 demo-recovery/output/bundles/bundle-alice/README.pdf docs/screenshots/demo-pdf/page
-	pdftoppm -png -r 200 demo-recovery/output/bundles/bundle-camila/LEEME.pdf docs/screenshots/demo-pdf-es/page
-	@echo "Generated PDF page screenshots in docs/screenshots/demo-pdf/ (English) and docs/screenshots/demo-pdf-es/ (Spanish)"
+	@echo "Generated PDF page screenshots in docs/screenshots/demo-pdf/"
 
 # Generate localized guide screenshots via Playwright (en, es, de, fr)
 screenshots: build

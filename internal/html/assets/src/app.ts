@@ -13,7 +13,6 @@ registerPolyfill();
 import type {
   RecoveryState,
   PersonalizationData,
-  FriendInfo,
   ToastAction,
   TranslationFunction,
 } from './types';
@@ -73,15 +72,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     formatTimelockDate(date: Date): string;
   } | null = __TLOCK__ ? require('./tlock-recover') : null;
 
-  // Wrap email addresses in mailto: links. Input must already be HTML-escaped.
-  const EMAIL_RE = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
-  function linkifyEmail(escaped: string): string {
-    return escaped.replace(EMAIL_RE, (match) => {
-      const clean = match.replace(/\.+$/, '');
-      return `<a href="mailto:${clean}">${clean}</a>`;
-    });
-  }
-
   // State
   const state: RecoveryState = {
     shares: [],
@@ -102,6 +92,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     shareFileInput: HTMLInputElement | null;
     sharesList: HTMLElement | null;
     thresholdInfo: HTMLElement | null;
+    whoElse: HTMLElement | null;
     ownerIdentity: HTMLInputElement | null;
     ownerStatus: HTMLElement | null;
     ownerStatusText: HTMLElement | null;
@@ -119,8 +110,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     pasteArea: HTMLElement | null;
     pasteInput: HTMLTextAreaElement | null;
     pasteSubmitBtn: HTMLButtonElement | null;
-    contactListSection: HTMLElement | null;
-    contactList: HTMLElement | null;
     verificationStatus: HTMLElement | null;
     step1Card: HTMLElement | null;
     step2Card: HTMLElement | null;
@@ -138,6 +127,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     shareFileInput: document.getElementById('share-file-input') as HTMLInputElement | null,
     sharesList: document.getElementById('shares-list'),
     thresholdInfo: document.getElementById('threshold-info'),
+    whoElse: document.getElementById('who-else'),
     ownerIdentity: document.getElementById('owner-identity') as HTMLInputElement | null,
     ownerStatus: document.getElementById('owner-status'),
     ownerStatusText: document.getElementById('owner-status-text'),
@@ -155,8 +145,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     pasteArea: document.getElementById('paste-area'),
     pasteInput: document.getElementById('paste-input') as HTMLTextAreaElement | null,
     pasteSubmitBtn: document.getElementById('paste-submit-btn') as HTMLButtonElement | null,
-    contactListSection: document.getElementById('contact-list-section'),
-    contactList: document.getElementById('contact-list'),
     verificationStatus: document.getElementById('verification-status'),
     step1Card: null,
     step2Card: null,
@@ -308,11 +296,8 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     setupPaste();
     setupScanner();
 
-    // Render contact list immediately
-    if (personalization?.otherFriends && personalization.otherFriends.length > 0) {
-      renderContactList();
-      elements.contactListSection?.classList.remove('hidden');
-    }
+    // A bundle names its own holder and nobody else, so there is no list to
+    // render here. Removed 2026-09-24 with the roster itself.
 
     // Native crypto is always ready
     window.rememoryAppReady = true;
@@ -343,7 +328,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
         state.total = share.total;
         state.shares.push(share);
         updateSharesUI();
-        updateContactList();
       } catch {
         // Surface corrupt pre-loaded holder share instead of silently ignoring it.
         showError(
@@ -432,54 +416,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     } catch {
       // Silently ignore invalid fragment shares
     }
-  }
-
-  function renderContactList(): void {
-    if (!personalization?.otherFriends || !elements.contactList) return;
-
-    elements.contactList.innerHTML = '';
-
-    personalization.otherFriends.forEach((friend: FriendInfo) => {
-      const item = document.createElement('div');
-      item.className = 'contact-item';
-      item.dataset.name = friend.name;
-      if (friend.shareIndex) {
-        item.dataset.shareIndex = String(friend.shareIndex);
-      }
-
-      const contactInfo = friend.contact ? linkifyEmail(escapeHtml(friend.contact)) : '';
-
-      item.innerHTML = `
-        <div class="checkbox"></div>
-        <div class="details">
-          <div class="name">${escapeHtml(friend.name)}</div>
-          <div class="contact-info">${contactInfo || '—'}</div>
-        </div>
-      `;
-
-      elements.contactList?.appendChild(item);
-    });
-  }
-
-  function updateContactList(): void {
-    if (!personalization?.otherFriends || !elements.contactList) return;
-
-    const collectedNames = new Set(
-      state.shares.map(s => s.holder?.toLowerCase()).filter(Boolean)
-    );
-    const collectedIndices = new Set(state.shares.map(s => s.index));
-
-    elements.contactList.querySelectorAll('.contact-item').forEach(item => {
-      const el = item as HTMLElement;
-      const name = el.dataset.name?.toLowerCase();
-      const shareIndex = el.dataset.shareIndex ? parseInt(el.dataset.shareIndex, 10) : 0;
-      const isCollected = (name ? collectedNames.has(name) : false) || collectedIndices.has(shareIndex);
-      el.classList.toggle('collected', isCollected);
-      const checkbox = el.querySelector('.checkbox');
-      if (checkbox) {
-        checkbox.textContent = isCollected ? '✓' : '';
-      }
-    });
   }
 
   // ============================================
@@ -1083,8 +1019,8 @@ type UIShare = ParsedShare & { isHolder?: boolean };
           return personalization.holder;
         }
       }
-      const friend = personalization.otherFriends.find(f => f.shareIndex === share.index);
-      if (friend) return friend.name;
+      // Every other piece is "Share N". Only the holder's own name is known
+      // to this bundle.
     }
     return 'Share ' + share.index;
   }
@@ -1128,10 +1064,14 @@ type UIShare = ParsedShare & { isHolder?: boolean };
           state.total = 0;
         }
         updateSharesUI();
-        updateContactList();
         checkRecoverReady();
       });
     });
+
+    // Where to find the others. This is NOT gated on the threshold: a
+    // hide-quorum bundle reports 0, and its holder has the least context of
+    // anyone, so it is the last bundle that should lose the pointer.
+    elements.whoElse?.classList.toggle('hidden', sharesReady());
 
     // Update threshold info
     if (state.threshold > 0 && elements.thresholdInfo) {
@@ -1150,7 +1090,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
       elements.step1Card?.classList.remove('threshold-met');
     }
 
-    updateContactList();
     updateVerificationStatus();
   }
 
@@ -1735,7 +1674,6 @@ function wireChainReader(): void {
 
   window.rememoryUpdateUI = function(): void {
     updateSharesUI();
-    updateContactList();
   };
 
   document.addEventListener('DOMContentLoaded', async () => {

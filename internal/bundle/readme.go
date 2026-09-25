@@ -8,7 +8,6 @@ import (
 	"golang.org/x/text/unicode/norm"
 
 	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/project"
 	"github.com/eljojo/rememory/internal/translations"
 )
 
@@ -17,7 +16,6 @@ type ReadmeData struct {
 	ProjectName      string
 	Holder           string
 	Share            *core.Share
-	OtherFriends     []project.Friend
 	Threshold        int
 	Total            int
 	Version          string
@@ -25,22 +23,16 @@ type ReadmeData struct {
 	ManifestChecksum string
 	RecoverChecksum  string
 	Created          time.Time
-	Anonymous        bool
 	Language         string // Bundle language (e.g. "en", "es"); defaults to "en"
 	ManifestEmbedded bool   // true when manifest is embedded in recover.html
 	OwnerKeyPresent  bool   // true when the bundle contains OWNER.age
 	TlockEnabled     bool   // true when manifest uses time-lock encryption
 
-	// RecoverySteps is the owner's own method, in the open because a lone
-	// guardian may safely hold it and an heir may need it early.
-	RecoverySteps string
-	// ChainPayload is the encrypted chain copy, ciphertext locked to the
-	// wallet's keys. An identical copy is public on the chain, so putting it
-	// here costs nothing and saves the heir who cannot gather enough pieces.
-	ChainPayload string
-	// ChainTxid is written in by the owner after publishing. It is proof that
-	// the copy landed, never the route in, so a missing one costs nothing.
-	ChainTxid string
+	// OwnerWroteNothing is true when the owner left no text at all. It is a
+	// flag and never the text itself: every word an owner writes is sealed in
+	// the encrypted archive, so this struct is not given the content and the
+	// README cannot print it by mistake. See sealed_texts.go.
+	OwnerWroteNothing bool
 }
 
 // writeWordGrid writes a two-column word grid to the string builder.
@@ -93,75 +85,36 @@ func GenerateReadme(data ReadmeData) string {
 
 	// Warning
 	sb.WriteString(fmt.Sprintf("!!  %s\n", t("warning_title")))
-	if data.Anonymous {
-		sb.WriteString(fmt.Sprintf("    %s\n\n", t("warning_message_shares")))
-	} else {
-		sb.WriteString(fmt.Sprintf("    %s\n\n", t("warning_message_friends")))
-	}
+	sb.WriteString(fmt.Sprintf("    %s\n\n", t("warning_message")))
 
-	// Other share holders (skip for anonymous mode)
-	if !data.Anonymous {
-		sb.WriteString("--------------------------------------------------------------------------------\n")
-		sb.WriteString(fmt.Sprintf("%s\n", t("other_holders")))
-		sb.WriteString("--------------------------------------------------------------------------------\n")
-		for _, friend := range data.OtherFriends {
-			sb.WriteString(fmt.Sprintf("%s\n", friend.Name))
-			if friend.Contact != "" {
-				sb.WriteString(fmt.Sprintf("  %s\n", t("contact_label", friend.Contact)))
-			}
-			sb.WriteString("\n")
-		}
-	}
-
-	// The owner's own words, and the chain copy. Both sit in the open: a lone
-	// guardian may safely hold them, and an heir with one bundle and one key
-	// needs them before anyone combines anything. The people and places went
-	// into the encrypted archive instead.
-	if data.RecoverySteps != "" {
-		sb.WriteString("--------------------------------------------------------------------------------\n")
-		sb.WriteString(fmt.Sprintf("%s\n", t("owner_steps_title")))
-		sb.WriteString("--------------------------------------------------------------------------------\n")
-		sb.WriteString(fmt.Sprintf("%s\n\n", t("owner_steps_intro")))
-		sb.WriteString(strings.TrimRight(data.RecoverySteps, "\n") + "\n\n")
-	}
+	// No roster, no method, no chain copy. Every one of them is sealed in the
+	// encrypted archive now, so they reach a reader only when enough guardians
+	// combine their pieces. See sealed_texts.go for why.
 
 	// Say so when the owner wrote nothing. An heir holding a bundle with no
 	// instructions cannot otherwise tell whether that was a decision or a lost
 	// file, and at the moment they are reading this, that difference matters.
-	if data.RecoverySteps == "" && data.ChainPayload == "" {
+	if data.OwnerWroteNothing {
 		sb.WriteString("--------------------------------------------------------------------------------\n")
 		sb.WriteString(fmt.Sprintf("%s\n", t("no_instructions_title")))
 		sb.WriteString("--------------------------------------------------------------------------------\n")
 		sb.WriteString(fmt.Sprintf("%s\n\n", t("no_instructions")))
 	}
 
-	if data.ChainPayload != "" {
-		sb.WriteString("--------------------------------------------------------------------------------\n")
-		sb.WriteString(fmt.Sprintf("%s\n", t("chain_copy_title")))
-		sb.WriteString("--------------------------------------------------------------------------------\n")
-		sb.WriteString(fmt.Sprintf("%s\n\n", t("chain_copy_intro")))
-		// Which copy wins, said where a guardian meets the second copy.
-		//
-		// The chain copy cannot be rewritten, so an owner who revises their
-		// instructions leaves an older copy on the chain for good. Decided
-		// 2026-09-23: the bundle wins, and the bundle carries a date, so the
-		// heir has something to check rather than a rule to remember.
-		sb.WriteString(fmt.Sprintf("%s\n\n", t("chain_copy_may_be_older")))
-		sb.WriteString(data.ChainPayload + "\n\n")
-		sb.WriteString(fmt.Sprintf("%s ", t("chain_copy_txid")))
-		if data.ChainTxid != "" {
-			sb.WriteString(data.ChainTxid + "\n\n")
-		} else {
-			sb.WriteString("________________________________________________________________\n")
-			sb.WriteString(fmt.Sprintf("%s\n\n", t("chain_copy_txid_blank")))
-		}
-	}
+	// Who else holds a piece. The bundle cannot say, so it says where to look.
+	sb.WriteString("--------------------------------------------------------------------------------\n")
+	sb.WriteString(fmt.Sprintf("%s\n", t("who_else_title")))
+	sb.WriteString("--------------------------------------------------------------------------------\n")
+	sb.WriteString(fmt.Sprintf("%s\n\n", t("who_else")))
 
 	// Sharing your share (what to do when someone asks)
 	sb.WriteString("--------------------------------------------------------------------------------\n")
 	sb.WriteString(fmt.Sprintf("%s\n", t("sharing_title")))
 	sb.WriteString("--------------------------------------------------------------------------------\n")
 	sb.WriteString(fmt.Sprintf("%s\n\n", t("sharing_verify")))
+	// A guardian used to be able to ring another guardian to check. They know
+	// nobody now, so the estate papers are the credential instead.
+	sb.WriteString(fmt.Sprintf("%s\n\n", t("sharing_verify_estate")))
 	sb.WriteString(fmt.Sprintf("  - %s\n", t("sharing_easiest")))
 	sb.WriteString(fmt.Sprintf("  - %s\n", t("sharing_readme_only")))
 	sb.WriteString(fmt.Sprintf("  - %s\n", t("sharing_words_phone")))
@@ -185,26 +138,15 @@ func GenerateReadme(data ReadmeData) string {
 	if data.OwnerKeyPresent {
 		sb.WriteString(fmt.Sprintf("%s\n\n", t("owner_note")))
 	}
-	if data.Anonymous {
-		sb.WriteString(fmt.Sprintf("%s\n", t("recover_anon_step3")))
-		sb.WriteString(fmt.Sprintf("   %s\n", t("recover_anon_step3_drag")))
-		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_anon_step3_paste")))
-		if data.Threshold > 0 {
-			sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_anon_step4_auto", data.Threshold)))
-		}
-		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_anon_step5")))
-	} else {
-		sb.WriteString(fmt.Sprintf("%s\n", t("recover_step3_contact")))
-		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step3_ask")))
-		sb.WriteString(fmt.Sprintf("%s\n", t("recover_step4")))
-		sb.WriteString(fmt.Sprintf("   %s\n", t("recover_step4_drag")))
-		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step4_paste")))
-		sb.WriteString(fmt.Sprintf("%s\n", t("recover_step5_checkmarks")))
-		if data.Threshold > 0 {
-			sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step5_auto", data.Threshold)))
-		}
-		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_step6")))
+	// One set of steps, for every bundle. The other set told the reader to
+	// open a contact list and ask the people on it. There is no list.
+	sb.WriteString(fmt.Sprintf("%s\n", t("recover_step3")))
+	sb.WriteString(fmt.Sprintf("   %s\n", t("recover_step3_drag")))
+	sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step3_paste")))
+	if data.Threshold > 0 {
+		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_step4_auto", data.Threshold)))
 	}
+	sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_step5")))
 	if data.TlockEnabled {
 		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_offline_tlock")))
 	} else {

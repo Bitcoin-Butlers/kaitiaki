@@ -10,7 +10,6 @@ interface SharedSetup {
   tmpDir: string;
   standardProject: string;
   noEmbedProject: string;
-  anonymousProject: string;
   makerHtml: string;
   recoverHtml: string;
   docsHtml: string;
@@ -211,44 +210,6 @@ export function createTestProject(options: TestProjectOptions = {}): string {
   return projectDir;
 }
 
-// Create a sealed anonymous test project with bundles (cached within a worker)
-export function createAnonymousTestProject(): string {
-  const key = 'anonymous';
-  const cached = projectCache.get(key);
-  if (cached && fs.existsSync(cached)) {
-    return cached;
-  }
-
-  // Use pre-created project from global setup when available
-  const shared = getSharedSetup();
-  if (shared?.anonymousProject && fs.existsSync(shared.anonymousProject)) {
-    projectCache.set(key, shared.anonymousProject);
-    globalSetupPaths.add(shared.anonymousProject);
-    return shared.anonymousProject;
-  }
-
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-anon-'));
-  const projectDir = path.join(tmpDir, 'test-anon-project');
-  const bin = getRememoryBin();
-
-  // Create anonymous project with 3 shares, threshold 2
-  execFileSync(bin, [
-    'init', projectDir, '--name', 'Anonymous E2E Test', '--anonymous', '--shares', '3', '--threshold', '2',
-  ], { stdio: 'inherit' });
-
-  // Add secret content
-  const manifestDir = path.join(projectDir, 'manifest');
-  fs.writeFileSync(path.join(manifestDir, 'secret.txt'), 'Anonymous secret: correct-horse-battery-staple');
-  fs.writeFileSync(path.join(manifestDir, 'notes.txt'), 'Anonymous notes!');
-
-  // Seal and generate bundles
-  execFileSync(bin, ['seal'], { cwd: projectDir, stdio: 'inherit' });
-  execFileSync(bin, ['bundle'], { cwd: projectDir, stdio: 'inherit' });
-
-  projectCache.set(key, projectDir);
-  cachedPaths.add(projectDir);
-  return projectDir;
-}
 
 // Safe cleanup: only removes the directory if it's not a cached project
 // that other describe blocks might still need.
@@ -302,15 +263,7 @@ export function extractBundles(bundlesDir: string, friendNames: string[]): strin
   return friendNames.map(name => extractBundle(bundlesDir, name));
 }
 
-// Extract anonymous bundle by share number
-export function extractAnonymousBundle(bundlesDir: string, shareNum: number): string {
-  return extractBundle(bundlesDir, `share-${shareNum}`);
-}
 
-// Extract multiple anonymous bundles
-export function extractAnonymousBundles(bundlesDir: string, shareNums: number[]): string[] {
-  return shareNums.map(num => extractAnonymousBundle(bundlesDir, num));
-}
 
 // Load README filenames from translations (source of truth)
 function loadReadmeFilenames(): string[] {
@@ -514,24 +467,6 @@ export class RecoveryPage {
     await expect(this.page.locator('.share-item').first()).toContainText('Your piece');
   }
 
-  // Contact list assertions
-  async expectContactListVisible(): Promise<void> {
-    await expect(this.page.locator('#contact-list-section')).toBeVisible();
-  }
-
-  async expectContactItem(name: string): Promise<void> {
-    await expect(this.page.locator('.contact-item').filter({ hasText: name })).toBeVisible();
-  }
-
-  async expectContactCollected(name: string): Promise<void> {
-    const contact = this.page.locator('.contact-item').filter({ hasText: name });
-    await expect(contact).toHaveClass(/collected/);
-  }
-
-  async expectContactNotCollected(name: string): Promise<void> {
-    const contact = this.page.locator('.contact-item').filter({ hasText: name });
-    await expect(contact).not.toHaveClass(/collected/);
-  }
 
   // Steps collapse assertions
   async expectStepsVisible(): Promise<void> {
@@ -716,66 +651,6 @@ export class CreationPage {
     this.page.on('dialog', dialog => dialog[action]());
   }
 
-  // Anonymous mode methods
-  async selectAnonymousMode(): Promise<void> {
-    await this.page.locator('.mode-tab[data-mode="anonymous"]').click();
-  }
-
-  async selectNamedMode(): Promise<void> {
-    await this.page.locator('.mode-tab[data-mode="named"]').click();
-  }
-
-  async toggleAnonymousMode(): Promise<void> {
-    const anonTab = this.page.locator('.mode-tab[data-mode="anonymous"]');
-    const isActive = await anonTab.evaluate(el => el.classList.contains('active'));
-    if (isActive) {
-      await this.page.locator('.mode-tab[data-mode="named"]').click();
-    } else {
-      await anonTab.click();
-    }
-  }
-
-  async expectAnonymousModeActive(): Promise<void> {
-    await expect(this.page.locator('.mode-tab[data-mode="anonymous"]')).toHaveClass(/active/);
-  }
-
-  async expectNamedModeActive(): Promise<void> {
-    await expect(this.page.locator('.mode-tab[data-mode="named"]')).toHaveClass(/active/);
-  }
-
-  async expectAnonymousModeChecked(): Promise<void> {
-    await this.expectAnonymousModeActive();
-  }
-
-  async expectAnonymousModeUnchecked(): Promise<void> {
-    await this.expectNamedModeActive();
-  }
-
-  async expectFriendsListHidden(): Promise<void> {
-    await expect(this.page.locator('#friends-section')).toHaveClass(/hidden/);
-  }
-
-  async expectFriendsListVisible(): Promise<void> {
-    await expect(this.page.locator('#friends-section')).not.toHaveClass(/hidden/);
-  }
-
-  async expectSharesInputVisible(): Promise<void> {
-    await expect(this.page.locator('#shares-input')).toBeVisible();
-  }
-
-  async expectSharesInputHidden(): Promise<void> {
-    await expect(this.page.locator('#shares-input')).toHaveClass(/hidden/);
-  }
-
-  async setNumShares(count: number): Promise<void> {
-    await this.page.locator('#num-shares').fill(String(count));
-    // Trigger input event to update state
-    await this.page.locator('#num-shares').dispatchEvent('input');
-  }
-
-  async expectNumShares(count: number): Promise<void> {
-    await expect(this.page.locator('#num-shares')).toHaveValue(String(count));
-  }
 
   // Export YAML and return content
   async exportYAML(): Promise<string> {

@@ -21,7 +21,7 @@ It encrypts your files with [age](https://github.com/FiloSottile/age) into one a
 Recovery is opening one file in a browser. It needs no server, no account and no internet connection, and it works if this website is gone. The one exception is a time-locked bundle, which needs a brief connection to check the date. See [Time-Delayed Recovery](#timelock).
 
 <div class="tip">
-<strong>No guardian can open anything alone.</strong> A 3 of 5 set needs three of the five guardians together. Two of them learn nothing.
+<strong>No guardian can open anything alone.</strong> A 3 of 5 set needs three of the five guardians together. A guardian below that number holds their own piece and learns nothing else: not who the other guardians are, not how your wallet works, not where your keys are.
 </div>
 
 This site has two tools:
@@ -47,7 +47,7 @@ Bitcoin Inheritance works differently:
 
 - **Several people must agree.** No guardian can read anything alone, and no single loss ends the plan.
 - **Nothing to keep running.** Recovery is one file in one browser. There is no server to keep alive and no company that has to exist.
-- **Written for the person who opens it.** Each bundle explains what it is, what it cannot do alone, and who else to contact. The reader needs no help from you.
+- **Written for the person who opens it.** Each bundle explains what it is, what it cannot do alone, and where to look for the other guardians. The reader needs no help from you.
 
 ## Creating Bundles {#creating}
 
@@ -55,7 +55,9 @@ Three steps, all in your browser. Your files never leave your device. Open [Crea
 
 ### Step 1: Add Guardians {#step1}
 
-Add the people who hold one piece of the key each. Give each one a name and, if you want, a way to reach them. The contact details go into every bundle, so the guardians can find each other without you.
+Add the people who hold one piece of the key each. Give each one a name and, if you want, a way to reach them.
+
+**These names go nowhere but each guardian's own bundle.** A guardian sees their own name and nobody else's. That is deliberate: a bundle travels, and a list of names travels with it, so a bundle in the wrong hands would name the rest of the people to approach. Write the list of guardians on your estate insert instead, where your heirs will find it and no guardian will.
 
 <figure class="screenshot">
 <img src="screenshots/en/friends.png" alt="Adding guardians in Step 1">
@@ -74,7 +76,7 @@ Then set the **threshold**: how many guardians must come together to recover the
 Set it high enough that a small group cannot act alone. Set it low enough that recovery still works when one or two people cannot be reached. Put at least one guardian outside your own household.
 </div>
 
-If the guardians should not know each other, use [Anonymous Mode](#anonymous).
+The guardians never learn each other's names. That is the default and there is no way to turn it off.
 
 ### Step 2: Add Files {#step2}
 
@@ -179,7 +181,7 @@ Each bundle is a ZIP file with these files inside:
 <div class="bundle-contents">
 <div class="file">
 <span class="file-name">README.txt</span>
-<span class="file-desc">What this is, your piece of the key, and the list of the other guardians</span>
+<span class="file-desc">What this is, your piece of the key, and where to look for the other guardians</span>
 </div>
 <div class="file">
 <span class="file-name">README.pdf</span>
@@ -200,16 +202,34 @@ Each bundle is a ZIP file with these files inside:
 </div>
 
 <p style="margin-top: 1rem;">
-Each bundle is made for its guardian. Your piece is already inside your <code>recover.html</code>, and the contact list shows who else holds one. When the encrypted archive is 10 MB or smaller, it is inside your <code>recover.html</code>, and the bundle has no separate <code>MANIFEST.age</code>.
+Each bundle is made for its guardian. Your piece is already inside your <code>recover.html</code>. It names you and no other guardian, and it tells you to look for that list with the owner's will. When the encrypted archive is 10 MB or smaller, it is inside your <code>recover.html</code>, and the bundle has no separate <code>MANIFEST.age</code>.
 </p>
 
 <p style="margin-top: 1rem;">
-<code>README.txt</code> also carries what the owner wrote in <a href="#step3">Step 3</a>, when they wrote anything. How the wallet works, and the chain copy if they chose to put the descriptor on Bitcoin. Both sit in the open, so a guardian can read them without any other guardian.
+<strong>Nothing the owner wrote is in the bundle's plain files.</strong> What they wrote in <a href="#step3">Step 3</a> is sealed inside the encrypted archive, so it appears only after enough guardians combine their pieces:
 </p>
 
+<div class="bundle-contents">
+<div class="file">
+<span class="file-name">HOW-THE-WALLET-WORKS.txt</span>
+<span class="file-desc">The owner's own words on how the wallet opens and how to spend from it</span>
+</div>
+<div class="file">
+<span class="file-name">WHERE-THE-KEYS-ARE.txt</span>
+<span class="file-desc">The owner's own words on where each key is kept</span>
+</div>
+<div class="file">
+<span class="file-name">CHAIN-COPY.txt</span>
+<span class="file-desc">The encrypted chain copy and its transaction id. Present only when the owner published one.</span>
+</div>
+</div>
+
 <p style="margin-top: 1rem;">
-<strong>Where the keys are is not in the bundle's files.</strong> It is inside the encrypted archive, in a file called <code>WHERE-THE-KEYS-ARE.txt</code>, so it appears only after enough guardians combine their pieces. A guardian holding one bundle cannot read it, and neither can anyone the bundle is forwarded to.
+A guardian holding one bundle reads none of these, and neither does anyone the bundle is forwarded to. The <code>README.txt</code> says only whether the owner wrote anything at all.
 </p>
+</p>
+
+
 
 ### Path A: I Have the Bundle ZIP {#recovery-bundle}
 
@@ -234,8 +254,8 @@ The simplest path. You have the bundle ZIP, or the files from it.
 <div class="step-guide">
 <div class="step-number">3</div>
 <div class="step-content">
-<h4>Contact the others</h4>
-<p>The page lists the other guardians and how to reach them. Ask each of them for their <code>README.txt</code>, or for their words over the phone.</p>
+<h4>Find the others</h4>
+<p>Your bundle does not name them. The owner kept that list with their will or estate papers, and the page tells you to look there. Ask each guardian for their <code>README.txt</code>, or for their words over the phone. Show them the estate page: it names them, which is how they know the request is genuine.</p>
 </div>
 </div>
 
@@ -311,7 +331,7 @@ Each printed PDF carries your piece as a numbered list of words. Type them into 
 <div class="step-number">4</div>
 <div class="step-content">
 <h4>Collect pieces from the other guardians</h4>
-<p>Contact the other guardians and ask for their pieces. They can send their <code>README.txt</code>, read their words to you over the phone, or show you their QR code.</p>
+<p>Find them on the owner's estate page, then ask for their pieces. They can send their <code>README.txt</code>, read their words to you over the phone, or show you their QR code. No bundle names them, so that page is where the list lives.</p>
 </div>
 </div>
 
@@ -366,7 +386,7 @@ If your device has a camera, scan the QR code on the PDF to load your piece dire
 <div class="step-number">3</div>
 <div class="step-content">
 <h4>Collect pieces from the other guardians</h4>
-<p>Contact the other guardians and ask for their pieces. They can send their <code>README.txt</code>, or you can scan their QR code.</p>
+<p>Find them on the owner's estate page, then ask for their pieces. They can send their <code>README.txt</code>, or you can scan their QR code.</p>
 </div>
 </div>
 
@@ -410,8 +430,8 @@ The descriptor backup is made in [Create Bundles](maker.html), in the same step 
 1. Work through steps 1 and 2 as normal: guardians, then files.
 1. In step 3, answer the questions about your wallet, then choose **the bundles and the chain** as the destination.
 1. Paste your descriptor into the box that appears. The page reads it back: the threshold and the derivation path. Check that they match your wallet. It also shows the size and what the chain fee will cost at two fee rates.
-1. Generate the bundles. Each one carries the encrypted chain copy in its README, and the page gives you the same text to publish.
 1. Put it on the chain, in one of two ways. Pay opreturnbot.com to publish it, ticking **Private**, or send it from your own Bitcoin Core node. Both put the same text into one OP_RETURN output.
+1. **Paste the transaction id back into the page, then generate.** Publishing before you generate is the only way the id reaches your guardians. The archive is encrypted and its key is split among them the moment you generate, so an id you find afterwards can never be added to it. Write it on your estate page as well, because the copy inside the archive needs enough guardians to open.
 1. **Read it back.** Open [Read a Descriptor Backup](descriptor.html), paste the transaction id, add your keys, and watch the descriptor come back. Publishing alone proves nothing. This step proves the backup landed.
 
 If you have never seen this work, that page has a button that does the whole read-back with our own published backup. It costs nothing and moves no coins.
@@ -494,7 +514,7 @@ More than one copy, in more than one form: paper plus a card, or paper plus the 
 
 ### Keeping Bundles Current {#keeping-current}
 
-Once a year, contact every guardian. Confirm that they still have their bundle, that it still opens, and that their contact details are current.
+Once a year, contact every guardian. Confirm that they still have their bundle, that it still opens, and that their contact details are current. Correct them on your estate insert, because that page is now the only place those details live.
 
 **Any change means new bundles for everyone.** Not for the guardians affected. For all of them.
 
@@ -548,7 +568,7 @@ The same applies when the files change. New bundles mean a new key and new piece
 
 When you make bundles, the page saves your project in a `project.yml` file. It stores:
 
-- The guardians' names and contact details
+- The guardians' names and contact details. These stay on your own machine. No bundle carries them.
 - Your threshold, for example 3 of 5
 - A hash to check that a set of bundles belongs together
 - Checksums to check that a bundle is intact
@@ -560,6 +580,28 @@ With `project.yml` you can make new bundles for the same guardians, check existi
 ## Understanding the Security {#security}
 
 Bitcoin Inheritance combines well-reviewed tools. It invents no ciphers of its own. This is what that means in practice.
+
+### Who Can Read What {#who-reads-what}
+
+Three tiers, and there are no others. Every sentence elsewhere in this guide
+has to agree with this table.
+
+| Who | What they can read |
+|---|---|
+| **One guardian**, on their own | Their own piece. Their own name. The project name. That more pieces are needed, and how many. Nothing else: not another guardian's name, not how your wallet works, not where a key is. |
+| **Enough guardians together** | Everything you sealed: your files, how the wallet works, where the keys are, and the chain copy. |
+| **Anyone holding one of the wallet's own keys**, plus the transaction id | The chain copy alone, so how the wallet works and the descriptor. No guardian is involved, and no key is revealed. This is the path for an heir who cannot gather enough guardians, and the id comes from your estate page. |
+
+Two things follow that are easy to miss.
+
+A guardian cannot tell how large your holdings are, who else you trusted, or
+whether your wallet is a single key or a multisig. Forwarding their whole
+bundle to a stranger gives that stranger no more than the guardian had.
+
+The third tier depends on the transaction id. A bundle carries it only if you
+published before you generated, and even then it is sealed behind the
+threshold, which is what that tier exists to avoid needing. So the estate page
+is the copy that matters. Write it there.
 
 ### What Protects Your Data {#cryptography}
 
@@ -612,7 +654,7 @@ Bitcoin Inheritance is one of many tools that split a secret with Shamir's Secre
 
 - **It holds files.** Most Shamir tools split a password or a short text. Bitcoin Inheritance encrypts whole files and folders: your estate letter, your descriptor, your instructions.
 - **Recovery comes with the bundle.** Each guardian receives `recover.html`, a complete recovery tool that runs in any browser, offline. Nothing to install.
-- **The guardians can find each other.** Each bundle lists the other guardians and how to reach them, so recovery does not depend on you being available.
+- **No guardian learns who the others are.** A bundle names its own holder and nobody else, so two guardians cannot quietly agree to open your backup. The list of guardians goes on your estate page, where your heirs find it.
 - **Nothing to keep running.** There is no service to sign up for, no account to maintain, and nothing that has to stay online.
 - **It knows what a multisig needs.** The descriptor backup puts the wallet's descriptor on the chain, so the keys stay enough on their own.
 
@@ -622,38 +664,6 @@ Against the alternatives people reach for first:
 - A will is public, and probate is slow.
 - A password manager's emergency access needs the company to exist.
 - A multisig wallet on its own protects the keys and leaves the descriptor unprotected.
-
-## Advanced: Anonymous Mode {#anonymous}
-
-When the guardians should not know each other, use **anonymous mode**:
-
-- The page labels the guardians Share 1, Share 2, and so on
-- The page collects and stores no contact details
-- The READMEs leave out the list of other guardians
-- Bundle file names carry numbers instead of names
-
-### When to Use Anonymous Mode {#anonymous-when}
-
-- The guardians should not know each other
-- You are testing quickly and do not want to enter names
-- You have another way to coordinate a recovery
-- Privacy matters more to you than easy coordination
-
-### How to Enable {#anonymous-enable}
-
-On the [Create Bundles](maker.html) page, choose **Anonymous** at the top of the Guardians step:
-
-- A count, labelled **Number of shares**, replaces the list of guardians
-- Set how many pieces to make, and the threshold
-- The page names the bundles `bundle-share-1.zip`, `bundle-share-2.zip`, and so on
-
-### Recovery in Anonymous Mode {#anonymous-recovery}
-
-Recovery works the same way, without the contact list. Guardians see Share 1, Share 2, and so on instead of names.
-
-<div class="warning">
-<strong>Important:</strong> without a built-in contact list, the guardians need another way to reach each other when a recovery is needed. Write it down for them.
-</div>
 
 ## Advanced: Owner Key {#owner-key}
 

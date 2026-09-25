@@ -12,7 +12,6 @@ import (
 	"golang.org/x/text/unicode/norm"
 
 	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/project"
 	"github.com/eljojo/rememory/internal/translations"
 )
 
@@ -21,7 +20,6 @@ type ReadmeData struct {
 	ProjectName      string
 	Holder           string
 	Share            *core.Share
-	OtherFriends     []project.Friend
 	Threshold        int
 	Total            int
 	Version          string
@@ -29,21 +27,12 @@ type ReadmeData struct {
 	ManifestChecksum string
 	RecoverChecksum  string
 	Created          time.Time
-	Anonymous        bool
 	RecoveryURL      string // Base URL for QR code (e.g. "https://example.com/recover.html")
 	Language         string // Bundle language (e.g. "en", "es"); defaults to "en"
 	ManifestEmbedded bool   // true when manifest is embedded in recover.html
 	OwnerKeyPresent  bool   // true when the bundle contains OWNER.age
 	TlockEnabled     bool   // true when manifest uses time-lock encryption
 
-	// RecoverySteps is the owner's own method, printed in the open.
-	RecoverySteps string
-	// ChainPayload is the encrypted chain copy. On paper it goes as a QR
-	// code, because a 2-of-3 payload runs to about 876 characters and nobody
-	// types that correctly.
-	ChainPayload string
-	// ChainTxid is written in by the owner after publishing.
-	ChainTxid string
 }
 
 // Font sizes
@@ -168,11 +157,7 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	p.CellFormat(0, 11, t("warning_title"), "", 1, "C", true, 0, "")
 	p.SetFillColor(232, 242, 234)
 	p.SetFont(fontSans, "", 9)
-	if data.Anonymous {
-		p.MultiCell(0, 5, t("warning_message_shares"), "", "C", true)
-	} else {
-		p.MultiCell(0, 5, t("warning_message_friends"), "", "C", true)
-	}
+	p.MultiCell(0, 5, t("warning_message"), "", "C", true)
 	p.Ln(8)
 
 	// ── Recovery rule — prominent standalone box ──
@@ -195,77 +180,16 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 		p.SetLineWidth(0.2)
 	}
 
-	// ── Other share holders — contact card layout ──
-	if !data.Anonymous {
-		addSection(p, t("other_holders"))
-		for i, friend := range data.OtherFriends {
-			p.SetFont(fontSans, "B", bodySize)
-			if friend.Contact != "" {
-				nameStr := "   " + friend.Name + "  "
-				nameW := p.GetStringWidth(nameStr)
-				p.CellFormat(nameW, 7, nameStr, "", 0, "L", false, 0, "")
-				p.SetFont(fontSans, "", bodySize)
-				p.CellFormat(0, 7, "\u2014  "+friend.Contact, "", 1, "L", false, 0, "")
-			} else {
-				p.CellFormat(0, 7, "   "+friend.Name, "", 1, "L", false, 0, "")
-			}
-			if i < len(data.OtherFriends)-1 {
-				p.Ln(2)
-			}
-		}
-		p.Ln(8)
-	}
+	// No roster, no method, no chain copy. All three are sealed inside the
+	// encrypted archive now. A printed page is the easiest of the three
+	// surfaces to photograph and pass on, so it carries the least.
 
-	// ── The owner's own words, and the chain copy ──
-	// Both are in the open on purpose. A lone guardian may safely hold them,
-	// and an heir with one bundle and one key needs them before anyone
-	// combines anything. The people and places went into the archive instead.
-	if data.RecoverySteps != "" {
-		addSection(p, t("owner_steps_title"))
-		p.SetFont(fontSans, "I", bodySize)
-		p.MultiCell(0, 5, t("owner_steps_intro"), "", "L", false)
-		p.Ln(2)
-		p.SetFont(fontSans, "", bodySize)
-		p.MultiCell(0, 5, data.RecoverySteps, "", "L", false)
-		p.Ln(5)
-	}
-
-	if data.ChainPayload != "" {
-		// Keep the heading, the explanation, the QR code and the transaction
-		// line together. A heading stranded at the foot of one page with its
-		// QR on the next is hard to follow, and this is a document somebody
-		// reads on the worst day of their life.
-		const chainBlockMM = 105.0
-		_, _, _, chainBottom := p.GetMargins()
-		if _, pageH := p.GetPageSize(); p.GetY()+chainBlockMM+chainBottom > pageH {
-			p.AddPage()
-		}
-		addSection(p, t("chain_copy_title"))
-		p.SetFont(fontSans, "", bodySize)
-		p.MultiCell(0, 5, t("chain_copy_intro"), "", "L", false)
-		p.Ln(3)
-		// The payload goes as a QR code. Printing 876 characters of base64 and
-		// asking a person to type them back is not a recovery plan.
-		// A 60mm square will not squeeze into whatever is left at the foot of
-		// a page. fpdf does not break for an image placed at an explicit y, so
-		// ask for the room first.
-		if png, err := generateQRPNG(data.ChainPayload); err == nil {
-			opt := fpdf.ImageOptions{ImageType: "PNG", ReadDpi: true}
-			p.RegisterImageOptionsReader("chaincopy", opt, bytes.NewReader(png))
-			x := leftMargin + (contentWidth-qrSizeMM)/2
-			p.ImageOptions("chaincopy", x, p.GetY(), qrSizeMM, qrSizeMM, false, opt, 0, "")
-			p.SetY(p.GetY() + qrSizeMM + 3)
-		}
-		p.SetFont(fontSans, "", bodySize)
-		if data.ChainTxid != "" {
-			p.MultiCell(0, 5, t("chain_copy_txid")+" "+data.ChainTxid, "", "L", false)
-		} else {
-			p.MultiCell(0, 5, t("chain_copy_txid")+" ______________________________________", "", "L", false)
-			p.SetFont(fontSans, "I", bodySize)
-			p.MultiCell(0, 5, t("chain_copy_txid_blank"), "", "L", false)
-		}
-		p.Ln(5)
-	}
+	// ── Who else holds a piece ──
+	// The bundle cannot say, so it says where to look.
+	addSection(p, t("who_else_title"))
+	p.SetFont(fontSans, "", bodySize)
+	p.MultiCell(0, 5, t("who_else"), "", "L", false)
+	p.Ln(5)
 
 	// ── Sharing your share — procedure card with grey background ──
 	p.SetFillColor(245, 245, 245)
@@ -274,6 +198,7 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	p.CellFormat(0, 2, "", "", 1, "", true, 0, "")
 	p.SetFont(fontSans, "", bodySize)
 	p.MultiCell(0, 5, " "+t("sharing_verify"), "", "L", true)
+	p.MultiCell(0, 5, " "+t("sharing_verify_estate"), "", "L", true)
 	p.CellFormat(0, 3, "", "", 1, "", true, 0, "")
 	p.MultiCell(0, 5, "   \u2022 "+t("sharing_easiest"), "", "L", true)
 	p.MultiCell(0, 5, "   \u2022 "+t("sharing_readme_only"), "", "L", true)
@@ -403,31 +328,17 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 		addBody(p, t("owner_note"))
 	}
 	p.Ln(2)
-	if data.Anonymous {
-		addBody(p, t("recover_anon_step3"))
-		addBody(p, "   "+t("recover_anon_step3_drag"))
-		addBody(p, "   "+t("recover_anon_step3_paste"))
-		p.Ln(2)
-		if data.Threshold > 0 {
-			addBody(p, t("recover_anon_step4_auto", data.Threshold))
-		}
-		p.Ln(2)
-		addBody(p, t("recover_anon_step5"))
-	} else {
-		addBody(p, t("recover_step3_contact"))
-		addBody(p, "   "+t("recover_step3_ask"))
-		p.Ln(2)
-		addBody(p, t("recover_step4"))
-		addBody(p, "   "+t("recover_step4_drag"))
-		addBody(p, "   "+t("recover_step4_paste"))
-		p.Ln(2)
-		addBody(p, t("recover_step5_checkmarks"))
-		if data.Threshold > 0 {
-			addBody(p, "   "+t("recover_step5_auto", data.Threshold))
-		}
-		p.Ln(2)
-		addBody(p, t("recover_step6"))
+	// One set of steps, for every bundle. The other set told the reader to
+	// open a contact list and ask the people on it. There is no list.
+	addBody(p, t("recover_step3"))
+	addBody(p, "   "+t("recover_step3_drag"))
+	addBody(p, "   "+t("recover_step3_paste"))
+	p.Ln(2)
+	if data.Threshold > 0 {
+		addBody(p, t("recover_step4_auto", data.Threshold))
 	}
+	p.Ln(2)
+	addBody(p, t("recover_step5"))
 	p.Ln(2)
 	p.SetFont(fontSans, "I", bodySize)
 	if data.TlockEnabled {

@@ -124,19 +124,20 @@ Each friend gets a ZIP bundle containing:
 
 | File | Purpose |
 |------|---------|
-| `README.txt` | Instructions, their unique piece, contact list |
+| `README.txt` | Instructions, their unique piece, and where to look for the other guardians |
 | `README.pdf` | Same content, formatted for printing |
 | `MANIFEST.age` | Your encrypted files (only included separately when over 10 MB) |
 | `recover.html` | Recovery tool (~300 KB), runs in any browser. For smaller archives, everything is embedded — just open this file |
 
-`README.txt` also carries two things the owner writes, when they write them.
+**Nothing the owner writes appears in `README.txt`.** Every word of it is sealed INSIDE the encrypted archive, so it opens only when enough guardians combine their pieces:
 
-- **What their heirs need to know about the wallet.** How it works, how many keys it takes, which software opens it.
-- **The chain copy**, if the owner chose to put the wallet's descriptor on Bitcoin. It is encrypted, and one of the wallet's own keys opens it with no other guardian involved.
+- `HOW-THE-WALLET-WORKS.txt` — how the wallet opens, how many keys it takes, which software reads it.
+- `WHERE-THE-KEYS-ARE.txt` — where each key is kept.
+- `CHAIN-COPY.txt` — the encrypted chain copy and its transaction id, if the owner put the descriptor on Bitcoin.
 
-**Where the keys are never appears here.** That goes into `WHERE-THE-KEYS-ARE.txt` INSIDE the encrypted archive, so it opens only when enough guardians combine. A list of where somebody's keys live does not belong in a file that can be forwarded, and it never goes on the chain.
+A README is built to be forwarded: it tells its holder to send it to whoever asks for their piece. So nothing that names a person, a place or a wallet may travel in one. **That includes the other guardians.** A bundle names its own holder and nobody else, which is what stops two guardians agreeing to open the backup between themselves. The owner keeps the guardian list with their will.
 
-**A single piece reveals nothing.** But tell your friends to keep their bundle somewhere safe — it's their responsibility to you.
+**A single piece reveals nothing.** Tell each guardian to keep their bundle somewhere safe anyway. It is their responsibility to you.
 
 ![Example README PDF — page 1](docs/screenshots/demo-pdf/page-1.png)
 

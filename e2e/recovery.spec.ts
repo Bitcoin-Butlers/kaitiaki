@@ -5,11 +5,9 @@ import * as os from 'os';
 import {
   getRememoryBin,
   createTestProject,
-  createAnonymousTestProject,
   cleanupProject,
   extractBundle,
   extractBundles,
-  extractAnonymousBundles,
   extractWordsFromReadme,
   findReadmeFile,
   generateStandaloneHTML,
@@ -69,46 +67,52 @@ test.describe('Browser Recovery Tool', () => {
     await recovery.expectNeedMoreShares(1);
   });
 
-  test('shows contact list for other friends', async ({ page }) => {
+  // A guardian's own page names them and nobody else. It listed every other
+  // guardian and their email until 2026-09-24, which is the collusion path:
+  // one bundle told its holder exactly who to approach.
+  test('the recover page names no other guardian', async ({ page }) => {
     const bundleDir = extractBundle(bundlesDir, 'Alice');
     const recovery = new RecoveryPage(page, bundleDir);
 
     await recovery.open();
 
-    // Contact list should show Bob and Carol (other friends)
-    await recovery.expectContactListVisible();
-    await recovery.expectContactItem('Bob');
-    await recovery.expectContactItem('Carol');
+    await expect(page.locator('#contact-list-section')).toHaveCount(0);
+    const body = await page.locator('body').innerText();
+    for (const secret of ['Bob', 'Carol', 'bob@test.com', 'carol@test.com']) {
+      expect(body).not.toContain(secret);
+    }
   });
 
-  test('email addresses in contact list are mailto links', async ({ page }) => {
+  // The bundle names nobody, so the page has to say where the names are.
+  // Without this an heir has a count of missing pieces and nowhere to look.
+  test('the page says where to find the other guardians', async ({ page }) => {
     const bundleDir = extractBundle(bundlesDir, 'Alice');
     const recovery = new RecoveryPage(page, bundleDir);
 
     await recovery.open();
 
-    // Bob's email should be a tappable mailto: link
-    const bobContact = page.locator('.contact-item').filter({ hasText: 'Bob' }).locator('.contact-info a');
-    await expect(bobContact).toHaveAttribute('href', 'mailto:bob@test.com');
-    await expect(bobContact).toHaveText('bob@test.com');
+    const whoElse = page.locator('#who-else');
+    await expect(whoElse).toBeVisible();
+    await expect(whoElse).toContainText('will or estate papers');
   });
 
-  test('contact list updates when shares are collected', async ({ page }) => {
-    const [aliceDir, bobDir] = extractBundles(bundlesDir, ['Alice', 'Bob']);
-    const recovery = new RecoveryPage(page, aliceDir);
+  // Before anything is collected, the list holds one entry: the holder's own
+  // piece. The other guardians are not named, because the bundle does not know
+  // them. A piece that someone sends you does carry their name, which is
+  // theirs to give.
+  test('the share list names the holder and no one else', async ({ page }) => {
+    const bundleDir = extractBundle(bundlesDir, 'Alice');
+    const recovery = new RecoveryPage(page, bundleDir);
 
     await recovery.open();
+    await recovery.expectShareCount(1);
 
-    // Bob's contact should not be checked initially
-    await recovery.expectContactNotCollected('Bob');
-
-    // Add Bob's share
-    await recovery.addShares(bobDir);
-
-    // Bob's contact should now be checked
-    await recovery.expectContactCollected('Bob');
+    const list = await page.locator('#shares-list').innerText();
+    expect(list.trim().length).toBeGreaterThan(0);
+    expect(list).toContain('Alice');
+    expect(list).not.toContain('Bob');
+    expect(list).not.toContain('Carol');
   });
-
   test('paste share functionality', async ({ page }) => {
     const [aliceDir, bobDir] = extractBundles(bundlesDir, ['Alice', 'Bob']);
     const recovery = new RecoveryPage(page, aliceDir);
@@ -280,79 +284,6 @@ test.describe('Browser Recovery Tool', () => {
 
     await recovery.open();
     await recovery.expectShareCount(1);
-  });
-});
-
-test.describe('Anonymous Bundle Recovery', () => {
-  let anonProjectDir: string;
-  let anonBundlesDir: string;
-
-  test.beforeAll(async () => {
-    // Skip if rememory binary not available
-    const bin = getRememoryBin();
-    if (!fs.existsSync(bin)) {
-      test.skip();
-      return;
-    }
-
-    anonProjectDir = createAnonymousTestProject();
-    anonBundlesDir = path.join(anonProjectDir, 'output', 'bundles');
-  });
-
-  test.afterAll(async () => {
-    cleanupProject(anonProjectDir);
-  });
-
-  test('anonymous recover.html loads and shows UI without contact list', async ({ page }) => {
-    const [share1Dir] = extractAnonymousBundles(anonBundlesDir, [1]);
-    const recovery = new RecoveryPage(page, share1Dir);
-
-    await recovery.open();
-    await recovery.expectUIElements();
-    // Manifest should be pre-loaded (embedded in personalization)
-    await recovery.expectManifestLoaded();
-
-    // Share should be pre-loaded with synthetic name
-    await recovery.expectShareCount(1);
-    await recovery.expectShareHolder('Share 1');
-
-    // Contact list should NOT be visible for anonymous bundles
-    await expect(page.locator('#contact-list-section')).not.toBeVisible();
-  });
-
-  test('anonymous full recovery workflow', async ({ page }) => {
-    const [share1Dir, share2Dir] = extractAnonymousBundles(anonBundlesDir, [1, 2]);
-    const recovery = new RecoveryPage(page, share1Dir);
-
-    await recovery.open();
-
-    // Share 1 is pre-loaded, manifest is embedded
-    await recovery.expectShareCount(1);
-    await recovery.expectShareHolder('Share 1');
-    await recovery.expectManifestLoaded();
-
-    // Add Share 2 (triggers auto-recovery since threshold is 2)
-    await recovery.addShares(share2Dir);
-
-    // Recovery should complete automatically
-    await recovery.expectRecoveryComplete();
-    await recovery.expectFileCount(3); // secret.txt, notes.txt, README.md
-    await recovery.expectDownloadVisible();
-  });
-
-  test('anonymous recovery shows generic share labels', async ({ page }) => {
-    const [share1Dir, share2Dir] = extractAnonymousBundles(anonBundlesDir, [1, 2]);
-    const recovery = new RecoveryPage(page, share1Dir);
-
-    await recovery.open();
-
-    // Add Share 2
-    await recovery.addShares(share2Dir);
-
-    // Both shares should be visible with synthetic names
-    await recovery.expectShareCount(2);
-    await recovery.expectShareHolder('Share 1');
-    await recovery.expectShareHolder('Share 2');
   });
 });
 

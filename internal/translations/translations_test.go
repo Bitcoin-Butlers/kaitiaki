@@ -291,10 +291,8 @@ func TestMakerHasExpectedKeys(t *testing.T) {
 
 func TestReadmeHasExpectedKeys(t *testing.T) {
 	expectedKeys := []string{
-		"title", "for", "warning_title",
-		"warning_message_friends", "warning_message_shares",
+		"title", "for", "warning_title", "warning_message",
 		"what_is_this", "what_bundle_for", "what_one_of", "what_threshold",
-		"other_holders", "contact_label",
 		"recover_browser", "recover_step1", "recover_share_loaded",
 		"recover_step2", "recover_step2_drag", "recover_step2_click",
 		"recover_offline", "recover_cli", "recover_cli_hint", "recover_cli_usage",

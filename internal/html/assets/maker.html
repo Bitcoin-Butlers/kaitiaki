@@ -51,20 +51,9 @@
     <div class="card">
       <div class="card-header">
         <h2><span class="step-number">1</span> <span data-i18n="step1_title">Guardians</span></h2>
-        <div class="mode-tabs" id="mode-tabs">
-          <button type="button" class="mode-tab active" data-mode="named" data-i18n="mode_named">Named</button>
-          <button type="button" class="mode-tab" data-mode="anonymous" data-i18n="mode_anonymous">Anonymous</button>
-        </div>
       </div>
       <p class="hint" id="friends-hint" data-i18n="friends_hint">Each person here will hold one piece of your recovery key</p>
 
-      <!-- Anonymous mode: shares input -->
-      <div id="shares-input" class="shares-input hidden">
-        <label for="num-shares" data-i18n="num_shares_label">Number of shares:</label>
-        <input type="number" id="num-shares" min="2" max="20" value="5">
-      </div>
-
-      <!-- Normal mode: guardians list -->
       <div id="friends-section">
         <div id="friends-list"></div>
 
@@ -125,6 +114,13 @@
         <small data-i18n="descriptor_hint">Export it from your coordinator. In Sparrow: Settings, then Export, then Output Descriptor.</small>
         <p id="chain-size" class="chain-size"></p>
         <p id="chain-long" class="words-warning hidden" data-i18n="chain_long">That is long for the chain. The bundles carry the same words for nothing, so keep the chain copy to the method a stranger would need.</p>
+
+        <!-- Publish before you seal. The archive is encrypted and its key is
+             split before the transaction exists, so an id discovered later can
+             never be added to it. -->
+        <label for="chain-txid" data-i18n="txid_label">The transaction id, once you have published</label>
+        <input type="text" id="chain-txid" spellcheck="false" autocomplete="off" placeholder="4801ea9c10e14a5e...">
+        <small data-i18n="txid_hint">Publish the text above first, then paste the id here and generate. Leave it blank and the bundles still work: the id then lives only on your estate page, so write it there either way.</small>
       </div>
 
       <div class="words-group">

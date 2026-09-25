@@ -60,6 +60,12 @@ function wireEmptyWordsWarning(): void {
 /** The chain copy the owner will publish, once they have asked for one. */
 let chainCopy: { text: string; bytes: number } | null = null;
 
+/** The transaction id, if the owner published before generating. */
+function chainTxid(): string {
+  const el = document.getElementById('chain-txid') as HTMLInputElement | null;
+  return el?.value.trim() ?? '';
+}
+
 /**
  * Wire the destination choice, the descriptor field and the live size.
  *
@@ -214,7 +220,7 @@ declare const __SELFHOSTED__: boolean;
   }
 
   // State
-  const state: CreationState & { anonymous: boolean; numShares: number } = {
+  const state: CreationState = {
     projectName: generateProjectName(),
     friends: [],
     threshold: 2,
@@ -223,8 +229,6 @@ declare const __SELFHOSTED__: boolean;
     wasmReady: false,
     generating: false,
     generationComplete: false,
-    anonymous: false,
-    numShares: 5,
     tlockEnabled: false,
     tlockValue: 30,
     tlockUnit: 'd' as string,
@@ -348,10 +352,7 @@ declare const __SELFHOSTED__: boolean;
     testBanner: HTMLElement | null;
     testOffBtn: HTMLButtonElement | null;
     wasmLoadingIndicator: HTMLElement | null;
-    modeTabs: HTMLElement | null;
     friendsHint: HTMLElement | null;
-    sharesInput: HTMLElement | null;
-    numShares: HTMLInputElement | null;
     friendsSection: HTMLElement | null;
     importSection: HTMLElement | null;
     yamlImport: HTMLTextAreaElement | null;
@@ -381,10 +382,7 @@ declare const __SELFHOSTED__: boolean;
   // DOM elements
   const elements: Elements = {
     wasmLoadingIndicator: document.getElementById('wasm-loading-indicator'),
-    modeTabs: document.getElementById('mode-tabs'),
     friendsHint: document.getElementById('friends-hint'),
-    sharesInput: document.getElementById('shares-input'),
-    numShares: document.getElementById('num-shares') as HTMLInputElement | null,
     friendsSection: document.getElementById('friends-section'),
     importSection: document.getElementById('import-section'),
     yamlImport: document.getElementById('yaml-import') as HTMLTextAreaElement | null,
@@ -461,7 +459,6 @@ declare const __SELFHOSTED__: boolean;
 
   async function init(): Promise<void> {
     checkBuildAge();
-    setupAnonymousMode();
     setupImport();
     setupFriends();
     setupFiles();
@@ -478,56 +475,6 @@ declare const __SELFHOSTED__: boolean;
     updateThresholdOptions();
 
     await waitForWasm();
-  }
-
-  // ============================================
-  // Anonymous Mode
-  // ============================================
-
-  function setupAnonymousMode(): void {
-    // Tab switching between Named and Anonymous
-    elements.modeTabs?.addEventListener('click', (e) => {
-      const tab = (e.target as HTMLElement).closest('.mode-tab') as HTMLElement | null;
-      if (!tab) return;
-      const mode = tab.dataset.mode;
-      if (!mode) return;
-
-      // Update active tab
-      elements.modeTabs?.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      state.anonymous = mode === 'anonymous';
-      updateAnonymousModeUI();
-      updateThresholdOptions();
-      checkGenerateReady();
-    });
-
-    elements.numShares?.addEventListener('input', () => {
-      const value = parseInt(elements.numShares?.value || '5', 10);
-      state.numShares = Math.max(2, Math.min(20, value));
-      updateThresholdOptions();
-      checkGenerateReady();
-    });
-  }
-
-  function updateAnonymousModeUI(): void {
-    if (state.anonymous) {
-      // Hide friends list and show shares input
-      elements.friendsSection?.classList.add('hidden');
-      elements.sharesInput?.classList.remove('hidden');
-      elements.importSection?.classList.add('hidden');
-      if (elements.friendsHint) {
-        elements.friendsHint.textContent = t('anonymous_hint');
-      }
-    } else {
-      // Show friends list and hide shares input
-      elements.friendsSection?.classList.remove('hidden');
-      elements.sharesInput?.classList.add('hidden');
-      elements.importSection?.classList.remove('hidden');
-      if (elements.friendsHint) {
-        elements.friendsHint.textContent = t('friends_hint');
-      }
-    }
   }
 
   async function waitForWasm(): Promise<void> {
@@ -703,9 +650,8 @@ declare const __SELFHOSTED__: boolean;
     state.friends = [];
     friends.forEach(f => addFriend(f.name, f.contact || '', f.language || ''));
   }
-
   function updateThresholdOptions(): void {
-    const n = state.anonymous ? state.numShares : state.friends.length;
+    const n = state.friends.length;
     const current = state.threshold;
 
     if (elements.thresholdSelect) {
@@ -730,9 +676,7 @@ declare const __SELFHOSTED__: boolean;
   }
 
   function updateThresholdVisibility(): void {
-    const show = state.anonymous
-      ? state.numShares >= 2
-      : state.friends.filter(f => f.name.trim().length > 0).length >= 2;
+    const show = state.friends.filter(f => f.name.trim().length > 0).length >= 2;
     elements.thresholdSection?.classList.toggle('hidden', !show);
     elements.thresholdGuidance?.classList.toggle('hidden', !show);
   }
@@ -1070,9 +1014,7 @@ declare const __SELFHOSTED__: boolean;
 
   function checkGenerateReady(): void {
     const hasFiles = state.files.length > 0;
-    const hasFriends = state.anonymous
-      ? state.numShares >= 2
-      : state.friends.filter(f => f.name.trim().length > 0).length >= 2;
+    const hasFriends = state.friends.filter(f => f.name.trim().length > 0).length >= 2;
 
     if (elements.generateBtn) {
       elements.generateBtn.disabled = !state.wasmReady || state.generating || isOverSizeLimit();
@@ -1115,32 +1057,24 @@ declare const __SELFHOSTED__: boolean;
     const existingFilesError = elements.filesDropZone?.parentNode?.querySelector('.inline-error');
     existingFilesError?.remove();
 
-    // Friends validation (skip for anonymous mode)
-    if (state.anonymous) {
-      if (state.numShares < 2) {
-        result.valid = false;
-        if (!silent) result.errors.push(t('validation_min_friends'));
-      }
+    if (state.friends.length < 2) {
+      result.valid = false;
+      if (!silent) result.errors.push(t('validation_min_friends'));
     } else {
-      if (state.friends.length < 2) {
-        result.valid = false;
-        if (!silent) result.errors.push(t('validation_min_friends'));
-      } else {
-        state.friends.forEach((f, i) => {
-          const entry = elements.friendsList?.children[i] as HTMLElement | undefined;
-          if (!entry) return;
+      state.friends.forEach((f, i) => {
+        const entry = elements.friendsList?.children[i] as HTMLElement | undefined;
+        if (!entry) return;
 
-          if (!f.name) {
-            result.valid = false;
-            if (!silent) {
-              result.errors.push(t('validation_friend_name', i + 1));
-              const nameInput = entry.querySelector('.friend-name') as HTMLInputElement;
-              nameInput?.classList.add('input-error');
-              if (!result.firstInvalidElement) result.firstInvalidElement = nameInput;
-            }
+        if (!f.name) {
+          result.valid = false;
+          if (!silent) {
+            result.errors.push(t('validation_friend_name', i + 1));
+            const nameInput = entry.querySelector('.friend-name') as HTMLInputElement;
+            nameInput?.classList.add('input-error');
+            if (!result.firstInvalidElement) result.firstInvalidElement = nameInput;
           }
-        });
-      }
+        }
+      });
     }
 
     // Files validation. A test run brings its own sample file, so asking the
@@ -1225,24 +1159,11 @@ declare const __SELFHOSTED__: boolean;
         ? `${TEST_PREFIX} ${state.projectName}`
         : state.projectName;
 
-      // Create friends array - synthetic names for anonymous mode
-      let friends;
-      if (state.anonymous) {
-        friends = [];
-        for (let i = 0; i < state.numShares; i++) {
-          friends.push({
-            name: `Share ${i + 1}`,
-            contact: '',
-            language: ''
-          });
-        }
-      } else {
-        friends = state.friends.map(f => ({
-          name: f.name,
-          contact: f.contact || '',
-          language: f.language || ''
-        }));
-      }
+      const friends = state.friends.map(f => ({
+        name: f.name,
+        contact: f.contact || '',
+        language: f.language || ''
+      }));
 
       // Step 1: Create archive
       setProgress(10);
@@ -1251,15 +1172,20 @@ declare const __SELFHOSTED__: boolean;
 
       const ownersWords = collectOwnersWords();
 
-      // The people and places go INSIDE the archive, so they open only when
-      // enough guardians combine. Go names the file and writes its header, so
-      // a bundle made here matches one made by the command line.
-      const archiveResult = window.rememoryCreateArchive(
-        filesForWasm,
+      // Every text the owner writes goes INSIDE the archive, so it opens only
+      // when enough guardians combine. Go names each file and writes its
+      // header, so a bundle made here matches one made by the command line.
+      const archiveResult = window.rememoryCreateArchive(filesForWasm, {
         // Where the keys are is the most sensitive thing an owner writes. It
         // does not go into a bundle they are about to throw away.
-        testMode ? undefined : ownersWords.peopleAndPlaces || undefined
-      );
+        peopleAndPlaces: testMode ? undefined : ownersWords.peopleAndPlaces || undefined,
+        recoverySteps: ownersWords.recoverySteps || undefined,
+        chainPayload: chainCopy?.text || undefined,
+        // Published before generating, so the id can go inside. An owner who
+        // publishes later cannot add it: the archive is encrypted and its key
+        // is already split. Their estate page carries it instead.
+        chainTxid: chainTxid() || undefined,
+      });
       if (archiveResult.error || !archiveResult.data) {
         throw new Error(archiveResult.error || 'Failed to create archive');
       }
@@ -1302,13 +1228,15 @@ declare const __SELFHOSTED__: boolean;
         friends: friends,
         archiveData: archiveData,
         version: window.VERSION || 'dev',
-        anonymous: state.anonymous,
         defaultLanguage: currentLang || 'en',
         tlockRound: tlockRound,
         tlockUnlock: tlockUnlock,
         ownerRecipient: ownerRecipient,
-        recoverySteps: ownersWords.recoverySteps,
-        chainPayload: chainCopy?.text || '',
+        // The words themselves are already sealed in the archive above. A
+        // bundle is told only whether there were any, so its README can say
+        // so and can never print them.
+        ownerWroteNothing:
+          ownersWords.recoverySteps === '' && !chainCopy?.text,
       });
 
       if (result.error || !result.bundles) {
@@ -1445,29 +1373,20 @@ declare const __SELFHOSTED__: boolean;
     yaml += `# Import this file to quickly restore your friend list\n\n`;
     yaml += `name: ${state.projectName}\n`;
     yaml += `threshold: ${state.threshold}\n`;
-    if (state.anonymous) {
-      yaml += `anonymous: true\n`;
-    }
     if (currentLang && currentLang !== 'en') {
       yaml += `language: ${currentLang}\n`;
     }
     yaml += `friends:\n`;
 
-    if (state.anonymous) {
-      for (let i = 0; i < state.numShares; i++) {
-        yaml += `  - name: Share ${i + 1}\n`;
+    state.friends.forEach(f => {
+      yaml += `  - name: "${escapeYamlString(f.name)}"\n`;
+      if (f.contact) {
+        yaml += `    contact: "${escapeYamlString(f.contact)}"\n`;
       }
-    } else {
-      state.friends.forEach(f => {
-        yaml += `  - name: "${escapeYamlString(f.name)}"\n`;
-        if (f.contact) {
-          yaml += `    contact: "${escapeYamlString(f.contact)}"\n`;
-        }
-        if (f.language) {
-          yaml += `    language: ${f.language}\n`;
-        }
-      });
-    }
+      if (f.language) {
+        yaml += `    language: ${f.language}\n`;
+      }
+    });
 
     const blob = new Blob([yaml], { type: 'text/yaml' });
     const url = URL.createObjectURL(blob);

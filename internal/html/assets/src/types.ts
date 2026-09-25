@@ -34,16 +34,29 @@ export interface BundleFromArchiveConfig {
   friends: FriendInput[];
   archiveData: Uint8Array;
   version: string;
-  anonymous?: boolean;
   defaultLanguage?: string;
   tlockRound?: number;
   tlockUnlock?: string;
   ownerRecipient?: string;
-  /** The owner's method, in the open in both README forms. */
+  /**
+   * True when the owner left no text at all. Every text they do write is
+   * sealed into the archive before bundles are made, so a bundle is given
+   * this flag and never the words themselves.
+   */
+  ownerWroteNothing?: boolean;
+}
+
+/**
+ * Everything the owner writes. All of it is sealed inside the encrypted
+ * archive, so it reaches a reader only when enough guardians combine their
+ * pieces. Go decides the filenames and headers, so a bundle made in the
+ * browser matches one made by the command line.
+ */
+export interface SealedTexts {
+  peopleAndPlaces?: string;
   recoverySteps?: string;
-  /** The encrypted chain copy, when the owner asked for one. */
   chainPayload?: string;
-  /** Proof the chain copy landed. Usually blank when bundles are made. */
+  /** Known only when the owner published BEFORE generating. */
   chainTxid?: string;
 }
 
@@ -99,7 +112,6 @@ export interface ProjectParseResult {
 export interface PersonalizationData {
   holder: string;
   holderShare: string;
-  otherFriends: FriendInfo[];
   threshold: number;
   total: number;
   language?: string;
@@ -195,7 +207,7 @@ declare global {
     rememoryAppReady?: boolean;
 
     // Creation functions (create.wasm, used by maker.html)
-    rememoryCreateArchive(files: BundleFile[], peopleAndPlaces?: string): ArchiveCreateResult;
+    rememoryCreateArchive(files: BundleFile[], texts?: SealedTexts): ArchiveCreateResult;
     rememoryEncryptChainCopy?(config: ChainCopyConfig): ChainCopyResult;
     rememoryCreateBundlesFromArchive(config: BundleFromArchiveConfig): BundleCreateResult;
     rememoryParseProjectYAML(yaml: string): ProjectParseResult;

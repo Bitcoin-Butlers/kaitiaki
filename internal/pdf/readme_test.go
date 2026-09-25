@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/project"
 )
 
 func testReadmeData() ReadmeData {
@@ -17,7 +16,6 @@ func testReadmeData() ReadmeData {
 		ProjectName:      "Test Project",
 		Holder:           "Alice",
 		Share:            share,
-		OtherFriends:     []project.Friend{{Name: "Bob", Contact: "bob@example.com"}},
 		Threshold:        2,
 		Total:            3,
 		Version:          "v0.0.1-test",
@@ -40,19 +38,6 @@ func TestGenerateReadme(t *testing.T) {
 	// Verify it's a valid PDF (starts with %PDF-)
 	if !bytes.HasPrefix(pdfBytes, []byte("%PDF-")) {
 		t.Error("output does not start with PDF header")
-	}
-}
-
-func TestGenerateReadmeAnonymous(t *testing.T) {
-	data := testReadmeData()
-	data.Anonymous = true
-	data.OtherFriends = nil
-	pdfBytes, err := GenerateReadme(data)
-	if err != nil {
-		t.Fatalf("GenerateReadme (anonymous): %v", err)
-	}
-	if len(pdfBytes) == 0 {
-		t.Fatal("generated PDF is empty")
 	}
 }
 
@@ -119,15 +104,9 @@ func TestWordGridNotSplitAcrossPages(t *testing.T) {
 	share := core.NewShare(2, 1, 5, 3, "Alice", shareData)
 
 	data := ReadmeData{
-		ProjectName: "Test Project With a Long Name",
-		Holder:      "Alice Wonderland",
-		Share:       share,
-		OtherFriends: []project.Friend{
-			{Name: "Bob Builder", Contact: "bob@example.com"},
-			{Name: "Carol Danvers", Contact: "carol@example.com"},
-			{Name: "David Copperfield", Contact: "david@example.com"},
-			{Name: "Eve Polastri", Contact: "eve@example.com"},
-		},
+		ProjectName:      "Test Project With a Long Name",
+		Holder:           "Alice Wonderland",
+		Share:            share,
 		Threshold:        3,
 		Total:            5,
 		Version:          "v0.0.1-test",
@@ -187,10 +166,6 @@ func TestGenerateReadmeCJK(t *testing.T) {
 	data.Language = "zh-TW"
 	data.Holder = "小明"
 	data.ProjectName = "我的秘密"
-	data.OtherFriends = []project.Friend{
-		{Name: "小華", Contact: "xiaohua@example.com"},
-		{Name: "小美", Contact: "xiaomei@example.com"},
-	}
 	pdfBytes, err := GenerateReadme(data)
 	if err != nil {
 		t.Fatalf("GenerateReadme (zh-TW): %v", err)

@@ -5,10 +5,6 @@
   "subtitle": "Keep your important files within reach, even when you cannot reach them yourself.",
   "step1_title": "Guardians",
   "friends_hint": "Each person here will hold one piece of your recovery key",
-  "mode_named": "Named",
-  "mode_anonymous": "Anonymous",
-  "anonymous_hint": "They won't see each other's names",
-  "num_shares_label": "Number of pieces:",
   "add_friend": "Add Guardian",
   "threshold_label": "Threshold:",
   "threshold_option": "{0} of {1}",
@@ -134,5 +130,7 @@
   "test_nudge_btn": "Do a test run",
   "test_mode_on": "TEST RUN",
   "test_mode_explain": "These bundles are for practice. They are built from a sample file, not yours, and every one is marked TEST. Turn this off before you make the real ones.",
-  "test_mode_off": "Turn off the test run"
+  "test_mode_off": "Turn off the test run",
+  "txid_label": "The transaction id, once you have published",
+  "txid_hint": "Publish the text above first, then paste the id here and generate. Leave it blank and the bundles still work: the id then lives only on your estate page, so write it there either way."
 }

@@ -44,10 +44,16 @@ computer with the Butler directing by voice only.
    the right id, the client can still produce enough keys, and the chain
    copy still reads. It costs nothing and it takes two minutes.
 
-   **Then read the bundle's copy too, and compare.** Every bundle carries
-   the chain copy in its own README, so an heir who cannot gather enough
-   guardians still has a way in. Open one guardian's README and check the
-   text matches what came off the chain. Two reads, not one.
+   **Then read the bundle's copy too, and compare.** The drill already
+   opens the archive, so the bundle's copy is there: `CHAIN-COPY.txt`,
+   beside `HOW-THE-WALLET-WORKS.txt`. Check the text matches what came off
+   the chain. Two reads, not one.
+
+   Changed 2026-09-24. This copy used to sit in the open in every README,
+   where a lone guardian could read it. It is sealed now, which means the
+   transaction id on the estate insert is the only route for an heir who
+   cannot gather enough guardians. **Check that id reads correctly every
+   drill.** It is no longer a convenience.
 
    **If the two differ, find out WHICH part differs. They are not the same
    problem.** Corrected 2026-09-23: this step used to assume the bundles were

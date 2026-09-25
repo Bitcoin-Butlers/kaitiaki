@@ -51,14 +51,7 @@ placed. Nothing about this session is technical from the client's side.
    Say where each half goes, because the page says it and they should hear
    it too: the method travels to the chain and into every bundle, the
    people and places stay sealed inside the encrypted archive.
-2. **Seal.** `inheritance init` (k, n, guardian names) → `seal`. Show the
-   client the bundles appearing; open one METADATA.yaml and read it , 
-   this is the transparency moment.
-3. **Live test recovery, before anything is placed.** Recover with k
-   bundles on the spot (`inheritance recover` or one recover.html). The
-   client watches their own files come back. Never skip this; it is the
-   product.
-4. **Put the wallet's descriptor on the chain.** Only for a client with a
+2. **Put the wallet's descriptor on the chain, BEFORE you seal.** Only for a client with a
    multisig wallet. In Create Bundles, where you already are, set the
    destination to "Bundles and the chain" and paste their descriptor. Read
    back what the page says it is (2 of 3, and the derivation path) before
@@ -78,6 +71,17 @@ placed. Nothing about this session is technical from the client's side.
 
    Butlers pay opreturnbot.com to publish it, with its Private box ticked.
    Take the transaction id, the block height and the block hash.
+
+   **Paste the transaction id back into the maker before you generate.**
+   The field sits under the descriptor. This is the whole reason this step
+   comes before the seal: the archive is encrypted and its key is split into
+   the guardians' pieces at seal time, so an id discovered afterwards can
+   never be added to it. Publish first and the id is sealed inside
+   CHAIN-COPY.txt as well as written on the insert. Publish after and the
+   insert is the only copy there will ever be.
+
+   Reordered 2026-09-24. This step used to come after the seal, which is why
+   no bundle ever carried an id.
 
    **Then read it back, in front of them.** Open
    bitcoinbutlers.com/tools/inheritance/descriptor.html,
@@ -105,12 +109,24 @@ placed. Nothing about this session is technical from the client's side.
    Then wait. If they skip it, the placement is still complete. A client who
    was talked into a permanent public record did not consent to it.
 
-5. **Write the transaction id onto every printed README.** Each bundle's
-   README.pdf has a blank line for it, because the transaction did not
-   exist when the bundles were made. Write the same id on every copy. It
-   is proof the chain copy landed, and it is never the way in: the bundle
-   already carries the chain copy itself, so a missing or mistyped id
-   costs the heir nothing.
+3. **Seal.** `inheritance init` (k, n, guardian names) → `seal`. Show the
+   client the bundles appearing; open one METADATA.yaml and read it , 
+   this is the transparency moment.
+4. **Live test recovery, before anything is placed.** Recover with k
+   bundles on the spot (`inheritance recover` or one recover.html). The
+   client watches their own files come back. Never skip this; it is the
+   product.
+5. **Write the transaction id on the estate insert too, and check it twice.**
+   The bundles carry it only if you pasted it in at step 2. Either way the
+   insert gets it, because the copy inside the archive needs enough
+   guardians to open, and an heir who cannot reach that many has the insert
+   and nothing else. `descriptor.html` cannot search the chain for a lost
+   id. **A mistyped id costs that heir the chain copy.** Read it back to
+   the client digit by digit.
+
+   Changed 2026-09-24. The printed README used to carry the id on a blank
+   line for you to fill in. That is gone: nothing an owner writes goes in a
+   file that can be forwarded.
 
 6. **Place each bundle.** USB stick or archival microSD per guardian,
    labeled with the guardian's name and year only (never "BITCOIN").
@@ -123,7 +139,19 @@ placed. Nothing about this session is technical from the client's side.
 7. **Guardian briefing sheets.** One per guardian (template below):
    what they hold, what it cannot do alone, what to do when contacted,
    and that the recovery page inside works offline in any browser.
+
+   **Say plainly that they will not know the other guardians.** A guardian
+   who expects a contact list and finds none will think the bundle is
+   broken. Tell them it is deliberate, and that it is what stops any two
+   of them agreeing to open the client's backup between themselves. Tell
+   them how a real request will reach them: with the client's estate
+   papers, on a page that names them. Nothing else is proof.
 8. **Estate insert into the client's documents.** Where the will lives.
+   Before it goes in, say out loud what it is now the only copy of: the
+   guardian list, the transaction id, and the page a guardian checks
+   before releasing a piece. No bundle holds any of those. Lose the insert
+   and the bundles cannot find each other. The client chose this over a
+   second copy; make sure they chose it knowingly.
 9. **Book the first annual drill before leaving.**
 
 ## Rules that make it a Butlers service
@@ -132,7 +160,8 @@ placed. Nothing about this session is technical from the client's side.
   choreography, not a guardian. State it in session, print it in the
   insert.
 - The client's k and n, guardian names, and locations exist only in the
-  client's estate insert, not in Butlers records. Our file holds: date,
+  client's estate insert, not in Butlers records and, since 2026-09-24,
+  not in any bundle either. Our file holds: date,
   drill schedule, and payload CATEGORIES only.
 - If the client wants a Butler as a guardian: decline; offer to help
   them choose a professional (lawyer/accountant) instead.

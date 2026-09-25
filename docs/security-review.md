@@ -333,11 +333,18 @@ No custom cryptographic primitives are used anywhere. All cryptography is compos
 |------|----------|---------|
 | README.txt / README.pdf | Instructions, share in PEM format, share as BIP39 words, QR code | The friend's single share + scheme parameters (N, K) |
 | MANIFEST.age | age-encrypted archive (optionally with tlock inner layer) | Nothing (encrypted with 256-bit passphrase) |
-| recover.html | Self-contained recovery tool + personalization JSON | Friend names/contact info (unless anonymous mode), the friend's pre-loaded share, and optionally the embedded manifest |
+| recover.html | Self-contained recovery tool + personalization JSON | The holder's own name, their pre-loaded share, and optionally the embedded manifest |
 
-**Personalization data** embedded in `recover.html` at [`bundle.go:91-99`](https://github.com/eljojo/rememory/blob/80cebf2/internal/bundle/bundle.go#L91-L99) includes:
+**Changed 2026-09-24.** The three surfaces above used to carry the whole
+guardian roster, with names and contact details, and the README also carried
+the owner's own text and the encrypted chain copy. One bundle in the wrong
+hands therefore named every other person to approach, and a README is built to
+be forwarded. All of it now goes inside the encrypted archive, which needs the
+threshold. The structs that build a README no longer have a field that could
+hold any of it.
+
+**Personalization data** embedded in `recover.html` includes:
 - The holder's name and share (necessary for recovery)
-- Other friends' names and contact info (necessary for coordinating recovery — empty in anonymous mode)
 - Threshold and total (necessary for recovery instructions)
 - Optionally the base64-encoded MANIFEST.age if <= 10 MiB (convenience for self-contained recovery)
 
@@ -657,7 +664,7 @@ This means an attacker needs both the passphrase (from K shares) AND the drand b
 
 **Server-side HTML generation:** [`internal/html/recover.go:136-142`](https://github.com/eljojo/rememory/blob/80cebf2/internal/html/recover.go#L136-L142)
 
-Personalization data (friend names, contact info, share content) is embedded in `recover.html` via `json.Marshal()`. Go's `json.Marshal` HTML-escapes `<`, `>`, `&` by default (as `\u003c`, `\u003e`, `\u0026`), preventing `</script>` injection.
+Personalization data (the holder's own name and share, and nothing about any other guardian since 2026-09-24) is embedded in `recover.html` via `json.Marshal()`. Go's `json.Marshal` HTML-escapes `<`, `>`, `&` by default (as `\u003c`, `\u003e`, `\u0026`), preventing `</script>` injection.
 
 **CSP as defense-in-depth:** Even if an XSS vector were found, the nonce-based CSP would prevent execution of injected scripts that don't carry the correct nonce.
 

@@ -10,13 +10,6 @@ import (
 	"github.com/eljojo/rememory/internal/translations"
 )
 
-// FriendInfo holds friend contact information for the UI.
-type FriendInfo struct {
-	Name       string `json:"name"`
-	Contact    string `json:"contact,omitempty"`
-	ShareIndex int    `json:"shareIndex"` // 1-based share index for this friend
-}
-
 // MaxEmbeddedManifestSize is the maximum size of MANIFEST.age that will be
 // embedded (base64-encoded) in recover.html. Manifests at or below this size
 // are included so recovery can work without the separate MANIFEST.age file.
@@ -24,15 +17,14 @@ const MaxEmbeddedManifestSize = 10 << 20 // 10 MiB
 
 // PersonalizationData holds the data to personalize recover.html for a specific friend.
 type PersonalizationData struct {
-	Holder       string       `json:"holder"`                 // This friend's name
-	HolderShare  string       `json:"holderShare"`            // This friend's encoded share
-	OtherFriends []FriendInfo `json:"otherFriends"`           // List of other friends
-	Threshold    int          `json:"threshold"`              // Required shares (K)
-	Total        int          `json:"total"`                  // Total shares (N)
-	Language     string       `json:"language,omitempty"`     // Default UI language for this friend
-	ManifestB64  string       `json:"manifestB64,omitempty"`  // Base64-encoded MANIFEST.age (when <= MaxEmbeddedManifestSize)
-	OwnerB64     string       `json:"ownerB64,omitempty"`     // Base64-encoded OWNER.age (always small)
-	TlockEnabled bool         `json:"tlockEnabled,omitempty"` // Signals tlock-js should be included
+	Holder       string `json:"holder"`                 // This friend's name
+	HolderShare  string `json:"holderShare"`            // This friend's encoded share
+	Threshold    int    `json:"threshold"`              // Required shares (K)
+	Total        int    `json:"total"`                  // Total shares (N)
+	Language     string `json:"language,omitempty"`     // Default UI language for this friend
+	ManifestB64  string `json:"manifestB64,omitempty"`  // Base64-encoded MANIFEST.age (when <= MaxEmbeddedManifestSize)
+	OwnerB64     string `json:"ownerB64,omitempty"`     // Base64-encoded OWNER.age (always small)
+	TlockEnabled bool   `json:"tlockEnabled,omitempty"` // Signals tlock-js should be included
 }
 
 // tlockWaitingHTML is the time-lock waiting UI injected into recover.html.

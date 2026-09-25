@@ -2,6 +2,51 @@
 
 ## Unreleased
 
+- Sealing no longer writes the owner's own words into their project folder.
+  They are built in memory and handed straight to the archive. Before this, an
+  owner who edited `manifest/HOW-THE-WALLET-WORKS.txt` by hand lost the edit on
+  the next `seal`, and their words sat in plaintext on disk afterwards.
+
+- The guide, the README, the CLI guide, the security review and the three
+  service runbooks now describe the tool as it is. Twenty places said a bundle
+  lists the other guardians, that the owner's words sit in the open, or that
+  the chain copy rides in every README. A new section, **Who Can Read What**,
+  states the three tiers of access in one table, so there is one place to check
+  a claim against.
+- **Publish the chain copy before you generate, and paste its transaction id
+  into the page.** A new field sits under the descriptor. This is the only way
+  the id reaches your guardians: the archive is encrypted and its key split
+  among them the moment you generate, so an id found afterwards can never be
+  added. Write it on your estate page as well. The guide and the placement
+  runbook used to say a missing id cost an heir nothing, because the bundles
+  carried the chain copy in the open. They no longer do.
+- The guide's screenshots are regenerated. They showed the Named and Anonymous
+  tabs, and a contact list that no longer exists.
+
+- Anonymous mode is gone. It existed so an owner could keep guardians from
+  seeing each other's names, and every bundle now does that by default. What
+  was left of it was a second way to do the same thing, with its own tab, its
+  own share-count field, its own CLI flags and its own recovery instructions.
+  Guardians are named in the maker, and their names go nowhere but their own
+  bundle. `inheritance init` loses `--anonymous` and `--shares`.
+
+- A guardian's bundle no longer tells them who the other guardians are. The
+  `README.txt`, the `README.pdf` and the personalised `recover.html` listed
+  every other guardian by name and email, so one bundle in the wrong hands
+  named the rest of the people to approach. All three surfaces now name their
+  own holder and nobody else. Who holds a piece belongs in the owner's will or
+  their estate insert, where estate practice already keeps it.
+- Everything the owner writes is now sealed inside the encrypted archive, so it
+  opens only when enough guardians combine their pieces. Their method for
+  spending and the encrypted chain copy used to sit in the open beside the
+  roster, where a single guardian read both. They now arrive as
+  `HOW-THE-WALLET-WORKS.txt` and `CHAIN-COPY.txt`, next to
+  `WHERE-THE-KEYS-ARE.txt`. The published transaction id travels with the
+  chain copy, because the id alone fetches the same payload off the chain.
+  A bundle README says only whether the owner wrote anything at all.
+- The `--chain-txid` flag on `bundle` is gone. Bundles no longer carry a
+  transaction id, so there was nothing for it to set.
+
 - The descriptor page can open our own published backup. One button fills the
   transaction id and two of the three keys from the mainnet backup recorded in
   `docs/descriptor-backup-vector.md`, fetches it, and leaves the reader one

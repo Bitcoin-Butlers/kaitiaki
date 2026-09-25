@@ -20,7 +20,6 @@ This guide walks you through using Bitcoin Inheritance to create encrypted recov
 - [Project Structure](#project-structure)
 - [Commands Reference](#commands-reference)
 - [Revoking Access](#revoking-access)
-- [Advanced: Anonymous Mode](#advanced-anonymous-mode)
 - [Advanced: Multilingual Bundles](#advanced-multilingual-bundles)
 - [Self-Hosting](#self-hosting)
 
@@ -269,7 +268,7 @@ Each bundle contains:
 
 | File | Purpose |
 |------|---------|
-| `README.txt` | Instructions + their unique share + contact list for other holders |
+| `README.txt` | Instructions + their unique share + where to look for the other holders |
 | `README.pdf` | Same content, formatted for printing |
 | `MANIFEST.age` | Your encrypted secrets (same in all bundles) |
 | `recover.html` | **Personalized** browser-based recovery tool (~300 KB, self-contained) |
@@ -277,7 +276,7 @@ Each bundle contains:
 **What makes each bundle unique:**
 - The `recover.html` is personalized for each friend:
   - Their share is pre-loaded automatically
-  - Shows a contact list with other friends' info
+  - Names its own holder and no other friend
   - If the encrypted manifest is 10 MB or less, it's also embedded in `recover.html`—so friends only need to collect shares from others to complete recovery
   - For larger manifests, they'll also need to load the separate `MANIFEST.age` file
 
@@ -346,14 +345,14 @@ When your friends need to recover your secrets:
 
 1. **One friend opens `recover.html`** from their bundle in any modern browser
    - Their share is **automatically pre-loaded** (the tool is personalized!)
-   - They'll see a **contact list** showing other friends who hold shares
+   - The page names them and no one else. It tells them the list of holders is with the owner's will.
 
 2. **Load the encrypted manifest**
    - For small manifests (≤ 10 MB), this step is automatic—the manifest is embedded in `recover.html`
    - Otherwise, drag and drop `MANIFEST.age` from the bundle onto the manifest area, or click to browse
 
 3. **Coordinate with other friends**
-   - The contact list shows names, emails, and phone numbers
+   - No bundle names them. The owner's estate papers carry that list.
    - Reach out and ask them to send their `README.txt` file
 
 4. **Add shares from other friends**
@@ -425,10 +424,13 @@ You can also verify bundles you receive from others to ensure they haven't been 
 ### Rotation
 
 Consider creating a new project every 2-3 years:
-- Friends' contact info changes
 - You may want to update secrets
 - Relationships change
 - New cryptographic best practices emerge
+
+A guardian's contact details changing is NOT a reason to re-issue. No bundle
+carries them. Correct them on your estate page instead, which is where they
+live.
 
 You can copy friend configuration:
 
@@ -495,60 +497,6 @@ For detailed help on any command:
 ```bash
 rememory <command> --help
 ```
-
-## Advanced: Anonymous Mode
-
-For situations where you don't want shareholders to know each other's identities, Bitcoin Inheritance offers an **anonymous mode**. In this mode:
-
-- Friends are labeled generically as "Share 1", "Share 2", etc.
-- No contact information is collected or stored
-- READMEs skip the "Other Share Holders" section
-- Bundle filenames use numbers instead of names (`bundle-share-1.zip`, etc.)
-
-### When to Use Anonymous Mode
-
-Anonymous mode is useful when:
-- You want to distribute shares to people who shouldn't know each other
-- You're testing the system quickly without entering contact details
-- You have a separate out-of-band method for coordinating recovery
-- Privacy is a higher priority than ease of coordination
-
-### Creating an Anonymous Project
-
-```bash
-# Create an anonymous project with 5 shares, threshold 3
-rememory init my-recovery --anonymous --shares 5 --threshold 3
-```
-
-You can also run it interactively:
-
-```bash
-rememory init my-recovery --anonymous
-# Prompts: How many shares? and What threshold?
-```
-
-The resulting `project.yml` will look like:
-
-```yaml
-name: my-recovery
-threshold: 3
-anonymous: true
-friends:
-  - name: Share 1
-  - name: Share 2
-  - name: Share 3
-  - name: Share 4
-  - name: Share 5
-```
-
-### Recovery in Anonymous Mode
-
-Recovery works the same way, but:
-- The contact list section won't appear in `recover.html`
-- Share holders will need to coordinate through other means
-- Shares show generic labels like "Share 1" instead of names
-
-Since there's no built-in contact list, make sure share holders know how to reach each other (or you) when recovery is needed.
 
 ## Advanced: Multilingual Bundles
 

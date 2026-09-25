@@ -31,14 +31,12 @@
 
       <div id="verification-status" class="verification-status hidden"></div>
 
-      <!-- Contact list for other guardians (populated via JS if personalization data exists) -->
-      <div id="contact-list-section" class="contact-list-section hidden">
-        <h3 data-i18n="contact_list">Contact the others</h3>
-        <p class="hint" data-i18n="contact_list_hint">Reach out to these guardians to gather their pieces</p>
-        <div id="contact-list" class="contact-list"></div>
-      </div>
-
       <div id="threshold-info" class="threshold-info hidden"></div>
+
+      <!-- Where to find who else holds a piece. The bundle names nobody, so
+           this points at the will instead. It is shown only while pieces are
+           still missing. -->
+      <p id="who-else" class="hint hidden" data-i18n="who_else">This bundle does not say who the other guardians are. The person who set it up kept that list with their will or estate papers. Look there first.</p>
 
       <details class="owner-key-section" id="owner-section">
         <summary data-i18n="owner_summary">I am the owner and have my owner key</summary>
