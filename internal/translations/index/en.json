@@ -37,7 +37,7 @@
   "whatis_is": "It is:",
   "whatis_is_1": "A free tool that runs in your browser, <span title=\"No internet needed. Time-locked archives need a connection to verify the unlock date.\">offline*</span>",
   "whatis_is_2": "A way to split the key to your backup among people you trust",
-  "whatis_is_3": "Open source (Apache-2.0), built on Rememory",
+  "whatis_is_3": "Open source (Apache-2.0)",
   "whatis_is_4": "Self-contained. Recovery works without this website",
   "whatis_isnt": "It isn't:",
   "whatis_isnt_1": "A custodian. We never hold a bundle, a share or your files",
