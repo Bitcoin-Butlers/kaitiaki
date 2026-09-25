@@ -150,8 +150,7 @@ they cannot gather enough guardians.
 
 ## Build it
 
-There are no published binaries and no published container image. Build from
-this repository.
+Build from this repository.
 
 ```bash
 npm install && make build      # needs Go and Node
@@ -163,7 +162,6 @@ make html                      # the static pages, into dist/
 ```
 
 Self-hosting a recovery server is in [docs/selfhosted.md](docs/selfhosted.md).
-It builds the image from this source; never pull upstream's.
 
 ---
 

@@ -1,10 +1,5 @@
 # Bitcoin Inheritance, self-hosted.
 #
-# This builds the image from THIS repository. It does not pull a published
-# image, because we publish none, and upstream's ghcr.io/eljojo/rememory
-# carries none of the Bitcoin Butlers work: bundles made by it still name
-# every guardian in every README.
-#
 #   docker compose up --build
 
 services:

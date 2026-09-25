@@ -30,10 +30,7 @@ Run Bitcoin Inheritance as a web app on your own server — create bundles, stor
 
 ### Docker
 
-**There is no published image, and you should not pull one.** Upstream's
-`ghcr.io/eljojo/rememory` is a different build: bundles made by it still name
-every guardian in every README, with their contact details. Build from this
-repository instead.
+Build the image from this repository:
 
 ```bash
 docker build -t inheritance:local .
@@ -76,8 +73,7 @@ The final image carries the binary and a CA bundle, nothing else. Data lives in 
 
 ### Without Docker
 
-Build the binary, then run it. There are no published binaries either, so
-this is the only way to get one:
+Build the binary, then run it:
 
 ```bash
 npm install

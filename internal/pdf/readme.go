@@ -44,17 +44,25 @@ const (
 	smallMono   = 7.0
 )
 
-// bundleColors are soft, distinguishable colors used to give each friend's
-// printed PDF a unique visual identity. Indexed by (share.Index - 1) % len.
+// bundleColors give each guardian's printed page its own band, so a stack of
+// them can be told apart at a glance. Indexed by (share.Index - 1) % len.
+//
+// The Bitcoin Butlers warm family, deepened for ink. The web palette's gold
+// (#FBDC7B) is too light to read as a band on white paper, so these are the
+// same hues at print weight.
+//
+// This document stays light. It is made to be printed: it carries a QR code
+// to scan off paper and tells the holder they can post it as a letter. A dark
+// page prints as a black page.
 var bundleColors = [][3]int{
-	{122, 143, 166}, // dusty blue
-	{85, 115, 90},   // sage
-	{166, 130, 100}, // warm tan
-	{140, 110, 140}, // muted plum
-	{110, 145, 140}, // teal
-	{180, 140, 100}, // amber
-	{120, 130, 160}, // slate
-	{155, 120, 120}, // dusty rose
+	{201, 154, 51},  // gold
+	{176, 122, 44},  // bronze
+	{209, 128, 47},  // amber
+	{184, 146, 86},  // sand
+	{150, 98, 40},   // copper
+	{198, 170, 110}, // pale gold
+	{155, 110, 70},  // warm tan
+	{132, 96, 58},   // dark bronze
 }
 
 // QR code size in mm on the PDF page.
@@ -151,11 +159,11 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	p.Ln(5)
 
 	// ── Warning stamp — soft, centered, calm ──
-	p.SetFillColor(232, 239, 234)
+	p.SetFillColor(250, 243, 224)
 	p.SetTextColor(46, 42, 38)
 	p.SetFont(fontSans, "B", headingSize)
 	p.CellFormat(0, 11, t("warning_title"), "", 1, "C", true, 0, "")
-	p.SetFillColor(232, 242, 234)
+	p.SetFillColor(252, 247, 233)
 	p.SetFont(fontSans, "", 9)
 	p.MultiCell(0, 5, t("warning_message"), "", "C", true)
 	p.Ln(8)
@@ -163,8 +171,8 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	// ── Recovery rule — prominent standalone box ──
 	// Skipped in hide-quorum mode: the box only states k of N.
 	if data.Threshold > 0 {
-		p.SetFillColor(242, 242, 248)
-		p.SetDrawColor(140, 140, 160)
+		p.SetFillColor(253, 248, 235)
+		p.SetDrawColor(201, 154, 51)
 		p.SetLineWidth(0.5)
 		ruleBoxY := p.GetY()
 		ruleBoxH := 20.0

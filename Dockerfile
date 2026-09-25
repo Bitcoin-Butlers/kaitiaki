@@ -1,6 +1,4 @@
-# Build from source. We publish no image, and we never pull upstream's:
-# ghcr.io/eljojo/rememory carries none of the Bitcoin Butlers work, so a
-# bundle made by it still names every guardian in every README.
+# Bitcoin Inheritance, built from this repository.
 #
 # The build needs Node as well as Go: the pages are TypeScript compiled by
 # esbuild, and the maker's create.wasm is Go compiled for js/wasm.
