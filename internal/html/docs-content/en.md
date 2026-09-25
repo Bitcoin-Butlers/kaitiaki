@@ -1,7 +1,7 @@
 ---
 title: "Bitcoin Inheritance Guide"
 subtitle: "How to make bundles, place them with guardians, and recover"
-cli_guide_note: 'There is also a <a href="{{GITHUB_REPO}}/blob/main/docs/guide.md">guide for the command line</a>.'
+cli_guide_note: ''
 nav_home: "Inheritance"
 nav_home_link: "Home"
 nav_create: "Create Bundles"
@@ -745,8 +745,6 @@ For the details, see the [drand timelock encryption documentation](https://docs.
 The same tool exists for the command line, for people who prefer a terminal or want to script it. The binary is called `inheritance`, and you build it from the [source repository]({{GITHUB_REPO}}) with Go. There are no published binaries yet.
 
 The main commands are `init`, `seal`, `bundle`, `recover`, `verify` and `status`. Run `inheritance --help` for the full list. They make the same bundles as the browser, with two differences. The command line has no cap on the time lock, and it cannot set an owner key.
-
-<a href="{{GITHUB_REPO}}/blob/main/docs/guide.md" class="btn btn-secondary">Read the guide for the command line</a>
 
 ## Self-Hosting {#selfhosted}
 

@@ -101,7 +101,9 @@ docker run -d \
 nix run github:eljojo/rememory
 ```
 
-See the **[CLI User Guide](docs/guide.md)** or the **[Self-Hosted Guide](docs/selfhosted.md)** for complete documentation.
+See the **[Self-Hosted Guide](docs/selfhosted.md)**. The command line has no guide of
+its own: it is built from source and `inheritance --help` lists its commands. The
+browser is the documented path, and its guide is the one the tool links to.
 
 ---
 

@@ -38,9 +38,16 @@ placed. Nothing about this session is technical from the client's side.
 
 ## The session
 
-1. **Assemble the payload together.** Client drags files into
-   manifest/. Read the manifest back aloud, what is here, what is
-   deliberately not (no seeds).
+1. **Assemble the payload together.** The whole session runs in Create
+   Bundles (`maker.html`) on the CLIENT's machine. The client drags their
+   files into step 2 of the page. Read the list back aloud, what is here,
+   what is deliberately not (no seeds).
+
+   Decided 2026-09-24: the browser makes the bundles, always. The command
+   line makes the same bundles and is there for whoever wants it, but a
+   placement does not mix the two. A session that starts in the page and
+   seals on the command line cannot carry the transaction id, because the
+   page is where it is entered.
 
    **Then ask them what their heirs need to know.** The maker asks this in
    its own step: the method in one group, the people and places in another.
@@ -49,8 +56,9 @@ placed. Nothing about this session is technical from the client's side.
    reason they are in the room.
 
    Say where each half goes, because the page says it and they should hear
-   it too: the method travels to the chain and into every bundle, the
-   people and places stay sealed inside the encrypted archive.
+   it too: both halves are sealed inside the encrypted archive and open
+   only when enough guardians come together. The method may ALSO go on the
+   chain if they ask for it. The people and places never do.
 2. **Put the wallet's descriptor on the chain, BEFORE you seal.** Only for a client with a
    multisig wallet. In Create Bundles, where you already are, set the
    destination to "Bundles and the chain" and paste their descriptor. Read
@@ -109,12 +117,18 @@ placed. Nothing about this session is technical from the client's side.
    Then wait. If they skip it, the placement is still complete. A client who
    was talked into a permanent public record did not consent to it.
 
-3. **Seal.** `inheritance init` (k, n, guardian names) → `seal`. Show the
-   client the bundles appearing; open one METADATA.yaml and read it , 
-   this is the transparency moment.
-4. **Live test recovery, before anything is placed.** Recover with k
-   bundles on the spot (`inheritance recover` or one recover.html). The
-   client watches their own files come back. Never skip this; it is the
+3. **Generate.** Press Generate in Create Bundles. Show the client the
+   bundles appearing, then open one bundle's `README.txt` and read it
+   aloud. This is the transparency moment, and it does more work than it
+   used to: it is the page their guardian will actually read, so the
+   client hears exactly what that person can and cannot see. Point at
+   what is NOT there, by name. No other guardian. Nothing the client
+   wrote. Those are sealed.
+4. **Live test recovery, before anything is placed.** Open one bundle's
+   `recover.html` and add k bundles on the spot. The client watches their
+   own files come back, and sees the sealed files arrive with them:
+   `HOW-THE-WALLET-WORKS.txt`, `WHERE-THE-KEYS-ARE.txt`, and
+   `CHAIN-COPY.txt` if they published one. Never skip this; it is the
    product.
 5. **Write the transaction id on the estate insert too, and check it twice.**
    The bundles carry it only if you pasted it in at step 2. Either way the
