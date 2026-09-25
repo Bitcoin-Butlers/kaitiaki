@@ -94,7 +94,7 @@
   "words_intro": "Write these in your own words. Your guardians and your heirs read them, never us.",
   "words_method_group": "Recovery steps",
   "words_method_dest": "goes on the chain and in the bundles",
-  "words_method_warn": "This text is public and permanent once you publish it on the chain. Any ONE of your keys opens it, now or in twenty years. Write the method, not the people.",
+  "words_method_warn": "If you also put it on the chain it becomes public and permanent. Any ONE of your keys opens that copy, now or in twenty years. Write the method, not the people.",
   "words_wallet_label": "What kind of wallet is this",
   "words_wallet_eg": "A 2 of 3. Any two of the three keys can spend.",
   "words_opens_label": "What opens it",
@@ -132,5 +132,6 @@
   "test_mode_explain": "These bundles are for practice. They are built from a sample file, not yours, and every one is marked TEST. Turn this off before you make the real ones.",
   "test_mode_off": "Turn off the test run",
   "txid_label": "The transaction id, once you have published",
-  "txid_hint": "Publish the text above first, then paste the id here and generate. Leave it blank and the bundles still work: the id then lives only on your estate page, so write it there either way."
+  "txid_hint": "Publish the text above first, then paste the id here and generate. Leave it blank and the bundles still work: the id then lives only on your estate page, so write it there either way.",
+  "words_method_note": "This stays sealed inside the encrypted archive. It appears only when enough guardians come together."
 }

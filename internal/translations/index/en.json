@@ -18,7 +18,7 @@
   "how_fallback": "<strong>Your File</strong> → <strong>Encrypt</strong> → <strong>Split key into 5 pieces</strong> → <strong>Distribute to guardians</strong><br>↓<br><strong>Any 3 guardians</strong> → <strong>Combine pieces</strong> → <strong>Unlock</strong> → <strong>File recovered</strong>",
   "bundles_title": "What each guardian gets",
   "bundles_desc": "Each guardian receives a <strong>self-contained bundle</strong>. It is a ZIP file with a recovery tool that works in <strong>any browser, offline, with no installation</strong>. If this project disappears, recovery still works.",
-  "bundles_contacts": "Every bundle includes <strong>contact details</strong> for the other guardians, so they can <strong>coordinate without you</strong>.",
+  "bundles_contacts": "No bundle names another guardian. A guardian learns who else holds a piece from the owner's will or estate papers, never from what they are holding. That is what stops any two of them <strong>agreeing to open it between themselves</strong>.",
   "trust_title": "On trust and verification",
   "trust_1": "Recovery works without this project existing. Each bundle is self-contained",
   "trust_2": "The code is open source. <a href=\"{{GITHUB_REPO}}\" target=\"_blank\">Read it on GitHub</a>",
