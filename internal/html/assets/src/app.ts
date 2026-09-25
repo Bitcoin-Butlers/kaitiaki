@@ -7,6 +7,7 @@
 // BarcodeDetector polyfill - provides QR scanning in browsers without native support
 import { registerPolyfill } from './barcode-detector';
 import { decryptDescriptor as decryptBip138Descriptor } from './crypto/bip138';
+import { SHARE_BLOCK_REGEX, COMPACT_LINE_REGEX } from './crypto/share-format';
 import { decryptDescriptor as decryptThresholdDescriptor } from './crypto/descriptor';
 registerPolyfill();
 
@@ -160,15 +161,9 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   const personalization: PersonalizationData | null =
     (typeof window.PERSONALIZATION !== 'undefined') ? window.PERSONALIZATION : null;
 
-  // Share regex to extract from README.txt content. Both spellings, because
-  // a guardian's README is not reissued when the project is renamed. This is
-  // the THIRD copy of these markers: the others are crypto/share.ts and
-  // internal/core/share.go. All three must accept both.
-  const shareRegex =
-    /-----BEGIN (?:INHERITANCE|REMEMORY) SHARE-----([\s\S]*?)-----END (?:INHERITANCE|REMEMORY) SHARE-----/;
-
-  // Compact share format: IH{version}:{index}:{total}:{threshold}:{base64url}:{check}
-  const compactShareRegex = /^(?:IH|RM)\d+:\d+:\d+:\d+:[A-Za-z0-9_-]+:[0-9a-f]{4}$/;
+  // Both generated from Go. See crypto/share-format.ts.
+  const shareRegex = SHARE_BLOCK_REGEX;
+  const compactShareRegex = COMPACT_LINE_REGEX;
 
   // ============================================
   // Error Handlers

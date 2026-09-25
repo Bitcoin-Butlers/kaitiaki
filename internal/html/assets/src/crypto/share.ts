@@ -16,15 +16,15 @@ export interface ParsedShare {
   compact?: string;
 }
 
-// PEM format markers
-// These are the on-disk share format, and they exist in Go too
-// (internal/core/share.go). Both copies must agree, and both must keep
-// reading the pre-2026-09-24 markers: a guardian's README is not reissued
-// because the project was renamed.
-const PEM_BEGIN = '-----BEGIN INHERITANCE SHARE-----';
-const PEM_END = '-----END INHERITANCE SHARE-----';
-const LEGACY_PEM_BEGIN = '-----BEGIN REMEMORY SHARE-----';
-const LEGACY_PEM_END = '-----END REMEMORY SHARE-----';
+// The format itself is generated from Go. See share-format.ts.
+import {
+  PEM_BEGIN,
+  PEM_END,
+  LEGACY_PEM_BEGIN,
+  LEGACY_PEM_END,
+  COMPACT_PREFIX,
+  COMPACT_REGEX,
+} from './share-format';
 
 /**
  * Parse a share from PEM format.
@@ -115,10 +115,7 @@ export async function parseShare(content: string): Promise<ParsedShare> {
   };
 }
 
-// Compact format: IH{version}:{index}:{total}:{threshold}:{base64url}:{check}
-// RM is the pre-2026-09-24 prefix and is still accepted, for the same
-// reason the legacy PEM markers are.
-const COMPACT_REGEX = /^(?:IH|RM)(\d+):(\d+):(\d+):(\d+):([A-Za-z0-9_-]+):([0-9a-f]{4})$/;
+
 
 /**
  * Parse a share from compact format.
@@ -164,5 +161,5 @@ export async function encodeCompact(share: ParsedShare): Promise<string> {
   const dataB64 = bytesToBase64(share.data);
   const fullHash = await hashBytes(share.data);
   const shortCheck = fullHash.slice(7, 11);
-  return `IH${share.version}:${share.index}:${share.total}:${share.threshold}:${dataB64}:${shortCheck}`;
+  return `${COMPACT_PREFIX}${share.version}:${share.index}:${share.total}:${share.threshold}:${dataB64}:${shortCheck}`;
 }
