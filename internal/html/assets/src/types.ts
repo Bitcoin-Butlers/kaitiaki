@@ -1,4 +1,4 @@
-// Kaitiaki Type Definitions
+// Bitcoin Inheritance Type Definitions
 // Shared types for recovery (native JS) and creation (WASM)
 
 // ============================================
@@ -34,11 +34,48 @@ export interface BundleFromArchiveConfig {
   friends: FriendInput[];
   archiveData: Uint8Array;
   version: string;
-  anonymous?: boolean;
   defaultLanguage?: string;
   tlockRound?: number;
   tlockUnlock?: string;
   ownerRecipient?: string;
+  /**
+   * True when the owner left no text at all. Every text they do write is
+   * sealed into the archive before bundles are made, so a bundle is given
+   * this flag and never the words themselves.
+   */
+  ownerWroteNothing?: boolean;
+}
+
+/**
+ * Everything the owner writes. All of it is sealed inside the encrypted
+ * archive, so it reaches a reader only when enough guardians combine their
+ * pieces. Go decides the filenames and headers, so a bundle made in the
+ * browser matches one made by the command line.
+ */
+export interface SealedTexts {
+  peopleAndPlaces?: string;
+  recoverySteps?: string;
+  chainPayload?: string;
+  /** Known only when the owner published BEFORE generating. */
+  chainTxid?: string;
+}
+
+/** Input for the chain copy an owner publishes. */
+export interface ChainCopyConfig {
+  descriptor: string;
+  recoverySteps?: string;
+}
+
+/** What the chain copy costs, worked out from the real payload. */
+export interface ChainCopyResult {
+  text: string;
+  bytes: number;
+  vbytes: number;
+  satAt2: number;
+  satAt10: number;
+  format: 'threshold' | 'bip138';
+  excluded: string[];
+  error: string | null;
 }
 
 // ============================================
@@ -75,7 +112,6 @@ export interface ProjectParseResult {
 export interface PersonalizationData {
   holder: string;
   holderShare: string;
-  otherFriends: FriendInfo[];
   threshold: number;
   total: number;
   language?: string;
@@ -167,16 +203,17 @@ export interface ToastOptions {
 declare global {
   interface Window {
     // WASM ready flag (used by maker.html)
-    rememoryReady: boolean;
-    rememoryAppReady?: boolean;
+    inheritanceReady: boolean;
+    inheritanceAppReady?: boolean;
 
     // Creation functions (create.wasm, used by maker.html)
-    rememoryCreateArchive(files: BundleFile[]): ArchiveCreateResult;
-    rememoryCreateBundlesFromArchive(config: BundleFromArchiveConfig): BundleCreateResult;
-    rememoryParseProjectYAML(yaml: string): ProjectParseResult;
+    inheritanceCreateArchive(files: BundleFile[], texts?: SealedTexts): ArchiveCreateResult;
+    inheritanceEncryptChainCopy?(config: ChainCopyConfig): ChainCopyResult;
+    inheritanceCreateBundlesFromArchive(config: BundleFromArchiveConfig): BundleCreateResult;
+    inheritanceParseProjectYAML(yaml: string): ProjectParseResult;
 
     // Shared utilities (exposed by shared.ts)
-    rememoryUtils: {
+    inheritanceUtils: {
       escapeHtml: (str: string | null | undefined) => string;
       formatSize: (bytes: number) => string;
       toast: ToastManager;
@@ -185,7 +222,7 @@ declare global {
     };
 
     // UI update callback
-    rememoryUpdateUI?: () => void;
+    inheritanceUpdateUI?: () => void;
 
     // Personalization data (embedded in recover.html)
     PERSONALIZATION?: PersonalizationData | null;
@@ -200,7 +237,7 @@ declare global {
     README_NAMES?: string[];
 
     // Selfhosted mode (only present in selfhosted builds, eliminated in static builds)
-    rememoryLoadManifest?: (data: Uint8Array, name?: string) => void;
+    inheritanceLoadManifest?: (data: Uint8Array, name?: string) => void;
     SELFHOSTED_CONFIG?: SelfhostedConfig | null;
 
     // Go WASM runtime (used by maker.html)

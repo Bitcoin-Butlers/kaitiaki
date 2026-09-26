@@ -315,16 +315,16 @@ func TestCompactEncodeFormat(t *testing.T) {
 	share := NewShare(1, 2, 5, 3, "Bob", []byte{0xDE, 0xAD, 0xBE, 0xEF})
 	compact := share.CompactEncode()
 
-	if !strings.HasPrefix(compact, "RM1:") {
-		t.Errorf("should start with RM1:, got %q", compact)
+	if !strings.HasPrefix(compact, "IH1:") {
+		t.Errorf("should start with IH1:, got %q", compact)
 	}
 
 	parts := strings.Split(compact, ":")
 	if len(parts) != 6 {
 		t.Fatalf("expected 6 parts, got %d: %q", len(parts), compact)
 	}
-	if parts[0] != "RM1" {
-		t.Errorf("version prefix: got %q, want RM1", parts[0])
+	if parts[0] != "IH1" {
+		t.Errorf("version prefix: got %q, want IH1", parts[0])
 	}
 	if parts[1] != "2" {
 		t.Errorf("index: got %q, want 2", parts[1])

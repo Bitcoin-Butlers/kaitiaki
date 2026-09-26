@@ -1,12 +1,12 @@
 import { test, expect } from './fixtures';
 import * as fs from 'fs';
-import { getRememoryBin, getDocsHtml } from './helpers';
+import { getInheritanceBin, getDocsHtml } from './helpers';
 
 test.describe('Documentation Page', () => {
   let docsPath: string;
 
   test.beforeAll(async () => {
-    if (!fs.existsSync(getRememoryBin())) {
+    if (!fs.existsSync(getInheritanceBin())) {
       test.skip();
       return;
     }
@@ -17,7 +17,7 @@ test.describe('Documentation Page', () => {
     await page.goto('file://' + docsPath);
 
     // Page title
-    await expect(page).toHaveTitle(/Kaitiaki Guide/);
+    await expect(page).toHaveTitle(/Bitcoin Inheritance Guide/);
 
     // TOC sidebar is visible
     const toc = page.locator('.toc');

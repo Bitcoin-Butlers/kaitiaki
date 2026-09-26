@@ -6,7 +6,6 @@ import (
 	cryptorand "crypto/rand"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -14,13 +13,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eljojo/rememory/internal/bundle"
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/crypto"
-	"github.com/eljojo/rememory/internal/html"
-	"github.com/eljojo/rememory/internal/manifest"
-	"github.com/eljojo/rememory/internal/project"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/bundle"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/crypto"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/manifest"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // TestFullWorkflow tests the complete init -> seal -> recover pipeline
@@ -495,10 +494,10 @@ func verifyBundle(t *testing.T, bundlePath string, friend project.Friend, allFri
 	}
 
 	// Verify README.txt contains the share
-	if !strings.Contains(readmeContent, "-----BEGIN REMEMORY SHARE-----") {
+	if !strings.Contains(readmeContent, core.ShareBegin) {
 		t.Error("README.txt missing share block")
 	}
-	if !strings.Contains(readmeContent, "-----END REMEMORY SHARE-----") {
+	if !strings.Contains(readmeContent, core.ShareEnd) {
 		t.Error("README.txt missing share end block")
 	}
 
@@ -522,15 +521,18 @@ func verifyBundle(t *testing.T, bundlePath string, friend project.Friend, allFri
 		t.Errorf("share verification failed: %v", err)
 	}
 
-	// Verify README contains other friends (not this one)
+	// A bundle names its own holder and nobody else. This asserted the
+	// opposite until 2026-09-24: a guardian who read one README learned every
+	// other guardian's name and email, which is the collusion path.
 	for _, f := range allFriends {
 		if f.Name == friend.Name {
-			// Should NOT contain own contact in contacts section
-			// (but will contain name in header, so just check contact)
 			continue
 		}
-		if f.Contact != "" && !strings.Contains(readmeContent, f.Contact) {
-			t.Errorf("README missing contact for %s", f.Name)
+		if strings.Contains(readmeContent, f.Name) {
+			t.Errorf("README names another guardian: %s", f.Name)
+		}
+		if f.Contact != "" && strings.Contains(readmeContent, f.Contact) {
+			t.Errorf("README carries the contact of another guardian: %s", f.Name)
 		}
 	}
 
@@ -538,7 +540,7 @@ func verifyBundle(t *testing.T, bundlePath string, friend project.Friend, allFri
 	if !strings.Contains(readmeContent, "METADATA FOOTER") {
 		t.Error("README missing metadata footer")
 	}
-	if !strings.Contains(readmeContent, "kaitiaki-version:") {
+	if !strings.Contains(readmeContent, "inheritance-version:") {
 		t.Error("README missing version in footer")
 	}
 	if !strings.Contains(readmeContent, "checksum-manifest:") {
@@ -546,7 +548,7 @@ func verifyBundle(t *testing.T, bundlePath string, friend project.Friend, allFri
 	}
 
 	// Verify recover.html contains expected elements
-	if !strings.Contains(recoverContent, "Kaitiaki") {
+	if !strings.Contains(recoverContent, "Inheritance") {
 		t.Error("recover.html missing title")
 	}
 	if !strings.Contains(recoverContent, "v1.0.0-test") {
@@ -800,258 +802,6 @@ func extractManifestFromBundle(t *testing.T, bundlePath string) []byte {
 	return data
 }
 
-// TestAnonymousBundleGeneration tests bundle generation for anonymous projects
-func TestAnonymousBundleGeneration(t *testing.T) {
-	baseDir := t.TempDir()
-	projectDir := filepath.Join(baseDir, "test-anon-project")
-
-	// Create anonymous project with 5 shares, threshold 3
-	p, err := project.NewAnonymous(projectDir, "test-anon", 3, 5)
-	if err != nil {
-		t.Fatalf("creating anonymous project: %v", err)
-	}
-
-	// Verify project is anonymous
-	if !p.Anonymous {
-		t.Fatal("project should be anonymous")
-	}
-
-	// Add secret content
-	secretContent := "Anonymous mode secret: the treasure is hidden"
-	secretFile := filepath.Join(p.ManifestPath(), "secrets.txt")
-	if err := os.WriteFile(secretFile, []byte(secretContent), 0644); err != nil {
-		t.Fatalf("writing secret: %v", err)
-	}
-
-	// Seal the project
-	var archiveBuf bytes.Buffer
-	if _, err := manifest.ArchiveZip(&archiveBuf, p.ManifestPath()); err != nil {
-		t.Fatalf("archiving: %v", err)
-	}
-
-	passphrase, err := crypto.GeneratePassphrase(crypto.DefaultPassphraseBytes)
-	if err != nil {
-		t.Fatalf("generating passphrase: %v", err)
-	}
-
-	// Create output directories
-	os.MkdirAll(p.OutputPath(), 0755)
-	os.MkdirAll(p.SharesPath(), 0755)
-
-	// Encrypt manifest
-	manifestFile, _ := os.Create(p.ManifestAgePath())
-	core.Encrypt(manifestFile, bytes.NewReader(archiveBuf.Bytes()), passphrase)
-	manifestFile.Close()
-
-	// Split passphrase and write shares
-	shares, _ := core.Split([]byte(passphrase), len(p.Friends), p.Threshold)
-	shareInfos := make([]project.ShareInfo, len(p.Friends))
-	for i, data := range shares {
-		share := core.NewShare(1, i+1, len(p.Friends), p.Threshold, p.Friends[i].Name, data)
-		sharePath := filepath.Join(p.SharesPath(), share.Filename())
-		os.WriteFile(sharePath, []byte(share.Encode()), 0644)
-		shareInfos[i] = project.ShareInfo{
-			Friend:   p.Friends[i].Name,
-			File:     share.Filename(),
-			Checksum: share.Checksum,
-		}
-	}
-
-	// Mark project as sealed
-	manifestData, _ := os.ReadFile(p.ManifestAgePath())
-	p.Sealed = &project.Sealed{
-		At:               time.Now(),
-		ManifestChecksum: core.HashBytes(manifestData),
-		VerificationHash: core.HashString(passphrase),
-		Shares:           shareInfos,
-	}
-	p.Save()
-
-	// Generate bundles
-	cfg := bundle.Config{
-		Version: "v1.0.0-test",
-	}
-	if err := bundle.GenerateAll(p, cfg); err != nil {
-		t.Fatalf("generating bundles: %v", err)
-	}
-
-	// Verify bundles were created with correct names
-	bundlesDir := filepath.Join(p.OutputPath(), "bundles")
-	for i := 1; i <= 5; i++ {
-		bundleName := fmt.Sprintf("bundle-share-%d.zip", i)
-		bundlePath := filepath.Join(bundlesDir, bundleName)
-
-		if _, err := os.Stat(bundlePath); os.IsNotExist(err) {
-			t.Errorf("bundle %s not found", bundleName)
-			continue
-		}
-
-		// Verify bundle contents
-		t.Run(bundleName, func(t *testing.T) {
-			verifyAnonymousBundle(t, bundlePath, i, 5, 3)
-		})
-	}
-}
-
-func verifyAnonymousBundle(t *testing.T, bundlePath string, shareNum, total, threshold int) {
-	t.Helper()
-
-	r, err := zip.OpenReader(bundlePath)
-	if err != nil {
-		t.Fatalf("opening bundle: %v", err)
-	}
-	defer r.Close()
-
-	var readmeContent string
-	for _, f := range r.File {
-		if translations.IsReadmeFile(f.Name, ".txt") {
-			rc, _ := f.Open()
-			data, _ := io.ReadAll(rc)
-			rc.Close()
-			readmeContent = string(data)
-			break
-		}
-	}
-
-	if readmeContent == "" {
-		t.Fatal("README file not found")
-	}
-
-	// Anonymous READMEs should NOT contain "OTHER SHARE HOLDERS" section
-	if strings.Contains(readmeContent, "OTHER SHARE HOLDERS") {
-		t.Error("anonymous README should not contain OTHER SHARE HOLDERS section")
-	}
-
-	// Should contain anonymous-specific warning text
-	if !strings.Contains(readmeContent, "combine it with the other pieces") {
-		t.Error("anonymous README should mention combining with other pieces")
-	}
-
-	// Should NOT contain "friends listed below"
-	if strings.Contains(readmeContent, "friends listed below") {
-		t.Error("anonymous README should not mention friends listed below")
-	}
-
-	// Should contain correct threshold info
-	thresholdText := fmt.Sprintf("At least %d of you must come together", threshold)
-	if !strings.Contains(readmeContent, thresholdText) {
-		t.Errorf("README should contain threshold info: %s", thresholdText)
-	}
-
-	totalText := fmt.Sprintf("one of %d guardians", total)
-	if !strings.Contains(readmeContent, totalText) {
-		t.Errorf("README should contain total info: %s", totalText)
-	}
-
-	// Parse and verify share
-	share, err := core.ParseShare([]byte(readmeContent))
-	if err != nil {
-		t.Fatalf("parsing share: %v", err)
-	}
-
-	expectedHolder := fmt.Sprintf("Share %d", shareNum)
-	if share.Holder != expectedHolder {
-		t.Errorf("holder: got %q, want %q", share.Holder, expectedHolder)
-	}
-
-	if err := share.Verify(); err != nil {
-		t.Errorf("share verification failed: %v", err)
-	}
-}
-
-// TestAnonymousBundleRecovery tests recovery from anonymous bundles
-func TestAnonymousBundleRecovery(t *testing.T) {
-	baseDir := t.TempDir()
-	projectDir := filepath.Join(baseDir, "test-anon-recovery")
-
-	// Create anonymous project
-	p, err := project.NewAnonymous(projectDir, "test-recovery", 2, 3)
-	if err != nil {
-		t.Fatalf("creating project: %v", err)
-	}
-
-	// Add secret content
-	secretContent := "The secret is: anonymous-mode-works"
-	secretFile := filepath.Join(p.ManifestPath(), "secret.txt")
-	os.WriteFile(secretFile, []byte(secretContent), 0644)
-
-	// Seal
-	var archiveBuf bytes.Buffer
-	manifest.ArchiveZip(&archiveBuf, p.ManifestPath())
-	passphrase, _ := crypto.GeneratePassphrase(crypto.DefaultPassphraseBytes)
-
-	os.MkdirAll(p.OutputPath(), 0755)
-	os.MkdirAll(p.SharesPath(), 0755)
-
-	manifestFile, _ := os.Create(p.ManifestAgePath())
-	core.Encrypt(manifestFile, bytes.NewReader(archiveBuf.Bytes()), passphrase)
-	manifestFile.Close()
-
-	shares, _ := core.Split([]byte(passphrase), len(p.Friends), p.Threshold)
-	shareInfos := make([]project.ShareInfo, len(p.Friends))
-	for i, data := range shares {
-		share := core.NewShare(1, i+1, len(p.Friends), p.Threshold, p.Friends[i].Name, data)
-		sharePath := filepath.Join(p.SharesPath(), share.Filename())
-		os.WriteFile(sharePath, []byte(share.Encode()), 0644)
-		shareInfos[i] = project.ShareInfo{
-			Friend:   p.Friends[i].Name,
-			File:     share.Filename(),
-			Checksum: share.Checksum,
-		}
-	}
-
-	manifestData, _ := os.ReadFile(p.ManifestAgePath())
-	p.Sealed = &project.Sealed{
-		At:               time.Now(),
-		ManifestChecksum: core.HashBytes(manifestData),
-		VerificationHash: core.HashString(passphrase),
-		Shares:           shareInfos,
-	}
-	p.Save()
-
-	// Generate bundles
-	cfg := bundle.Config{
-		Version: "v1.0.0",
-	}
-	bundle.GenerateAll(p, cfg)
-
-	// Recover using bundles
-	bundlesDir := filepath.Join(p.OutputPath(), "bundles")
-	bundle1 := filepath.Join(bundlesDir, "bundle-share-1.zip")
-	bundle2 := filepath.Join(bundlesDir, "bundle-share-2.zip")
-
-	share1 := extractShareFromBundle(t, bundle1)
-	share2 := extractShareFromBundle(t, bundle2)
-	bundleManifest := extractManifestFromBundle(t, bundle1)
-
-	// Combine shares
-	recoveredPass, err := core.Combine([][]byte{share1.Data, share2.Data})
-	if err != nil {
-		t.Fatalf("combining shares: %v", err)
-	}
-
-	// Decrypt
-	var decrypted bytes.Buffer
-	if err := core.Decrypt(&decrypted, bytes.NewReader(bundleManifest), string(recoveredPass)); err != nil {
-		t.Fatalf("decrypting: %v", err)
-	}
-
-	// Extract and verify
-	extractDir := t.TempDir()
-	extractResult, err := manifest.ExtractAuto(bytes.NewReader(decrypted.Bytes()), extractDir)
-	if err != nil {
-		t.Fatalf("extracting: %v", err)
-	}
-
-	recovered, err := os.ReadFile(filepath.Join(extractResult.Path, "secret.txt"))
-	if err != nil {
-		t.Fatalf("reading recovered: %v", err)
-	}
-	if string(recovered) != secretContent {
-		t.Errorf("content mismatch: got %q, want %q", recovered, secretContent)
-	}
-}
-
 // TestManifestEmbedding verifies that small manifests are embedded in recover.html
 // and that the NoEmbedManifest flag disables embedding.
 func TestManifestEmbedding(t *testing.T) {
@@ -1249,10 +999,10 @@ func TestManifestEmbedding(t *testing.T) {
 }
 
 // TestTlockFullWorkflow tests the complete seal-with-timelock and recover pipeline.
-// Gated by REMEMORY_TEST_TLOCK=1 because it requires internet access (drand network).
+// Gated by INHERITANCE_TEST_TLOCK=1 because it requires internet access (drand network).
 func TestTlockFullWorkflow(t *testing.T) {
-	if os.Getenv("REMEMORY_TEST_TLOCK") != "1" {
-		t.Skip("set REMEMORY_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
+	if os.Getenv("INHERITANCE_TEST_TLOCK") != "1" {
+		t.Skip("set INHERITANCE_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
 	}
 
 	baseDir := t.TempDir()
@@ -1386,10 +1136,10 @@ func TestTlockFullWorkflow(t *testing.T) {
 
 // TestTlockFutureRoundCannotDecrypt encrypts to a far-future drand round and
 // confirms decryption fails with ErrTooEarly.
-// Gated by REMEMORY_TEST_TLOCK=1 because it requires internet access (drand network).
+// Gated by INHERITANCE_TEST_TLOCK=1 because it requires internet access (drand network).
 func TestTlockFutureRoundCannotDecrypt(t *testing.T) {
-	if os.Getenv("REMEMORY_TEST_TLOCK") != "1" {
-		t.Skip("set REMEMORY_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
+	if os.Getenv("INHERITANCE_TEST_TLOCK") != "1" {
+		t.Skip("set INHERITANCE_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
 	}
 
 	futureRound := core.RoundForTime(time.Now().Add(365 * 24 * time.Hour))

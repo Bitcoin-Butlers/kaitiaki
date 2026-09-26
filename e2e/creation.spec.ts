@@ -1,10 +1,11 @@
 import { test, expect } from './fixtures';
 import * as fs from 'fs';
+import { execFileSync } from 'child_process';
 import * as path from 'path';
 import * as os from 'os';
 import AdmZip from 'adm-zip';
 import {
-  getRememoryBin,
+  getInheritanceBin,
   CreationPage,
   RecoveryPage,
   generateStandaloneHTML
@@ -15,15 +16,15 @@ test.describe('Browser Bundle Creation Tool', () => {
   let tmpDir: string;
 
   test.beforeAll(async () => {
-    // Skip if rememory binary not available
-    const bin = getRememoryBin();
+    // Skip if inheritance binary not available
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
     }
 
     // Generate standalone maker.html for testing
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-create-e2e-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-create-e2e-'));
     htmlPath = generateStandaloneHTML(tmpDir, 'create');
   });
 
@@ -41,7 +42,7 @@ test.describe('Browser Bundle Creation Tool', () => {
     const link = page.locator('.how-secure-intro a').first();
     await expect(link).toHaveCSS('color', 'rgb(251, 220, 123)');
 
-    // Active tabs (Named/Anonymous in step 1, Simple/Advanced in step 3) used
+    // Active tabs (Simple/Advanced in step 3) used
     // to be white text on a white pill.
     const activeTabs = page.locator('.mode-tab.active');
     const count = await activeTabs.count();
@@ -269,106 +270,6 @@ friends:
     await creation.expectFriendData(0, 'Alice', 'alice@test.com');
   });
 
-  test('anonymous mode toggle hides friends list', async ({ page }) => {
-    const creation = new CreationPage(page, htmlPath);
-
-    await creation.open();
-
-    // Anonymous mode should be off by default
-    await creation.expectAnonymousModeUnchecked();
-    await creation.expectFriendsListVisible();
-    await creation.expectSharesInputHidden();
-
-    // Enable anonymous mode
-    await creation.toggleAnonymousMode();
-
-    // Friends list should be hidden, shares input should be visible
-    await creation.expectAnonymousModeChecked();
-    await creation.expectFriendsListHidden();
-    await creation.expectSharesInputVisible();
-
-    // Disable anonymous mode
-    await creation.toggleAnonymousMode();
-
-    // Friends list should be visible again
-    await creation.expectAnonymousModeUnchecked();
-    await creation.expectFriendsListVisible();
-    await creation.expectSharesInputHidden();
-  });
-
-  test('anonymous mode threshold updates with share count', async ({ page }) => {
-    const creation = new CreationPage(page, htmlPath);
-
-    await creation.open();
-
-    // Enable anonymous mode
-    await creation.toggleAnonymousMode();
-
-    // Default 5 shares should have threshold options 2-5
-    await creation.expectNumShares(5);
-    await creation.expectThresholdOptions(['2 of 5', '3 of 5', '4 of 5', '5 of 5']);
-
-    // Change to 3 shares
-    await creation.setNumShares(3);
-    await creation.expectThresholdOptions(['2 of 3', '3 of 3']);
-
-    // Change to 7 shares
-    await creation.setNumShares(7);
-    await creation.expectThresholdOptions(['2 of 7', '3 of 7', '4 of 7', '5 of 7', '6 of 7', '7 of 7']);
-  });
-
-  test('anonymous mode full bundle creation workflow', async ({ page }, testInfo) => {
-    testInfo.setTimeout(120000);
-    const creation = new CreationPage(page, htmlPath);
-
-    await creation.open();
-
-    // Enable anonymous mode
-    await creation.toggleAnonymousMode();
-    await creation.expectSharesInputVisible();
-
-    // Set 4 shares with threshold 3
-    await creation.setNumShares(4);
-    await creation.setThreshold(3);
-
-    // Add test files
-    const testFiles = creation.createTestFiles(tmpDir, 'anon');
-    await creation.addFiles(testFiles);
-
-    // Generate bundles
-    await creation.generate();
-
-    // Should complete successfully
-    await creation.expectGenerationComplete();
-
-    // Should have 4 bundles (Share 1, Share 2, Share 3, Share 4)
-    await creation.expectBundleCount(4);
-    await creation.expectBundleFor('Share 1');
-    await creation.expectBundleFor('Share 2');
-    await creation.expectBundleFor('Share 3');
-    await creation.expectBundleFor('Share 4');
-  });
-
-  test('anonymous mode validates files required', async ({ page }) => {
-    const creation = new CreationPage(page, htmlPath);
-
-    await creation.open();
-
-    // Enable anonymous mode
-    await creation.toggleAnonymousMode();
-
-    // Don't add any files - this should fail validation
-
-    // Try to generate - should show validation error
-    await creation.generate();
-
-    // Should show validation toast for missing files
-    await expect(page.locator('.toast-warning')).toBeVisible();
-
-    // Files drop zone should be highlighted
-    await expect(page.locator('#files-drop-zone.has-error')).toBeVisible();
-  });
-
   test('YAML export escapes special characters in friend names and contact fields', async ({ page }) => {
     const creation = new CreationPage(page, htmlPath);
 
@@ -405,6 +306,202 @@ friends:
 
     // Should have successfully imported 2 friends
     await creation.expectFriendCount(2);
+  });
+
+  test('the chain copy is opt in, and the label never promises more than it does', async ({ page }) => {
+    const creation = new CreationPage(page, htmlPath);
+    await creation.open();
+
+    // Default: bundles only. The label must not claim the chain, because a
+    // page about inheritance cannot make a promise it does not keep.
+    await expect(page.locator('.words-dest-chain')).toHaveText(/bundles only/i);
+    await expect(page.locator('#chain-fields')).toBeHidden();
+
+    await page.check('input[name="destination"][value="both"]');
+    await expect(page.locator('.words-dest-chain')).toHaveText(/chain/i);
+    await expect(page.locator('#chain-fields')).toBeVisible();
+
+    // A real descriptor produces a real size, worked out from the payload
+    // rather than estimated, so the sat figure is what the client pays.
+    await page.fill('#words-wallet', 'A 2 of 3. Any two of the three keys can spend.');
+    await page.fill('#chain-descriptor',
+      'wsh(sortedmulti(2,[73c5da0a/48h/0h/0h/2h]xpub6DkFAXWQ2dHxq2vatrt9qyA3bXYU4ToWQwCHbf5XB2mSTexcHZCeKS1VZYcPoBd5X8yVcbXFHJR9R8UCVpt82VX1VhR28mCyxUFL4r6KFrf/<0;1>/*,[b8688df1/48h/0h/0h/2h]xpub6FQya7zGhR92kacYsNnjreouvnHJMpXYsUXnW6NJJAJRCKsa26TzDy4LdnGhEurr3d6y1J8PJ7EEMKQp74XTqYvmGJNogYXSKDszYHtF8mX/<0;1>/*,[28645006/48h/0h/0h/2h]xpub6DnEBNkSJKBYQmsbhS1sP9cNdtU5c9PLFGCjTJmxicxc13WB8zNNGQazabQpyFAGW5bV9tMko4uBxDxjUKL6dSAcx1tEbgEHtgSqyRsekh6/<0;1>/*))');
+
+    await expect(page.locator('#chain-size')).toContainText(/characters on the chain/i);
+    await expect(page.locator('#chain-size')).toContainText(/sat/i);
+
+    // Going back to bundles only clears it again.
+    await page.check('input[name="destination"][value="bundles"]');
+    await expect(page.locator('.words-dest-chain')).toHaveText(/bundles only/i);
+    await expect(page.locator('#chain-size')).toHaveText('');
+  });
+
+  // The id can only get into the archive if the owner publishes BEFORE
+  // sealing, because the archive is encrypted and its key split before any
+  // transaction exists. Until 2026-09-24 nothing passed it at all, so every
+  // CHAIN-COPY.txt shipped without one and no test noticed.
+  test('a transaction id pasted before generating lands inside the archive', async ({ page }, testInfo) => {
+    testInfo.setTimeout(120000);
+    const creation = new CreationPage(page, htmlPath);
+    await creation.open();
+
+    await creation.setFriend(0, 'Hannah', 'hannah@test.com');
+    await creation.setFriend(1, 'Sebastian', 'sebastian@test.com');
+    await page.check('input[name="destination"][value="both"]');
+    await page.fill('#words-wallet', 'A 2 of 3. Any two of the three keys can spend.');
+    await page.fill('#chain-descriptor',
+      'wsh(sortedmulti(2,[73c5da0a/48h/0h/0h/2h]xpub6DkFAXWQ2dHxq2vatrt9qyA3bXYU4ToWQwCHbf5XB2mSTexcHZCeKS1VZYcPoBd5X8yVcbXFHJR9R8UCVpt82VX1VhR28mCyxUFL4r6KFrf/<0;1>/*,[b8688df1/48h/0h/0h/2h]xpub6FQya7zGhR92kacYsNnjreouvnHJMpXYsUXnW6NJJAJRCKsa26TzDy4LdnGhEurr3d6y1J8PJ7EEMKQp74XTqYvmGJNogYXSKDszYHtF8mX/<0;1>/*,[28645006/48h/0h/0h/2h]xpub6DnEBNkSJKBYQmsbhS1sP9cNdtU5c9PLFGCjTJmxicxc13WB8zNNGQazabQpyFAGW5bV9tMko4uBxDxjUKL6dSAcx1tEbgEHtgSqyRsekh6/<0;1>/*))');
+
+    const txid = '4801ea9c10e14a5ea5c0e5e68bfe08fd2422005ea0a3a9631fead29ce910a4df';
+    await page.fill('#chain-txid', txid);
+
+    const testFiles = creation.createTestFiles(tmpDir, 'txid');
+    await creation.addFiles(testFiles);
+    await creation.generate();
+    await creation.expectGenerationComplete();
+
+    const dir = path.join(tmpDir, 'txid-bundles');
+    fs.mkdirSync(dir, { recursive: true });
+    const first = path.join(dir, 'a');
+    const second = path.join(dir, 'b');
+    fs.mkdirSync(first, { recursive: true });
+    fs.mkdirSync(second, { recursive: true });
+    const firstZip = path.join(dir, 'a.zip');
+    const secondZip = path.join(dir, 'b.zip');
+    fs.writeFileSync(firstZip, (await creation.downloadBundle(0))!);
+    fs.writeFileSync(secondZip, (await creation.downloadBundle(1))!);
+    new AdmZip(firstZip).extractAllTo(first, true);
+    new AdmZip(secondZip).extractAllTo(second, true);
+
+    // Not in the open, on any surface.
+    expect(new AdmZip(firstZip).readAsText('README.txt')).not.toContain(txid);
+    expect(new AdmZip(firstZip).readAsText('recover.html')).not.toContain(txid);
+
+    // But sealed, and IN the file once the guardians combine. Asserting only
+    // that CHAIN-COPY.txt exists would pass with an empty id, which is exactly
+    // the bug this test is here for.
+    const out = path.join(dir, 'recovered');
+    fs.mkdirSync(out, { recursive: true });
+    execFileSync(getInheritanceBin(), [
+      'recover',
+      path.join(first, 'README.txt'),
+      path.join(second, 'README.txt'),
+      '--manifest', path.join(first, 'recover.html'),
+    ], { cwd: out, stdio: 'pipe' });
+
+    const found = execFileSync('find', [out, '-name', 'CHAIN-COPY.txt'], { encoding: 'utf8' })
+      .trim().split('\n')[0];
+    expect(found).toBeTruthy();
+    const sealed = fs.readFileSync(found, 'utf8');
+    expect(sealed).toContain(txid);
+  });
+
+  test('warns when the owner has written nothing, and never blocks', async ({ page }) => {
+    const creation = new CreationPage(page, htmlPath);
+    await creation.open();
+
+    // Visible from the start, because nothing has been written.
+    await expect(page.locator('#empty-words-warning')).toBeVisible();
+
+    // It must never stand between the owner and the button. A gate on a free
+    // tool is satisfied by typing a full stop, and then the heir holds a
+    // bundle that passed the check and still says nothing.
+    await creation.setFriend(0, 'Hannah', 'hannah@test.com');
+    await creation.setFriend(1, 'Sebastian', 'sebastian@test.com');
+    const testFiles = creation.createTestFiles(tmpDir, 'emptywords');
+    await creation.addFiles(testFiles);
+    await expect(page.locator('#generate-btn')).toBeEnabled();
+
+    // One word anywhere clears it.
+    await page.fill('#words-wallet', 'A 2 of 3.');
+    await expect(page.locator('#empty-words-warning')).toBeHidden();
+
+    // Clearing it again brings the warning back.
+    await page.fill('#words-wallet', '');
+    await expect(page.locator('#empty-words-warning')).toBeVisible();
+  });
+
+  test("the owner's words land where they were decided to land", async ({ page }, testInfo) => {
+    // The one that must never silently regress. A README is built to be
+    // forwarded: a guardian's own copy tells them to send it to whoever asks
+    // for their piece. So nothing the owner writes may sit in one. Every word
+    // is sealed in the encrypted archive, which opens only when enough
+    // guardians combine their pieces.
+    //
+    // The method sat in the open until 2026-09-24, beside the roster. Read
+    // together they told a colluding guardian how the wallet works and who
+    // else to approach.
+    testInfo.setTimeout(120000);
+    const creation = new CreationPage(page, htmlPath);
+    await creation.open();
+
+    await creation.setFriend(0, 'Hannah', 'hannah@test.com');
+    await creation.setFriend(1, 'Sebastian', 'sebastian@test.com');
+
+    const method = 'The older Coldcard needs firmware 5.1 or it will not show the wallet.';
+    const location = 'Key 1: the safe at the Wellington house.';
+    const alsoNote = 'The safe code is my birth year backwards.';
+
+    await page.fill('#words-wallet', 'A 2 of 3. Any two of the three keys can spend.');
+    await page.fill('#words-sign', method);
+    await page.fill('#words-keys', location);
+    await page.fill('#words-call', 'Hannah. She has done this drill twice.');
+    await page.fill('.words-else', alsoNote);
+
+    const testFiles = creation.createTestFiles(tmpDir, 'ownerwords');
+    await creation.addFiles(testFiles);
+    await creation.generate();
+    await creation.expectGenerationComplete();
+
+    const data = await creation.downloadBundle(0);
+    expect(data).toBeTruthy();
+    const dir = path.join(tmpDir, 'ownerwords-bundle');
+    fs.mkdirSync(dir, { recursive: true });
+    const zipPath = path.join(dir, 'bundle.zip');
+    fs.writeFileSync(zipPath, data!);
+    const readme = new AdmZip(zipPath).readAsText('README.txt');
+
+    // Not one word of it, on any surface a lone guardian can read.
+    expect(readme).not.toContain(method);
+    expect(readme).not.toContain(location);
+    expect(readme).not.toContain(alsoNote);
+    expect(readme).not.toContain('Wellington');
+    expect(readme).not.toContain('Coldcard');
+
+    // And no other guardian is named.
+    expect(readme).not.toContain('Sebastian');
+    expect(readme).not.toContain('sebastian@test.com');
+
+    // The personalised recover page is the third surface. A fix that misses
+    // one of the three leaks everything.
+    const recoverHtml = new AdmZip(zipPath).readAsText('recover.html');
+    expect(recoverHtml).not.toContain(method);
+    expect(recoverHtml).not.toContain(location);
+    expect(recoverHtml).not.toContain('sebastian@test.com');
+
+    // And now the half that matters just as much: the words must still be
+    // THERE, sealed, not quietly dropped. A test that only checks absence
+    // passes just as well when the maker loses the owner's writing.
+    const secondData = await creation.downloadBundle(1);
+    const secondDir = path.join(dir, 'sebastian');
+    const secondZipPath = path.join(secondDir, 'bundle.zip');
+    fs.mkdirSync(secondDir, { recursive: true });
+    fs.writeFileSync(secondZipPath, secondData!);
+    new AdmZip(secondZipPath).extractAllTo(path.join(secondDir, 'x'), true);
+
+    const firstDir = path.join(dir, 'hannah');
+    fs.mkdirSync(firstDir, { recursive: true });
+    new AdmZip(zipPath).extractAllTo(firstDir, true);
+
+    const recovery = new RecoveryPage(page, firstDir);
+    await recovery.open();
+    await recovery.addShares(path.join(secondDir, 'x'));
+    await recovery.expectRecoveryComplete();
+
+    const recovered = await page.locator('.file-item').allInnerTexts();
+    const names = recovered.join('\n');
+    expect(names).toContain('HOW-THE-WALLET-WORKS.txt');
+    expect(names).toContain('WHERE-THE-KEYS-ARE.txt');
   });
 
   test('browser-created bundles can be recovered @cross-browser', async ({ page }, testInfo) => {

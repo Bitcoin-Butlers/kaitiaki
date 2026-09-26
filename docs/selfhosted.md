@@ -1,93 +1,97 @@
-# Hosting Kaitiaki
+# Hosting Bitcoin Inheritance
 
-There are two ways to host Kaitiaki for your friends: **static pages** (simplest) and a **self-hosted server** (full-featured).
+There are two ways to host Bitcoin Inheritance for your guardians: **static pages** (simplest) and a **self-hosted server** (full-featured).
 
 ## Static pages
 
 The lightest option. Generate a folder with `recover.html` and `MANIFEST.age`, then upload it anywhere that serves files — GitHub Pages, Netlify, an S3 bucket, any web server.
 
 ```bash
-rememory seal --pages
+inheritance seal --pages
 # or after sealing:
-rememory bundle --pages
+inheritance bundle --pages
 ```
 
-This creates `output/pages/` in your project. The `recover.html` page fetches `MANIFEST.age` from the same directory automatically. Friends visit the URL, add their shares, and recover. No server-side code runs — it's just static files.
+This creates `output/pages/` in your project. The `recover.html` page fetches `MANIFEST.age` from the same directory automatically. Guardians visit the URL, add their shares, and recover. No server-side code runs — it's just static files.
 
 Works well when:
-- You want to give friends a URL instead of (or alongside) a ZIP file
+- You want to give guardians a URL instead of (or alongside) a ZIP file
 - You don't need the ability to create bundles from the browser
 - You don't want to run a server
 
 Limitations:
-- Friends still need their shares (from their bundles or README.txt files)
+- Guardians still need their shares (from their bundles or README.txt files)
 - No admin interface — you manage files directly
-- No bundle creation in the browser (use the CLI or [maker.html](https://eljojo.github.io/rememory/maker.html))
+- No bundle creation in the browser (use [Create Bundles](https://www.bitcoinbutlers.com/tools/inheritance/maker.html), or the command line)
 
 ## Self-hosted server
 
-Run Kaitiaki as a web app on your own server — create bundles, store encrypted archives, and recover, all from a browser.
+Run Bitcoin Inheritance as a web app on your own server — create bundles, store encrypted archives, and recover, all from a browser.
 
 ### Docker
 
-A pre-built image is published to GitHub Container Registry on every release.
+Build the image from this repository:
 
 ```bash
+docker build -t inheritance:local .
 docker run -d \
-  --name rememory \
-  -p 8080:8080 \
-  -v rememory-data:/data \
-  ghcr.io/eljojo/rememory:latest
+  --name inheritance \
+  -p 127.0.0.1:8080:8080 \
+  -v inheritance-data:/data \
+  inheritance:local
 ```
 
-Visit `http://localhost:8080` to set up. The first page asks you to choose an admin password for deleting bundles.
+The build needs no toolchain on your machine. It installs Go and Node inside
+the image, compiles the TypeScript and the maker's WebAssembly, and ships only
+the binary in the final layer.
 
-To pin a specific version:
+Visit `http://localhost:8080` to set up. The first page asks you to choose an
+admin password for deleting bundles.
 
-```bash
-docker run -d \
-  --name rememory \
-  -p 8080:8080 \
-  -v rememory-data:/data \
-  ghcr.io/eljojo/rememory:v0.0.16
-```
+The port binds to `127.0.0.1` on purpose. Put a reverse proxy with TLS in front
+of it before you expose it to a network. See **Reverse proxy** below.
 
 **Docker Compose:**
 
 ```yaml
 services:
-  rememory:
-    image: ghcr.io/eljojo/rememory:latest
+  inheritance:
+    build: .
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
-      - rememory-data:/data
+      - inheritance-data:/data
     restart: unless-stopped
     # environment:
-    #   REMEMORY_MAX_MANIFEST_SIZE: 200MB
+    #   INHERITANCE_MAX_MANIFEST_SIZE: 200MB
 
 volumes:
-  rememory-data:
+  inheritance-data:
 ```
 
-The container is a single static binary with no dependencies. Data lives in `/data` — mount a volume there to persist across restarts.
+The final image carries the binary and a CA bundle, nothing else. Data lives in `/data` — mount a volume there to persist across restarts.
 
 ### Without Docker
 
-If you have the CLI installed:
+Build the binary, then run it:
 
 ```bash
-rememory serve
+npm install
+make build
+./inheritance serve
 ```
+
+`make build` needs Go and Node. It compiles the TypeScript, builds the maker's
+WebAssembly, then the binary.
 
 ### Options
 
 | Flag | Env var | Default | Description |
 |------|--------|---------|-------------|
-| `--port, -p` | `REMEMORY_PORT` | `8080` | Port to listen on |
-| `--host` | `REMEMORY_HOST` | `127.0.0.1` | Host to bind to |
-| `--data, -d` | `REMEMORY_DATA` | `./rememory-data` | Data directory for bundles and config |
-| `--max-manifest-size` | `REMEMORY_MAX_MANIFEST_SIZE` | `50MB` | Maximum MANIFEST.age size (e.g. `50MB`, `1GB`) |
+| `--port, -p` | `INHERITANCE_PORT` | `8080` | Port to listen on |
+| `--host` | `INHERITANCE_HOST` | `127.0.0.1` | Host to bind to |
+| `--data, -d` | `INHERITANCE_DATA` | `./inheritance-data` | Data directory for bundles and config |
+| `--max-manifest-size` | `INHERITANCE_MAX_MANIFEST_SIZE` | `50MB` | Maximum MANIFEST.age size (e.g. `50MB`, `1GB`) |
 
 Flags take precedence over environment variables.
 
@@ -99,7 +103,7 @@ Put the server behind a reverse proxy with TLS.
 
 **Caddy:**
 ```
-rememory.example.com {
+inheritance.example.com {
     reverse_proxy localhost:8080
 }
 ```
@@ -108,7 +112,7 @@ rememory.example.com {
 ```nginx
 server {
     listen 443 ssl;
-    server_name rememory.example.com;
+    server_name inheritance.example.com;
 
     location / {
         proxy_pass http://localhost:8080;
@@ -135,14 +139,14 @@ The admin password only protects bundle deletion. For access control, use an aut
 - The admin password uses age's scrypt-based passphrase encryption. Choose a strong one.
 - Put the server behind HTTPS and authentication appropriate for your threat model.
 
-Friends still get self-contained offline bundles. The server is a convenience — if it goes away, they can recover without it.
+Guardians still get self-contained offline bundles. The server is a convenience — if it goes away, they can recover without it.
 
 ## Data directory
 
 The data directory contains:
 
 ```
-rememory-data/
+inheritance-data/
   admin.age               # Admin password (age-encrypted)
   bundles/
     <uuid>/

@@ -1,7 +1,7 @@
 import { test, expect } from './fixtures';
 import * as fs from 'fs';
 import * as path from 'path';
-import { getRememoryBin, createTestProject, cleanupProject, extractBundle, getCryptoTestHtml } from './helpers';
+import { getInheritanceBin, createTestProject, cleanupProject, extractBundle, getCryptoTestHtml } from './helpers';
 
 // Load golden fixtures
 const v1Golden = JSON.parse(
@@ -36,7 +36,7 @@ test.describe('Golden Crypto Compatibility @cross-browser', () => {
 
       const result = await page.evaluate(
         async ({ shares, manifestBytes, version }: { shares: any[]; manifestBytes: number[]; version: number }) => {
-          const crypto = (window as any).rememoryCrypto;
+          const crypto = (window as any).inheritanceCrypto;
 
           // Convert hex shares to Uint8Array
           const shareBytes = shares.map(s => {
@@ -85,7 +85,7 @@ test.describe('Golden Crypto Compatibility @cross-browser', () => {
       const share = data.shares[0];
 
       const result = await page.evaluate(async (pem: string) => {
-        const crypto = (window as any).rememoryCrypto;
+        const crypto = (window as any).inheritanceCrypto;
         try {
           const parsed = await crypto.parseShare(pem);
           return {
@@ -117,7 +117,7 @@ test.describe('Golden Crypto Compatibility @cross-browser', () => {
       expect(words.length).toBe(25);
 
       const result = await page.evaluate(async (words: string[]) => {
-        const crypto = (window as any).rememoryCrypto;
+        const crypto = (window as any).inheritanceCrypto;
         try {
           const decoded = await crypto.decodeShareWords(words);
           const hex = Array.from(decoded.data as Uint8Array)
@@ -143,7 +143,7 @@ test.describe('Golden Crypto Compatibility @cross-browser', () => {
     const share = v2Golden.shares[0];
 
     const result = await page.evaluate(async (compact: string) => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       try {
         const parsed = await crypto.parseCompactShare(compact);
         return {
@@ -173,7 +173,7 @@ test.describe('Golden Crypto Compatibility @cross-browser', () => {
     const shares = v2Golden.shares.slice(0, 2).map((s: any) => s.data_hex);
 
     const result = await page.evaluate(async ({ shares, version, expectedPassphrase }: { shares: string[]; version: number; expectedPassphrase: string }) => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
 
       // Convert hex shares to Uint8Array
       const shareBytes = shares.map(hex => {
@@ -206,7 +206,7 @@ test.describe('extractBundle from recover.html', () => {
   let bundlesDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
@@ -231,7 +231,7 @@ test.describe('extractBundle from recover.html', () => {
     );
 
     const result = await page.evaluate(async (htmlBytes: number[]) => {
-      const crypto = (window as any).rememoryCrypto;
+      const crypto = (window as any).inheritanceCrypto;
       try {
         const data = new Uint8Array(htmlBytes);
         const bundle = await crypto.extractBundle(data);

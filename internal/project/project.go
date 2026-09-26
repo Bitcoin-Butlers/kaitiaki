@@ -41,12 +41,11 @@ type Sealed struct {
 	TlockUnlockTime  *time.Time  `yaml:"tlock_unlock_time,omitempty"`
 }
 
-// Project represents a kaitiaki project configuration.
+// Project represents a inheritance project configuration.
 type Project struct {
 	Name      string `yaml:"name"`
 	Created   string `yaml:"created"`
 	Threshold int    `yaml:"threshold"`
-	Anonymous bool   `yaml:"anonymous,omitempty"`
 	// HideQuorum omits Total and Threshold from share headers and
 	// bundle documents. Recovery then works by try-decrypt: combine
 	// and attempt decryption as shares arrive. Disclose is the default.
@@ -54,6 +53,25 @@ type Project struct {
 	Language   string   `yaml:"language,omitempty"` // Default bundle language (e.g. "en", "es", "de", "fr", "sl", "pt", "zh-TW")
 	Friends    []Friend `yaml:"friends"`
 	Sealed     *Sealed  `yaml:"sealed,omitempty"`
+
+	// RecoverySteps is the owner's own method, in their own words. Seal writes
+	// it into the encrypted archive as HOW-THE-WALLET-WORKS.txt, so it reaches
+	// a reader only when enough guardians combine their pieces. It reached
+	// every README in the open until 2026-09-24, beside the guardian roster.
+	// Write it as a YAML block, with "|".
+	//
+	// Key locations do NOT belong here. Add them as one of the files you seal,
+	// or seal writes them for you from the browser's people-and-places field.
+	RecoverySteps string `yaml:"recovery_steps,omitempty"`
+	// ChainPayload is the encrypted chain copy, if one was made. Ciphertext
+	// locked to the wallet's keys, and an identical copy is public on chain.
+	ChainPayload string `yaml:"chain_payload,omitempty"`
+	// ChainTxid is proof the copy landed. Set it BEFORE sealing: the archive
+	// is encrypted and its key split into the guardians' pieces at seal time,
+	// so an id discovered afterwards can never be added to it. An owner who
+	// publishes later keeps the id on their estate insert instead, which is
+	// the copy an heir below the threshold needs anyway.
+	ChainTxid string `yaml:"chain_txid,omitempty"`
 
 	// Path is the directory containing this project (not serialized)
 	Path string `yaml:"-"`
@@ -165,20 +183,6 @@ func FindProjectDir(startDir string) (string, error) {
 
 // New creates a new project with the given configuration.
 func New(dir, name string, threshold int, friends []Friend) (*Project, error) {
-	return NewWithOptions(dir, name, threshold, friends, false)
-}
-
-// NewAnonymous creates a new anonymous project (no contact info).
-func NewAnonymous(dir, name string, threshold int, numShares int) (*Project, error) {
-	friends := make([]Friend, numShares)
-	for i := 0; i < numShares; i++ {
-		friends[i] = Friend{Name: fmt.Sprintf("Share %d", i+1)}
-	}
-	return NewWithOptions(dir, name, threshold, friends, true)
-}
-
-// NewWithOptions creates a new project with the given configuration.
-func NewWithOptions(dir, name string, threshold int, friends []Friend, anonymous bool) (*Project, error) {
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return nil, fmt.Errorf("creating project directory: %w", err)
 	}
@@ -192,7 +196,6 @@ func NewWithOptions(dir, name string, threshold int, friends []Friend, anonymous
 		Name:      name,
 		Created:   time.Now().Format("2006-01-02"),
 		Threshold: threshold,
-		Anonymous: anonymous,
 		Friends:   friends,
 		Path:      dir,
 	}

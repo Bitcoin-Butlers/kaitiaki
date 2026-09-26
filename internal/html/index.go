@@ -5,19 +5,19 @@ func GenerateIndexHTML(selfhosted bool) string {
 	content := aboutHTMLTemplate
 
 	result := applyLayout(LayoutOptions{
-		Title:      "Kaitiaki - A digital safe with multiple keys",
+		Title:      "Bitcoin Inheritance - A digital safe with multiple keys",
 		BodyClass:  "landing",
 		Selfhosted: selfhosted,
-		HeadMeta: `<meta name="generator" content="Kaitiaki {{VERSION}}">
+		HeadMeta: `<meta name="generator" content="Bitcoin Inheritance {{VERSION}}">
   <meta name="description" content="A digital safe with multiple keys, held by people you trust. No accounts, no servers. Recovery works offline.">
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Kaitiaki - A digital safe with multiple keys">
+  <meta property="og:title" content="Bitcoin Inheritance - A digital safe with multiple keys">
   <meta property="og:description" content="A digital safe with multiple keys, held by people you trust. No accounts, no servers. Recovery works offline.">
   <meta property="og:image" content="{{GITHUB_PAGES}}/screenshots/recovery-1.png">
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kaitiaki - A digital safe with multiple keys">
+  <meta name="twitter:title" content="Bitcoin Inheritance - A digital safe with multiple keys">
   <meta name="twitter:description" content="A digital safe with multiple keys, held by people you trust. No accounts, no servers. Recovery works offline.">
   <meta name="twitter:image" content="{{GITHUB_PAGES}}/screenshots/recovery-1.png">`,
 		PageStyles: indexCSS,
@@ -28,12 +28,12 @@ func GenerateIndexHTML(selfhosted bool) string {
       <a href="docs.html" data-i18n="footer_docs">Documentation</a>
     </p>
     <p class="version"><a href="{{GITHUB_REPO}}/blob/main/CHANGELOG.md" target="_blank" style="color: var(--text-muted); text-decoration: none;">{{VERSION}}</a></p>
-    <p class="version">Built on <a href="https://github.com/eljojo/rememory" target="_blank" style="color: var(--text-muted);">Rememory</a> by eljojo (Apache-2.0)</p>`,
+    <p class="version">Free software under the Apache licence. <a href="https://github.com/Bitcoin-Butlers/kaitiaki" target="_blank" style="color: var(--text-muted);">Source and attribution</a></p>`,
 		Scripts: `<script>document.querySelector('#nav-links-main a[href="about.html"]')?.remove();</script>
 
   <script>` + dataflowJS + `</script>` + i18nScript(I18nScriptOptions{
-			Component:         "index",
-			SetLanguageExtra:  i18nIndexSetlangJS,
+			Component:        "index",
+			SetLanguageExtra: i18nIndexSetlangJS,
 		}),
 	})
 

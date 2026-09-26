@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/eljojo/rememory/internal/cmd"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/cmd"
 )
 
 var version = "dev"

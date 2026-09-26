@@ -1,0 +1,24 @@
+{
+  "note": "Golden vector produced by running joshdoman/multisig-backup (MIT) source directly, with the 16-byte secret stubbed so the output is reproducible. Test wallets only; these mnemonics are BIP-39 test vectors and hold nothing.",
+  "generatedOn": "2026-09-10",
+  "fixedSecretHex": "0102030405060708090a0b0c0d0e0f10",
+  "phrases": [
+    "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+    "legal winner thank year wave sausage worth useful legal winner thank yellow",
+    "letter advice cage absurd amount doctor acoustic avoid letter advice cage above"
+  ],
+  "path": "m/48'/0'/0'/2'",
+  "xfps": [
+    "73c5da0a",
+    "b8688df1",
+    "28645006"
+  ],
+  "xpubs": [
+    "xpub6DkFAXWQ2dHxq2vatrt9qyA3bXYU4ToWQwCHbf5XB2mSTexcHZCeKS1VZYcPoBd5X8yVcbXFHJR9R8UCVpt82VX1VhR28mCyxUFL4r6KFrf",
+    "xpub6FQya7zGhR92kacYsNnjreouvnHJMpXYsUXnW6NJJAJRCKsa26TzDy4LdnGhEurr3d6y1J8PJ7EEMKQp74XTqYvmGJNogYXSKDszYHtF8mX",
+    "xpub6DnEBNkSJKBYQmsbhS1sP9cNdtU5c9PLFGCjTJmxicxc13WB8zNNGQazabQpyFAGW5bV9tMko4uBxDxjUKL6dSAcx1tEbgEHtgSqyRsekh6"
+  ],
+  "descriptor": "wsh(sortedmulti(2,[73c5da0a/48h/0h/0h/2h]xpub6DkFAXWQ2dHxq2vatrt9qyA3bXYU4ToWQwCHbf5XB2mSTexcHZCeKS1VZYcPoBd5X8yVcbXFHJR9R8UCVpt82VX1VhR28mCyxUFL4r6KFrf/<0;1>/*,[b8688df1/48h/0h/0h/2h]xpub6FQya7zGhR92kacYsNnjreouvnHJMpXYsUXnW6NJJAJRCKsa26TzDy4LdnGhEurr3d6y1J8PJ7EEMKQp74XTqYvmGJNogYXSKDszYHtF8mX/<0;1>/*,[28645006/48h/0h/0h/2h]xpub6DnEBNkSJKBYQmsbhS1sP9cNdtU5c9PLFGCjTJmxicxc13WB8zNNGQazabQpyFAGW5bV9tMko4uBxDxjUKL6dSAcx1tEbgEHtgSqyRsekh6/<0;1>/*))",
+  "encryptedText": "wsh(sortedmulti(2,[48h/0h/0h/2h]<0;1>/*,[48h/0h/0h/2h]<0;1>/*,[48h/0h/0h/2h]<0;1>/*))CCQDZ+maZ+y+OQ3xN/t/RZCLXHg0rDBPAPxLFXpWi+D8rqeGVJ+QlP/v3vh84/7D71chAqsOuYfY72DZ7rC7ObyBg9YPUbUgXmW66Jn6iIbr4t39jhDoCVGG0a29hLZ5W9qzH9/HrHyt+BXgawtDuAl/E5Q4F+ZfORyTT+cZOTnND2uQQ6MVPUTOhyII4ixLC/y4ESC9EjzU4nTjtjTTdsijdeFRICvQY5dePPA5ZhqevBwi2OBkmV/FgPJichRTkIl7+vjbuWKwd7ylbnqK8q1L3v/yCtFzohW9rXEoBZGVKI63kdiDjHtNyaeTZ3eurWwihnPtAYsBhvxgpoM/9p2iU/11IpSTqkWc41MeO0mMIDXEi8TsoCzBLc8kqn+9HaVpJxoXovivKh70SuzUQXcMtRU9GLgiE+TI3HG5oNP50zeAwpbZLHXDDetqL5dIt//lNdXEWciU",
+  "dataBytes": 345
+}

@@ -49,8 +49,8 @@ func TestAllJSONFilesParseCorrectly(t *testing.T) {
 }
 
 func TestAllLanguagesHaveSameKeys(t *testing.T) {
-	if os.Getenv("REMEMORY_CHECK_TRANSLATIONS") == "" {
-		t.Skip("Skipping translation parity check (set REMEMORY_CHECK_TRANSLATIONS=1 or run 'make check-translations')")
+	if os.Getenv("INHERITANCE_CHECK_TRANSLATIONS") == "" {
+		t.Skip("Skipping translation parity check (set INHERITANCE_CHECK_TRANSLATIONS=1 or run 'make check-translations')")
 	}
 	for _, component := range []string{"recover", "maker", "readme", "index", "common"} {
 		t.Run(component, func(t *testing.T) {
@@ -291,10 +291,8 @@ func TestMakerHasExpectedKeys(t *testing.T) {
 
 func TestReadmeHasExpectedKeys(t *testing.T) {
 	expectedKeys := []string{
-		"title", "for", "warning_title",
-		"warning_message_friends", "warning_message_shares",
+		"title", "for", "warning_title", "warning_message",
 		"what_is_this", "what_bundle_for", "what_one_of", "what_threshold",
-		"other_holders", "contact_label",
 		"recover_browser", "recover_step1", "recover_share_loaded",
 		"recover_step2", "recover_step2_drag", "recover_step2_click",
 		"recover_offline", "recover_cli", "recover_cli_hint", "recover_cli_usage",
@@ -380,14 +378,14 @@ func TestIndexHasExpectedKeys(t *testing.T) {
 func TestReadmeTranslation(t *testing.T) {
 	// Test English
 	got := T("readme", "en", "title")
-	if got != "KAITIAKI GUARDIAN BUNDLE" {
-		t.Errorf("readme/en/title = %q, want %q", got, "KAITIAKI GUARDIAN BUNDLE")
+	if got != "BITCOIN INHERITANCE GUARDIAN BUNDLE" {
+		t.Errorf("readme/en/title = %q, want %q", got, "BITCOIN INHERITANCE GUARDIAN BUNDLE")
 	}
 
 	// Unknown languages fall back to English
 	got = T("readme", "mi", "title")
-	if got != "KAITIAKI GUARDIAN BUNDLE" {
-		t.Errorf("readme/mi/title = %q, want %q", got, "KAITIAKI GUARDIAN BUNDLE")
+	if got != "BITCOIN INHERITANCE GUARDIAN BUNDLE" {
+		t.Errorf("readme/mi/title = %q, want %q", got, "BITCOIN INHERITANCE GUARDIAN BUNDLE")
 	}
 
 	// Test parameter substitution
@@ -398,7 +396,7 @@ func TestReadmeTranslation(t *testing.T) {
 
 	// Test fallback to English for unknown language
 	got = T("readme", "xx", "title")
-	if got != "KAITIAKI GUARDIAN BUNDLE" {
+	if got != "BITCOIN INHERITANCE GUARDIAN BUNDLE" {
 		t.Errorf("readme/xx/title should fall back to English, got %q", got)
 	}
 }

@@ -1,4 +1,4 @@
-// Kaitiaki Recovery Tool - Browser-based recovery using native JavaScript crypto
+// Bitcoin Inheritance Recovery Tool - Browser-based recovery using native JavaScript crypto
 //
 // Built with esbuild --define:__TLOCK__=true|false to produce two variants:
 //   app.js       (__TLOCK__=false) — offline recovery, no tlock/drand code
@@ -6,12 +6,14 @@
 
 // BarcodeDetector polyfill - provides QR scanning in browsers without native support
 import { registerPolyfill } from './barcode-detector';
+import { decryptDescriptor as decryptBip138Descriptor } from './crypto/bip138';
+import { SHARE_BLOCK_REGEX, COMPACT_LINE_REGEX } from './crypto/share-format';
+import { decryptDescriptor as decryptThresholdDescriptor } from './crypto/descriptor';
 registerPolyfill();
 
 import type {
   RecoveryState,
   PersonalizationData,
-  FriendInfo,
   ToastAction,
   TranslationFunction,
 } from './types';
@@ -51,7 +53,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   'use strict';
 
   // Import shared utilities
-  const { escapeHtml, formatSize, toast, showInlineError, clearInlineError } = window.rememoryUtils;
+  const { escapeHtml, formatSize, toast, showInlineError, clearInlineError } = window.inheritanceUtils;
 
   // Tlock recovery functions — conditionally required so esbuild eliminates
   // tlock-js + drand-client HTTP code from the offline variant (app.js).
@@ -70,15 +72,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     formatUnlockDate(date: Date, t: TranslationFunction): { text: string; relative: boolean };
     formatTimelockDate(date: Date): string;
   } | null = __TLOCK__ ? require('./tlock-recover') : null;
-
-  // Wrap email addresses in mailto: links. Input must already be HTML-escaped.
-  const EMAIL_RE = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
-  function linkifyEmail(escaped: string): string {
-    return escaped.replace(EMAIL_RE, (match) => {
-      const clean = match.replace(/\.+$/, '');
-      return `<a href="mailto:${clean}">${clean}</a>`;
-    });
-  }
 
   // State
   const state: RecoveryState = {
@@ -100,6 +93,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     shareFileInput: HTMLInputElement | null;
     sharesList: HTMLElement | null;
     thresholdInfo: HTMLElement | null;
+    whoElse: HTMLElement | null;
     ownerIdentity: HTMLInputElement | null;
     ownerStatus: HTMLElement | null;
     ownerStatusText: HTMLElement | null;
@@ -117,8 +111,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     pasteArea: HTMLElement | null;
     pasteInput: HTMLTextAreaElement | null;
     pasteSubmitBtn: HTMLButtonElement | null;
-    contactListSection: HTMLElement | null;
-    contactList: HTMLElement | null;
     verificationStatus: HTMLElement | null;
     step1Card: HTMLElement | null;
     step2Card: HTMLElement | null;
@@ -136,6 +128,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     shareFileInput: document.getElementById('share-file-input') as HTMLInputElement | null,
     sharesList: document.getElementById('shares-list'),
     thresholdInfo: document.getElementById('threshold-info'),
+    whoElse: document.getElementById('who-else'),
     ownerIdentity: document.getElementById('owner-identity') as HTMLInputElement | null,
     ownerStatus: document.getElementById('owner-status'),
     ownerStatusText: document.getElementById('owner-status-text'),
@@ -153,8 +146,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     pasteArea: document.getElementById('paste-area'),
     pasteInput: document.getElementById('paste-input') as HTMLTextAreaElement | null,
     pasteSubmitBtn: document.getElementById('paste-submit-btn') as HTMLButtonElement | null,
-    contactListSection: document.getElementById('contact-list-section'),
-    contactList: document.getElementById('contact-list'),
     verificationStatus: document.getElementById('verification-status'),
     step1Card: null,
     step2Card: null,
@@ -170,11 +161,9 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   const personalization: PersonalizationData | null =
     (typeof window.PERSONALIZATION !== 'undefined') ? window.PERSONALIZATION : null;
 
-  // Share regex to extract from README.txt content
-  const shareRegex = /-----BEGIN REMEMORY SHARE-----([\s\S]*?)-----END REMEMORY SHARE-----/;
-
-  // Compact share format regex: RM{version}:{index}:{total}:{threshold}:{base64url}:{check}
-  const compactShareRegex = /^RM\d+:\d+:\d+:\d+:[A-Za-z0-9_-]+:[0-9a-f]{4}$/;
+  // Both generated from Go. See crypto/share-format.ts.
+  const shareRegex = SHARE_BLOCK_REGEX;
+  const compactShareRegex = COMPACT_LINE_REGEX;
 
   // ============================================
   // Error Handlers
@@ -306,14 +295,11 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     setupPaste();
     setupScanner();
 
-    // Render contact list immediately
-    if (personalization?.otherFriends && personalization.otherFriends.length > 0) {
-      renderContactList();
-      elements.contactListSection?.classList.remove('hidden');
-    }
+    // A bundle names its own holder and nobody else, so there is no list to
+    // render here. Removed 2026-09-24 with the roster itself.
 
     // Native crypto is always ready
-    window.rememoryAppReady = true;
+    window.inheritanceAppReady = true;
 
     // Load personalization data
     if (personalization) {
@@ -341,7 +327,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
         state.total = share.total;
         state.shares.push(share);
         updateSharesUI();
-        updateContactList();
       } catch {
         // Surface corrupt pre-loaded holder share instead of silently ignoring it.
         showError(
@@ -430,54 +415,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     } catch {
       // Silently ignore invalid fragment shares
     }
-  }
-
-  function renderContactList(): void {
-    if (!personalization?.otherFriends || !elements.contactList) return;
-
-    elements.contactList.innerHTML = '';
-
-    personalization.otherFriends.forEach((friend: FriendInfo) => {
-      const item = document.createElement('div');
-      item.className = 'contact-item';
-      item.dataset.name = friend.name;
-      if (friend.shareIndex) {
-        item.dataset.shareIndex = String(friend.shareIndex);
-      }
-
-      const contactInfo = friend.contact ? linkifyEmail(escapeHtml(friend.contact)) : '';
-
-      item.innerHTML = `
-        <div class="checkbox"></div>
-        <div class="details">
-          <div class="name">${escapeHtml(friend.name)}</div>
-          <div class="contact-info">${contactInfo || '—'}</div>
-        </div>
-      `;
-
-      elements.contactList?.appendChild(item);
-    });
-  }
-
-  function updateContactList(): void {
-    if (!personalization?.otherFriends || !elements.contactList) return;
-
-    const collectedNames = new Set(
-      state.shares.map(s => s.holder?.toLowerCase()).filter(Boolean)
-    );
-    const collectedIndices = new Set(state.shares.map(s => s.index));
-
-    elements.contactList.querySelectorAll('.contact-item').forEach(item => {
-      const el = item as HTMLElement;
-      const name = el.dataset.name?.toLowerCase();
-      const shareIndex = el.dataset.shareIndex ? parseInt(el.dataset.shareIndex, 10) : 0;
-      const isCollected = (name ? collectedNames.has(name) : false) || collectedIndices.has(shareIndex);
-      el.classList.toggle('collected', isCollected);
-      const checkbox = el.querySelector('.checkbox');
-      if (checkbox) {
-        checkbox.textContent = isCollected ? '✓' : '';
-      }
-    });
   }
 
   // ============================================
@@ -1081,8 +1018,8 @@ type UIShare = ParsedShare & { isHolder?: boolean };
           return personalization.holder;
         }
       }
-      const friend = personalization.otherFriends.find(f => f.shareIndex === share.index);
-      if (friend) return friend.name;
+      // Every other piece is "Share N". Only the holder's own name is known
+      // to this bundle.
     }
     return 'Share ' + share.index;
   }
@@ -1126,10 +1063,14 @@ type UIShare = ParsedShare & { isHolder?: boolean };
           state.total = 0;
         }
         updateSharesUI();
-        updateContactList();
         checkRecoverReady();
       });
     });
+
+    // Where to find the others. This is NOT gated on the threshold: a
+    // hide-quorum bundle reports 0, and its holder has the least context of
+    // anyone, so it is the last bundle that should lose the pointer.
+    elements.whoElse?.classList.toggle('hidden', sharesReady());
 
     // Update threshold info
     if (state.threshold > 0 && elements.thresholdInfo) {
@@ -1148,7 +1089,6 @@ type UIShare = ParsedShare & { isHolder?: boolean };
       elements.step1Card?.classList.remove('threshold-met');
     }
 
-    updateContactList();
     updateVerificationStatus();
   }
 
@@ -1270,8 +1210,34 @@ type UIShare = ParsedShare & { isHolder?: boolean };
     }
   }
 
+  /**
+   * Offer the chain copy when the bundle path stalls.
+   *
+   * An heir who cannot reach enough guardians is the exact person the chain
+   * copy exists for, and they meet it at the bottom of the page, below a
+   * dead end. So the moment they have added at least one piece and still do
+   * not have enough, the panel opens itself and says why it is there.
+   *
+   * It never closes again on its own. Somebody who has seen it should not
+   * have it taken away while they are reading.
+   *
+   * Two pieces, not one. A personalized bundle arrives with the holder's own
+   * piece already loaded, so one piece means "I opened my bundle" and says
+   * nothing about whether the guardians can be reached. Two means somebody is
+   * actively gathering and coming up short.
+   */
+  function offerChainCopyIfStalled(): void {
+    if (state.shares.length < 2 || sharesReady()) return;
+    const panel = document.getElementById('chain-reader') as HTMLDetailsElement | null;
+    const nudge = document.getElementById('chain-nudge');
+    if (!panel || panel.open) return;
+    panel.open = true;
+    nudge?.classList.remove('hidden');
+  }
+
   function checkRecoverReady(): void {
     const ready = state.manifest !== null && (sharesReady() || ownerReady());
+    offerChainCopyIfStalled();
 
     if (elements.recoverBtn) {
       elements.recoverBtn.disabled = !ready;
@@ -1632,7 +1598,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   }
 
   // Expose public manifest loading API for programmatic use (used by auto-fetch below)
-  window.rememoryLoadManifest = function(data: Uint8Array, name?: string): void {
+  window.inheritanceLoadManifest = function(data: Uint8Array, name?: string): void {
     state.manifest = data;
     showManifestLoaded(name || 'MANIFEST.age', data.length, 'server');
     checkRecoverReady();
@@ -1642,13 +1608,76 @@ type UIShare = ParsedShare & { isHolder?: boolean };
   // Global Exports & Startup
   // ============================================
 
-  window.rememoryUpdateUI = function(): void {
+
+/**
+ * The chain copy: a second way in that needs no other guardian.
+ *
+ * An heir holding one bundle and one of the wallet's own keys can read the
+ * instructions here, with no internet and with nothing of ours alive. The
+ * bundle's README carries the text, so there is nothing to fetch.
+ *
+ * The reader ships in every bundle, not only in bundles made when a chain copy
+ * already existed. A bundle made today must still read a copy published in
+ * five years, because re-issuing bundles to guardians is the most expensive
+ * thing in this system.
+ */
+function wireChainReader(): void {
+  const payloadEl = document.getElementById('chain-payload') as HTMLTextAreaElement | null;
+  const keysEl = document.getElementById('chain-keys') as HTMLTextAreaElement | null;
+  const outEl = document.getElementById('chain-output') as HTMLTextAreaElement | null;
+  const statusEl = document.getElementById('chain-status');
+  const button = document.getElementById('chain-btn');
+  // Shown only after a successful read. An heir holding one copy has nothing
+  // to reconcile; an heir holding two does.
+  const trustEl = document.getElementById('chain-trust');
+  if (!payloadEl || !keysEl || !outEl || !statusEl || !button) return;
+
+  button.addEventListener('click', async () => {
+    const text = payloadEl.value.trim();
+    const keys = keysEl.value.split('\n').map((k) => k.trim()).filter(Boolean);
+    outEl.classList.add('hidden');
+    trustEl?.classList.add('hidden');
+    statusEl.textContent = '';
+
+    if (!text || keys.length === 0) {
+      statusEl.textContent = t('chain_fail_text');
+      return;
+    }
+
+    // Two formats are in the world. A threshold backup keeps the descriptor
+    // skeleton in front of its ciphertext, so it starts with the policy. A
+    // BIP-138 backup is base64 of bytes that begin with the text BIP138.
+    let descriptor: string | undefined;
+    try {
+      if (/^[a-z_]*\(/i.test(text)) {
+        const r = await decryptThresholdDescriptor(text, keys);
+        descriptor = r.descriptor;
+      } else {
+        descriptor = decryptBip138Descriptor(text, keys[0]);
+      }
+    } catch {
+      statusEl.textContent = t('chain_fail_keys');
+      return;
+    }
+
+    if (!descriptor) {
+      statusEl.textContent = t('chain_fail_keys');
+      return;
+    }
+    outEl.value = descriptor;
+    outEl.classList.remove('hidden');
+    trustEl?.classList.remove('hidden');
+    statusEl.textContent = t('chain_result');
+  });
+}
+
+  window.inheritanceUpdateUI = function(): void {
     updateSharesUI();
-    updateContactList();
   };
 
   document.addEventListener('DOMContentLoaded', async () => {
     await init();
+    wireChainReader();
 
     elements.ownerIdentity?.addEventListener('input', () => checkRecoverReady());
 
@@ -1660,7 +1689,7 @@ type UIShare = ParsedShare & { isHolder?: boolean };
         if (resp.ok) {
           const data = new Uint8Array(await resp.arrayBuffer());
           if (data.length > 0 && !state.manifest) {
-            window.rememoryLoadManifest!(data, 'MANIFEST.age');
+            window.inheritanceLoadManifest!(data, 'MANIFEST.age');
           }
         }
       } catch {

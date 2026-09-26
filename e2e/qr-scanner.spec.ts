@@ -2,7 +2,7 @@ import { test, expect } from './fixtures';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
-  getRememoryBin,
+  getInheritanceBin,
   createTestProject,
   cleanupProject,
   extractBundle,
@@ -16,7 +16,7 @@ test.describe('QR Scanner', () => {
   let bundlesDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
@@ -152,7 +152,7 @@ test.describe('QR Scanner', () => {
 
     // Use a known valid compact share from golden fixtures (Carol, index 3)
     const compactShare = 'RM2:3:5:3:aKoRQv1shz6UZSAXvTLEXnS1zSQkTS3jhqA3-06G2jnA:6ec0';
-    const qrUrl = `https://eljojo.github.io/rememory/recover.html#share=${encodeURIComponent(compactShare)}`;
+    const qrUrl = `https://eljojo.github.io/inheritance/recover.html#share=${encodeURIComponent(compactShare)}`;
 
     // Mock BarcodeDetector to return a URL with fragment
     await page.addInitScript((url: string) => {

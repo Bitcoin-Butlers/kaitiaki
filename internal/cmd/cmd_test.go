@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
 )
 
 func TestFormatSize(t *testing.T) {

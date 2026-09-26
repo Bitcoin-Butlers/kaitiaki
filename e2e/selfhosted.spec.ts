@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as net from 'net';
 import AdmZip from 'adm-zip';
-import { getRememoryBin, extractWordsFromReadme, findReadmeFile } from './helpers';
+import { getInheritanceBin, extractWordsFromReadme, findReadmeFile } from './helpers';
 
 // Find an available port
 async function getAvailablePort(): Promise<number> {
@@ -19,7 +19,7 @@ async function getAvailablePort(): Promise<number> {
   });
 }
 
-// Start rememory serve and wait for it to be ready
+// Start inheritance serve and wait for it to be ready
 async function startServer(bin: string, port: number, dataDir: string): Promise<ChildProcess> {
   const proc = spawn(bin, ['serve', '--port', String(port), '--host', '127.0.0.1', '--data', dataDir], {
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -52,13 +52,13 @@ test.describe('Selfhosted Server', () => {
   const adminPassword = 'test-password-e2e';
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
     }
 
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-selfhosted-e2e-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-selfhosted-e2e-'));
     dataDir = path.join(tmpDir, 'data');
     port = await getAvailablePort();
     baseURL = `http://127.0.0.1:${port}`;
@@ -97,7 +97,7 @@ test.describe('Selfhosted Server', () => {
     // Step 1: Visit root — should show setup page (no password)
     // -----------------------------------------------------------
     await page.goto(baseURL);
-    await expect(page.locator('h1')).toContainText('Set up Kaitiaki');
+    await expect(page.locator('h1')).toContainText('Set up Bitcoin Inheritance');
 
     // Fill in password
     await page.locator('#password').fill(adminPassword);
@@ -118,7 +118,7 @@ test.describe('Selfhosted Server', () => {
 
     // Wait for WASM to load
     await page.waitForFunction(
-      () => (window as any).rememoryReady === true,
+      () => (window as any).inheritanceReady === true,
       { timeout: 30000 }
     );
 
@@ -162,7 +162,7 @@ test.describe('Selfhosted Server', () => {
 
     // Download both bundles — extract ZIP data from the page
     const bundleData = await page.evaluate(() => {
-      const bundles = (window as any).rememoryBundles;
+      const bundles = (window as any).inheritanceBundles;
       if (!bundles) return null;
       return bundles.map((b: any) => ({
         fileName: b.fileName,
@@ -210,7 +210,7 @@ test.describe('Selfhosted Server', () => {
     await page.waitForURL(/\/recover\.html\?id=/);
 
     await page.waitForFunction(
-      () => (window as any).rememoryAppReady === true,
+      () => (window as any).inheritanceAppReady === true,
       { timeout: 30000 }
     );
 

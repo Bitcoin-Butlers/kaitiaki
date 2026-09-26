@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/eljojo/rememory/internal/bundle"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/bundle"
 	"github.com/spf13/cobra"
 )
 

@@ -3,19 +3,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 
-function getRememoryBin(): string {
-  const binEnv = process.env.REMEMORY_BIN || './kaitiaki';
+function getInheritanceBin(): string {
+  const binEnv = process.env.INHERITANCE_BIN || './inheritance';
   return path.resolve(binEnv);
 }
 
 async function globalSetup() {
-  const bin = getRememoryBin();
+  const bin = getInheritanceBin();
   if (!fs.existsSync(bin)) {
-    console.log('Global setup: rememory binary not found, skipping shared resource creation');
+    console.log('Global setup: inheritance binary not found, skipping shared resource creation');
     return;
   }
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-global-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-e2e-global-'));
 
   // --- Projects ---
 
@@ -42,17 +42,6 @@ async function globalSetup() {
   fs.writeFileSync(path.join(noEmbedManifest, 'notes.txt'), 'Remember to feed the cat!');
   execFileSync(bin, ['seal', '--no-embed-manifest'], { cwd: noEmbedProject, stdio: 'inherit' });
   execFileSync(bin, ['bundle', '--no-embed-manifest'], { cwd: noEmbedProject, stdio: 'inherit' });
-
-  // Anonymous test project (3 shares, threshold 2)
-  const anonymousProject = path.join(tmpDir, 'anonymous-project');
-  execFileSync(bin, [
-    'init', anonymousProject, '--name', 'Anonymous E2E Test', '--anonymous', '--shares', '3', '--threshold', '2',
-  ], { stdio: 'inherit' });
-  const anonManifest = path.join(anonymousProject, 'manifest');
-  fs.writeFileSync(path.join(anonManifest, 'secret.txt'), 'Anonymous secret: correct-horse-battery-staple');
-  fs.writeFileSync(path.join(anonManifest, 'notes.txt'), 'Anonymous notes!');
-  execFileSync(bin, ['seal'], { cwd: anonymousProject, stdio: 'inherit' });
-  execFileSync(bin, ['bundle'], { cwd: anonymousProject, stdio: 'inherit' });
 
   // --- Standalone HTML files ---
 
@@ -83,7 +72,7 @@ async function globalSetup() {
 <head><meta charset="utf-8"><title>Crypto Test</title></head>
 <body>
   <script>${cryptoJs}</script>
-  <script>window.rememoryCrypto = RememoryCrypto; window.testReady = true;</script>
+  <script>window.inheritanceCrypto = RememoryCrypto; window.testReady = true;</script>
 </body>
 </html>`);
 
@@ -93,7 +82,6 @@ async function globalSetup() {
     tmpDir,
     standardProject,
     noEmbedProject,
-    anonymousProject,
     makerHtml,
     recoverHtml,
     docsHtml,
@@ -103,7 +91,7 @@ async function globalSetup() {
 
   const setupPath = path.join(tmpDir, 'setup.json');
   fs.writeFileSync(setupPath, JSON.stringify(setup, null, 2));
-  process.env.REMEMORY_E2E_SETUP = setupPath;
+  process.env.INHERITANCE_E2E_SETUP = setupPath;
 }
 
 export default globalSetup;

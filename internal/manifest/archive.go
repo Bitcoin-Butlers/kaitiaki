@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 // ArchiveResult contains the result of an archive operation.
@@ -269,7 +269,15 @@ func describeTarType(typeflag byte) string {
 // ArchiveZip creates a ZIP archive of the given directory.
 // The archive preserves the directory structure relative to the source.
 // Returns warnings about any skipped files (symlinks, special files, etc.)
-func ArchiveZip(w io.Writer, sourceDir string) (*ArchiveResult, error) {
+// ExtraFile is content added to the archive that does not exist on disk.
+// The owner's own texts arrive this way: writing them into the source
+// directory would overwrite an edit the owner made there by hand.
+type ExtraFile struct {
+	Name    string
+	Content []byte
+}
+
+func ArchiveZip(w io.Writer, sourceDir string, extras ...ExtraFile) (*ArchiveResult, error) {
 	result := &ArchiveResult{}
 
 	sourceDir, err := filepath.Abs(sourceDir)
@@ -287,6 +295,16 @@ func ArchiveZip(w io.Writer, sourceDir string) (*ArchiveResult, error) {
 
 	zw := zip.NewWriter(w)
 	defer zw.Close()
+
+	for _, e := range extras {
+		fw, err := zw.Create(filepath.Join(filepath.Base(sourceDir), e.Name))
+		if err != nil {
+			return nil, fmt.Errorf("adding %s: %w", e.Name, err)
+		}
+		if _, err := fw.Write(e.Content); err != nil {
+			return nil, fmt.Errorf("writing %s: %w", e.Name, err)
+		}
+	}
 
 	err = filepath.Walk(sourceDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

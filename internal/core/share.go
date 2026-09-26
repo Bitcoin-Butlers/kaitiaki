@@ -14,12 +14,26 @@ import (
 )
 
 const (
-	ShareBegin = "-----BEGIN REMEMORY SHARE-----"
-	ShareEnd   = "-----END REMEMORY SHARE-----"
+	// What Encode writes. Changed 2026-09-24 when the upstream name left
+	// the project.
+	ShareBegin = "-----BEGIN INHERITANCE SHARE-----"
+	ShareEnd   = "-----END INHERITANCE SHARE-----"
+
+	// What ParseShare also accepts. A share is a file somebody may have
+	// been holding for years, so the old markers keep working forever.
+	// Never remove these: a guardian's README does not get reissued
+	// because we renamed something.
+	legacyShareBegin = "-----BEGIN REMEMORY SHARE-----"
+	legacyShareEnd   = "-----END REMEMORY SHARE-----"
+
+	// The compact form printed under every QR code. Same rule as the
+	// markers: write the current one, read both forever.
+	CompactPrefix       = "IH"
+	legacyCompactPrefix = "RM"
 
 	// DefaultRecoveryURL is the default base URL for QR codes in PDFs.
 	// Points to the recover.html hosted on bitcoinbutlers.com.
-	DefaultRecoveryURL = "https://www.bitcoinbutlers.com/tools/kaitiaki/recover.html"
+	DefaultRecoveryURL = "https://www.bitcoinbutlers.com/tools/inheritance/recover.html"
 )
 
 // Share represents a single Shamir share with metadata.
@@ -98,14 +112,18 @@ func ParseShare(content []byte) (*Share, error) {
 	text := string(content)
 
 	// Find the PEM block
-	beginIdx := strings.Index(text, ShareBegin)
-	endIdx := strings.Index(text, ShareEnd)
+	begin, end := ShareBegin, ShareEnd
+	if !strings.Contains(text, begin) && strings.Contains(text, legacyShareBegin) {
+		begin, end = legacyShareBegin, legacyShareEnd
+	}
+	beginIdx := strings.Index(text, begin)
+	endIdx := strings.Index(text, end)
 	if beginIdx == -1 || endIdx == -1 || endIdx <= beginIdx {
 		return nil, fmt.Errorf("invalid share format: missing BEGIN/END markers")
 	}
 
 	// Extract content between markers
-	inner := text[beginIdx+len(ShareBegin) : endIdx]
+	inner := text[beginIdx+len(begin) : endIdx]
 	lines := strings.Split(strings.TrimSpace(inner), "\n")
 
 	share := &Share{}
@@ -219,7 +237,7 @@ func (s *Share) Verify() error {
 func (s *Share) CompactEncode() string {
 	data := base64.RawURLEncoding.EncodeToString(s.Data)
 	check := shortChecksum(s.Data)
-	return fmt.Sprintf("RM%d:%d:%d:%d:%s:%s", s.Version, s.Index, s.Total, s.Threshold, data, check)
+	return fmt.Sprintf("%s%d:%d:%d:%d:%s:%s", CompactPrefix, s.Version, s.Index, s.Total, s.Threshold, data, check)
 }
 
 // ParseCompact parses a compact-encoded share string back into a Share.
@@ -231,8 +249,8 @@ func ParseCompact(s string) (*Share, error) {
 	}
 
 	prefix := parts[0]
-	if !strings.HasPrefix(prefix, "RM") {
-		return nil, fmt.Errorf("invalid compact share: must start with 'RM', got %q", prefix)
+	if !strings.HasPrefix(prefix, CompactPrefix) && !strings.HasPrefix(prefix, legacyCompactPrefix) {
+		return nil, fmt.Errorf("invalid compact share: must start with %q or %q, got %q", CompactPrefix, legacyCompactPrefix, prefix)
 	}
 
 	version, err := strconv.Atoi(prefix[2:])

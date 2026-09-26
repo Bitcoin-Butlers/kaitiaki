@@ -3,7 +3,7 @@ package html
 import (
 	"strings"
 
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // I18nScriptOptions controls the page-specific parts of the shared i18n script block.

@@ -11,11 +11,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/html"
-	"github.com/eljojo/rememory/internal/pdf"
-	"github.com/eljojo/rememory/internal/project"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/pdf"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // Config holds configuration for bundle generation.
@@ -86,29 +86,13 @@ func GenerateAll(p *project.Project, cfg Config) error {
 			lang = "en"
 		}
 
-		// Get other friends (excluding this one) - empty for anonymous mode
-		var otherFriends []project.Friend
-		var otherFriendsInfo []html.FriendInfo
-		if !p.Anonymous {
-			otherFriends = make([]project.Friend, 0, len(p.Friends)-1)
-			otherFriendsInfo = make([]html.FriendInfo, 0, len(p.Friends)-1)
-			for j, f := range p.Friends {
-				if j != i {
-					otherFriends = append(otherFriends, f)
-					otherFriendsInfo = append(otherFriendsInfo, html.FriendInfo{
-						Name:       f.Name,
-						Contact:    f.Contact,
-						ShareIndex: j + 1, // 1-based share index
-					})
-				}
-			}
-		}
+		// A bundle names its own holder and nobody else. The other guardians
+		// were listed here until 2026-09-24. See sealed_texts.go.
 
 		// Generate personalized recover.html for this friend
 		personalization := &html.PersonalizationData{
 			Holder:       friend.Name,
 			HolderShare:  share.Encode(),
-			OtherFriends: otherFriendsInfo,
 			Threshold:    disclosedThreshold,
 			Total:        disclosedTotal,
 			Language:     lang,
@@ -131,7 +115,6 @@ func GenerateAll(p *project.Project, cfg Config) error {
 			ProjectName:      p.Name,
 			Friend:           friend,
 			Share:            share,
-			OtherFriends:     otherFriends,
 			Threshold:        disclosedThreshold,
 			Total:            disclosedTotal,
 			ManifestData:     manifestData,
@@ -142,10 +125,12 @@ func GenerateAll(p *project.Project, cfg Config) error {
 			Version:          cfg.Version,
 			GitHubReleaseURL: githubReleaseURL,
 			SealedAt:         p.Sealed.At,
-			Anonymous:        p.Anonymous,
 			RecoveryURL:      cfg.RecoveryURL,
 			Language:         lang,
 			TlockEnabled:     cfg.TlockEnabled,
+			// The texts themselves went into the archive before it was
+			// encrypted. A bundle carries only whether there were any.
+			OwnerWroteNothing: p.RecoverySteps == "" && p.ChainPayload == "",
 		})
 		if err != nil {
 			return fmt.Errorf("generating bundle for %s: %w", friend.Name, err)
@@ -166,7 +151,6 @@ type BundleParams struct {
 	ProjectName      string
 	Friend           project.Friend
 	Share            *core.Share
-	OtherFriends     []project.Friend
 	Threshold        int
 	Total            int
 	ManifestData     []byte
@@ -177,31 +161,34 @@ type BundleParams struct {
 	Version          string
 	GitHubReleaseURL string
 	SealedAt         time.Time
-	Anonymous        bool
 	RecoveryURL      string
 	Language         string // Bundle language for this friend
 	TlockEnabled     bool   // true when manifest uses time-lock encryption
+
+	// OwnerWroteNothing is true when the owner left no text at all. Every
+	// text an owner writes is sealed in the encrypted archive, so a bundle
+	// carries the flag and never the words. See sealed_texts.go.
+	OwnerWroteNothing bool
 }
 
 // GenerateBundle creates a single bundle ZIP file for one friend.
 func GenerateBundle(params BundleParams) error {
 	// Common data for both README formats
 	readmeData := ReadmeData{
-		ProjectName:      params.ProjectName,
-		Holder:           params.Friend.Name,
-		Share:            params.Share,
-		OtherFriends:     params.OtherFriends,
-		Threshold:        params.Threshold,
-		Total:            params.Total,
-		Version:          params.Version,
-		GitHubReleaseURL: params.GitHubReleaseURL,
-		ManifestChecksum: params.ManifestChecksum,
-		RecoverChecksum:  params.RecoverChecksum,
-		Created:          params.SealedAt,
-		Anonymous:        params.Anonymous,
-		Language:         params.Language,
-		ManifestEmbedded: params.ManifestEmbedded,
-		TlockEnabled:     params.TlockEnabled,
+		ProjectName:       params.ProjectName,
+		Holder:            params.Friend.Name,
+		Share:             params.Share,
+		Threshold:         params.Threshold,
+		Total:             params.Total,
+		Version:           params.Version,
+		GitHubReleaseURL:  params.GitHubReleaseURL,
+		ManifestChecksum:  params.ManifestChecksum,
+		RecoverChecksum:   params.RecoverChecksum,
+		Created:           params.SealedAt,
+		Language:          params.Language,
+		ManifestEmbedded:  params.ManifestEmbedded,
+		TlockEnabled:      params.TlockEnabled,
+		OwnerWroteNothing: params.OwnerWroteNothing,
 	}
 
 	// Generate README.txt
@@ -212,7 +199,6 @@ func GenerateBundle(params BundleParams) error {
 		ProjectName:      readmeData.ProjectName,
 		Holder:           readmeData.Holder,
 		Share:            readmeData.Share,
-		OtherFriends:     readmeData.OtherFriends,
 		Threshold:        readmeData.Threshold,
 		Total:            params.Total,
 		Version:          readmeData.Version,
@@ -220,7 +206,6 @@ func GenerateBundle(params BundleParams) error {
 		ManifestChecksum: readmeData.ManifestChecksum,
 		RecoverChecksum:  readmeData.RecoverChecksum,
 		Created:          readmeData.Created,
-		Anonymous:        readmeData.Anonymous,
 		RecoveryURL:      params.RecoveryURL,
 		Language:         params.Language,
 		ManifestEmbedded: params.ManifestEmbedded,

@@ -3,7 +3,6 @@ package html
 import (
 	"encoding/json"
 	"strings"
-
 )
 
 // GenerateHomeHTML creates the selfhosted home page with bundle data.
@@ -16,17 +15,17 @@ func GenerateHomeHTML(bundlesJSON string) string {
 	// Build scripts: i18n first, then home logic
 	var scripts strings.Builder
 	scripts.WriteString(i18nScript(I18nScriptOptions{
-		Component:         "home",
+		Component: "home",
 	}))
 	scripts.WriteString("\n  <script>" + strings.Replace(homeJS, "{{BUNDLES_JSON}}", bundlesJSON, 1) + "</script>")
 
 	result := applyLayout(LayoutOptions{
-		Title:         "Kaitiaki",
+		Title:         "Bitcoin Inheritance",
 		Selfhosted:    true,
 		PageStyles:    homeCSS,
 		NavExtras:     navExtras,
 		Content:       content,
-		FooterContent: `<p>Kaitiaki</p><p class="version">{{VERSION}}</p>`,
+		FooterContent: `<p>Bitcoin Inheritance</p><p class="version">{{VERSION}}</p>`,
 		Scripts:       scripts.String(),
 	})
 

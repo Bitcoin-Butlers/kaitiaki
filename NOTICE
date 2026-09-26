@@ -1,18 +1,8 @@
-Kaitiaki
+Bitcoin Inheritance
 Copyright 2026 Bitcoin Butlers
 
-This product is a fork of Rememory (https://github.com/eljojo/rememory),
-created by José Tomás Albornoz (eljojo) and contributors, and is
-distributed under the Apache License, Version 2.0. We thank the
-Rememory authors for their excellent work; all credit for the original
-design and implementation belongs to them.
-
-Changes made in this fork (Kaitiaki):
-- docs/independent-recovery.md: recovery procedure with independent
-  tools (stock age + contrib/combine.py), proven against the golden
-  fixtures in internal/core/testdata/.
-- contrib/combine.py: standalone GF(2^8) Lagrange share combiner.
-- Each bundle ZIP gains a machine-readable METADATA.yaml.
-- New `--hide-quorum` flag on init: shares and bundle documents can
-  omit the total/threshold values (disclosure stays the default).
-- NOTICE and README updated to state these changes.
+Portions copyright José Tomás Albornoz and the Rememory contributors.
+This work is a modified derivative of Rememory
+(https://github.com/eljojo/rememory), used under the Apache License,
+Version 2.0. Files throughout this repository have been changed; see the
+Git history for what and when.

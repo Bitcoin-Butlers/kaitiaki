@@ -28,7 +28,7 @@ func runDoc(cmd *cobra.Command, args []string) error {
 	switch docFormat {
 	case "man":
 		header := &doc.GenManHeader{
-			Title:   "KAITIAKI",
+			Title:   "INHERITANCE",
 			Section: "1",
 		}
 		if err := doc.GenManTree(rootCmd, header, outputDir); err != nil {

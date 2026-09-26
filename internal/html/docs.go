@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 // DocsLanguages returns the language codes that have a translated docs guide

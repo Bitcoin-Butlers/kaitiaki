@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 func TestGeneratePassphrase(t *testing.T) {

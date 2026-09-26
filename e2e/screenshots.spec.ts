@@ -10,16 +10,17 @@
  *
  * Usage:
  *   make screenshots          # or:
- *   REMEMORY_BIN=./rememory npx playwright test e2e/screenshots.spec.ts --project=chromium
+ *   INHERITANCE_BIN=./inheritance npx playwright test e2e/screenshots.spec.ts --project=chromium
  */
 
 import { test, expect, Page } from './fixtures';
+import { chromium } from '@playwright/test';
 import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import {
-  getRememoryBin,
+  getInheritanceBin,
   generateStandaloneHTML,
   extractBundle,
   extractWordsFromReadme,
@@ -44,11 +45,15 @@ const VIEWPORT = { width: 1280, height: 2000 };
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Save a screenshot cropped tightly to visible cards. */
+/** Save a screenshot cropped tightly to visible cards, under docs/screenshots/{lang}/. */
 async function snap(page: Page, lang: Lang, name: string): Promise<void> {
   const dir = path.join(SCREENSHOTS_ROOT, lang);
   fs.mkdirSync(dir, { recursive: true });
+  await snapTo(page, path.join(dir, `${name}.png`));
+}
 
+/** Save a screenshot cropped tightly to visible cards, to an absolute path. */
+async function snapTo(page: Page, file: string): Promise<void> {
   // Remove overflow:hidden from cards so content isn't clipped, then measure bounds.
   const bounds = await page.evaluate(() => {
     const cards = document.querySelectorAll('.container > .card');
@@ -73,7 +78,7 @@ async function snap(page: Page, lang: Lang, name: string): Promise<void> {
 
   const pad = 16;
   await page.screenshot({
-    path: path.join(dir, `${name}.png`),
+    path: file,
     clip: {
       x: bounds.x - pad,
       y: bounds.y - pad,
@@ -148,14 +153,14 @@ let standaloneRecoverHtml: string;
 const langBundlesDirs: Partial<Record<Lang, string>> = {};
 
 test.beforeAll(async () => {
-  const bin = getRememoryBin();
+  const bin = getInheritanceBin();
   if (!fs.existsSync(bin)) {
     test.skip();
     return;
   }
 
   // Create a project with 5 friends for richer screenshots.
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-screenshots-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-screenshots-'));
   projectDir = path.join(tmpDir, 'screenshot-project');
 
   execFileSync(bin, [
@@ -180,7 +185,7 @@ test.beforeAll(async () => {
 
   // Create per-language projects so word screenshots show translated BIP39 words
   for (const lang of LANGUAGES) {
-    const langTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), `rememory-ss-${lang}-`));
+    const langTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), `inheritance-ss-${lang}-`));
     const langProjectDir = path.join(langTmpDir, `words-${lang}`);
     execFileSync(bin, [
       'init', langProjectDir, '--name', 'Words',
@@ -196,7 +201,7 @@ test.beforeAll(async () => {
   }
 
   // Generate standalone HTML files
-  const htmlTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-ss-html-'));
+  const htmlTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-ss-html-'));
   makerHtmlPath = generateStandaloneHTML(htmlTmpDir, 'create');
   standaloneRecoverHtml = generateStandaloneHTML(htmlTmpDir, 'recover');
 });
@@ -270,6 +275,37 @@ for (const lang of LANGUAGES) {
       await snap(page, lang, 'files');
     });
 
+    test(`[${lang}] owners-words`, async ({ page }) => {
+      const creation = new CreationPage(page, makerHtmlPath);
+      await creation.open();
+
+      // The prompts show their examples as placeholder text, so an empty step
+      // is the honest picture: it is what an owner actually sees when they
+      // arrive, and the examples are the point of the figure.
+      //
+      // Index 2 is correct here: this IS step 3.
+      await frameCreationStep(page, [2]);
+
+      await snap(page, lang, 'owners-words');
+    });
+
+    // The chain step, with a transaction id in it. Publishing happens BEFORE
+    // generating, and nothing in the guide had a picture of that.
+    test(`[${lang}] chain-copy`, async ({ page }) => {
+      const creation = new CreationPage(page, makerHtmlPath);
+      await creation.open();
+
+      await page.check('input[name="destination"][value="both"]');
+      await page.fill('#words-wallet', 'A 2 of 3. Any two of the three keys can spend.');
+      await page.fill('#chain-descriptor',
+        'wsh(sortedmulti(2,[73c5da0a/48h/0h/0h/2h]xpub6DkFAXWQ2dHxq2vatrt9qyA3bXYU4ToWQwCHbf5XB2mSTexcHZCeKS1VZYcPoBd5X8yVcbXFHJR9R8UCVpt82VX1VhR28mCyxUFL4r6KFrf/<0;1>/*,[b8688df1/48h/0h/0h/2h]xpub6FQya7zGhR92kacYsNnjreouvnHJMpXYsUXnW6NJJAJRCKsa26TzDy4LdnGhEurr3d6y1J8PJ7EEMKQp74XTqYvmGJNogYXSKDszYHtF8mX/<0;1>/*,[28645006/48h/0h/0h/2h]xpub6DnEBNkSJKBYQmsbhS1sP9cNdtU5c9PLFGCjTJmxicxc13WB8zNNGQazabQpyFAGW5bV9tMko4uBxDxjUKL6dSAcx1tEbgEHtgSqyRsekh6/<0;1>/*))');
+      await expect(page.locator('#chain-size')).toContainText(/sat/i);
+      await page.fill('#chain-txid', '4801ea9c10e14a5ea5c0e5e68bfe08fd2422005ea0a3a9631fead29ce910a4df');
+
+      await frameCreationStep(page, [2]);
+      await snap(page, lang, 'chain-copy');
+    });
+
     test(`[${lang}] bundles`, async ({ page }) => {
       const creation = new CreationPage(page, makerHtmlPath);
       await creation.open();
@@ -292,8 +328,12 @@ for (const lang of LANGUAGES) {
       await expect(page.locator('#status-message.success')).toBeAttached({ timeout: 120000 });
       await expect(page.locator('#generate-btn.btn-secondary')).toBeAttached({ timeout: 5000 });
 
-      // Frame: only Step 3 (bundles), hide progress bar
-      await frameCreationStep(page, [2]);
+      // Frame: only Step 4, Generate Bundles. Hide the progress bar.
+      //
+      // Index 3, not 2. Step 3 became "What Your Heirs Need To Know" on
+      // 2026-09-22 and Generate moved down one. Until 2026-09-23 this framed
+      // index 2 and photographed the wrong card.
+      await frameCreationStep(page, [3]);
       await hide(page, '#progress-bar');
 
       await snap(page, lang, 'bundles');
@@ -310,8 +350,12 @@ for (const lang of LANGUAGES) {
       // Wait for the date preview to appear
       await expect(page.locator('#timelock-date-preview')).not.toBeEmpty();
 
-      // Frame: only Step 3 (generate bundles with tlock panel)
-      await frameCreationStep(page, [2]);
+      // Frame: only Step 4, Generate Bundles, where the time lock panel is.
+      //
+      // Index 3, not 2. This framed index 2 and produced a picture BYTE
+      // IDENTICAL to owners-words.png, so the guide showed the wrong card
+      // under the time lock heading.
+      await frameCreationStep(page, [3]);
 
       await snap(page, lang, 'tlock-setup');
     });
@@ -363,6 +407,48 @@ for (const lang of LANGUAGES) {
       await frameRecoveryStep(page, [2]);
 
       await snap(page, lang, 'recovery-2');
+    });
+
+    // What the guardians actually get back. Every other recovery figure uses
+    // a fixture with no owner texts, so nothing in the guide showed the
+    // sealed files by name, which is the whole point of sealing them.
+    test(`[${lang}] sealed-files`, async ({ page }, testInfo) => {
+      testInfo.setTimeout(120000);
+      const creation = new CreationPage(page, makerHtmlPath);
+      await creation.open();
+
+      await creation.setFriend(0, 'Alice', 'alice@example.com');
+      await creation.setFriend(1, 'Bob', 'bob@example.com');
+      await page.fill('#words-wallet', 'A 2 of 3. Any two of the three keys can spend.');
+      await page.fill('#words-keys', 'Key 1: the safe at home. Key 2: Hannah has it.');
+
+      const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-sealed-'));
+      const files = creation.createTestFiles(tmp, 'sealed');
+      await creation.addFiles(files);
+      await creation.generate();
+      await creation.expectGenerationComplete();
+
+      const dirs: string[] = [];
+      for (let i = 0; i < 2; i++) {
+        const data = await creation.downloadBundle(i);
+        const zipPath = path.join(tmp, `b${i}.zip`);
+        fs.writeFileSync(zipPath, data!);
+        const out = path.join(tmp, `b${i}`);
+        fs.mkdirSync(out, { recursive: true });
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const AdmZip = require('adm-zip');
+        new AdmZip(zipPath).extractAllTo(out, true);
+        dirs.push(out);
+      }
+
+      const recovery = new RecoveryPage(page, dirs[0]);
+      await recovery.open();
+      await recovery.addShares(dirs[1]);
+      await expect(page.locator('#status-message.success')).toBeAttached({ timeout: 60000 });
+      await page.waitForTimeout(500);
+
+      await frameRecoveryStep(page, [2]);
+      await snap(page, lang, 'sealed-files');
     });
 
     test(`[${lang}] tlock-waiting`, async ({ page }) => {
@@ -478,5 +564,119 @@ test.describe('README screenshot', () => {
         width: bounds.width + pad * 2, height: bounds.height + pad * 2,
       },
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Docs step screenshots
+//
+// The guide's recovery section had three images the generator above did not
+// make: a browser asking for camera permission, the scanner in use, and an
+// OS file picker. The first and last were dialogs of the reader's browser and
+// operating system, not of this tool, and a page screenshot cannot contain
+// them. They are replaced by the page at that step: the share step with the
+// Scan button, and the manifest drop zone. The scanner shot needs a camera,
+// which the offline fixtures do not provide, so it launches its own Chromium
+// with a fake camera fed from a rendered QR code on paper, and stubs
+// BarcodeDetector so the modal stays open long enough to photograph.
+//
+// Also made here: the Open Graph image (docs/screenshots/recovery-1.png) at
+// 1200x630, and the root friends.png the README links to.
+// ---------------------------------------------------------------------------
+
+test.describe('Docs step screenshots', () => {
+  test('scan button, scanner, manifest drop zone, og image', async () => {
+    test.setTimeout(120000);
+    const aliceDir = extractBundle(bundlesDir, 'Alice');
+
+    // A QR code on warm paper, as a short looping video the fake camera plays.
+    // The code carries our recovery URL and nothing else, so a reader who
+    // scans the documentation image lands on the tool.
+    const work = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-qr-'));
+    const qrPng = path.join(work, 'qr.png');
+    const feed = path.join(work, 'qr.y4m');
+    execFileSync('qrencode', ['-o', qrPng, '-s', '10', '-m', '2', 'https://www.bitcoinbutlers.com/tools/inheritance/recover.html']);
+    // Portrait, like a phone camera; the code sized to sit inside the 250px frame.
+    execFileSync('ffmpeg', [
+      '-y', '-loglevel', 'error',
+      '-f', 'lavfi', '-i', 'color=c=0xf3eee4:s=480x640:r=10:d=2',
+      '-i', qrPng,
+      '-filter_complex', '[1:v]scale=150:-1[q];[0:v][q]overlay=(W-w)/2:(H-h)/2',
+      '-pix_fmt', 'yuv420p', '-t', '2', feed,
+    ]);
+
+    const browser = await chromium.launch({
+      args: [
+        '--use-fake-device-for-media-stream',
+        '--use-fake-ui-for-media-stream',
+        `--use-file-for-fake-video-capture=${feed}`,
+      ],
+    });
+    try {
+      const context = await browser.newContext({ viewport: VIEWPORT, permissions: ['camera'] });
+      // Never detect anything: the modal must stay open for the photograph.
+      await context.addInitScript(() => {
+        (window as any).BarcodeDetector = class {
+          static getSupportedFormats() { return Promise.resolve(['qr_code']); }
+          detect() { return Promise.resolve([]); }
+        };
+      });
+      const page = await context.newPage();
+      const recovery = new RecoveryPage(page, aliceDir);
+      await recovery.open();
+      await recovery.expectShareCount(1);
+
+      // The share step, with the Scan QR code button the reader is about to press.
+      await frameRecoveryStep(page, [0]);
+      await snapTo(page, path.join(SCREENSHOTS_ROOT, 'scan-qr-button.png'));
+
+      // The scanner, with the printed code in the camera's view. The guide says
+      // to scan with a phone, so this one is a phone: 430x932 at 2x.
+      const phone = await browser.newContext({
+        viewport: { width: 430, height: 932 },
+        deviceScaleFactor: 2,
+        permissions: ['camera'],
+      });
+      await phone.addInitScript(() => {
+        (window as any).BarcodeDetector = class {
+          static getSupportedFormats() { return Promise.resolve(['qr_code']); }
+          detect() { return Promise.resolve([]); }
+        };
+      });
+      const phonePage = await phone.newPage();
+      const phoneRecovery = new RecoveryPage(phonePage, aliceDir);
+      await phoneRecovery.open();
+      await phoneRecovery.expectShareCount(1);
+      await phonePage.locator('#scan-qr-btn').click();
+      const modal = phonePage.locator('#qr-scanner-modal');
+      await expect(modal).toBeVisible();
+      await phonePage.waitForFunction(() => {
+        const v = document.getElementById('qr-video') as HTMLVideoElement | null;
+        return !!v && v.readyState >= 2 && v.videoWidth > 0;
+      }, null, { timeout: 20000 });
+      await phonePage.waitForTimeout(700);
+      await modal.screenshot({ path: path.join(SCREENSHOTS_ROOT, 'qr-scanning.png') });
+      await phone.close();
+
+      // The manifest step before anything is loaded: the standalone page, not
+      // a personalised bundle, because a bundle carries its manifest with it.
+      await recovery.openFile(standaloneRecoverHtml);
+      await frameRecoveryStep(page, [1]);
+      await snapTo(page, path.join(SCREENSHOTS_ROOT, 'manifest-drop-zone.png'));
+
+      // Open Graph image: the recovery tool with a bundle open, 1200x630.
+      const og = await browser.newPage({ viewport: { width: 1200, height: 630 } });
+      const ogRecovery = new RecoveryPage(og, aliceDir);
+      await ogRecovery.open();
+      await ogRecovery.expectShareCount(1);
+      await og.screenshot({ path: path.join(SCREENSHOTS_ROOT, 'recovery-1.png') });
+      await og.close();
+    } finally {
+      await browser.close();
+      fs.rmSync(work, { recursive: true, force: true });
+    }
+
+    // The README links the root friends.png; keep it the same image as the guide's.
+    fs.copyFileSync(path.join(SCREENSHOTS_ROOT, 'en', 'friends.png'), path.join(SCREENSHOTS_ROOT, 'friends.png'));
   });
 });
