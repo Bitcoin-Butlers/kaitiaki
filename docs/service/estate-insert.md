@@ -30,7 +30,8 @@ No guardian can read anything alone.
 
 **No bundle names anyone but its own holder.** A guardian does not know who the
 others are, and that is deliberate: it means no two of them can agree to open
-anything behind your back. This table is how your heirs find them.
+anything behind your back. This table is how your heirs find them. To
+anyone who reads it early it is names and nothing else.
 
 If a row is struck through, that bundle was replaced. It will still open and
 it no longer works with the others, so it counts for nothing. Use the rows

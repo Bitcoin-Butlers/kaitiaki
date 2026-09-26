@@ -42,6 +42,8 @@ enough guardians come together:
 | `CHAIN-COPY.txt` | the chain copy and its transaction id, if you made one |
 
 **Who holds a piece belongs in your will**, not in the thing they are holding.
+To anyone who reads that list early it is names and nothing else. To your
+heirs it is the only way to find the bundles.
 Two guardians who know each other can agree between themselves. Two guardians
 who do not, cannot.
 

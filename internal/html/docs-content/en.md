@@ -57,7 +57,7 @@ Three steps, all in your browser. Your files never leave your device. Open [Crea
 
 Add the people who hold one piece of the key each. Give each one a name and, if you want, a way to reach them.
 
-**These names go nowhere but each guardian's own bundle.** A guardian sees their own name and nobody else's. That is deliberate: a bundle travels, and a list of names travels with it, so a bundle in the wrong hands would name the rest of the people to approach. Write the list of guardians on your estate insert instead, where your heirs will find it and no guardian will.
+**These names go nowhere but each guardian's own bundle.** A guardian sees their own name and nobody else's. That is deliberate: a bundle travels, and a list of names travels with it, so a bundle in the wrong hands would name the rest of the people to approach. Write the list of guardians on your estate insert instead, where your heirs will find it and no guardian will. To anyone who reads that list early it is names and nothing else. To your heirs it is the only way to find the bundles.
 
 <figure class="screenshot">
 <img src="screenshots/en/friends.png" alt="Adding guardians in Step 1">
