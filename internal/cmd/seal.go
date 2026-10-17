@@ -8,11 +8,11 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/eljojo/rememory/internal/bundle"
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/crypto"
-	"github.com/eljojo/rememory/internal/manifest"
-	"github.com/eljojo/rememory/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/bundle"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/crypto"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/manifest"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +30,7 @@ This command:
   5. Generates ZIP bundles for distribution
   6. Writes checksums to project.yml
 
-Run this command inside a project directory (created with 'kaitiaki init').`,
+Run this command inside a project directory (created with 'inheritance init').`,
 	RunE: runSeal,
 }
 
@@ -126,16 +126,37 @@ func sealProject(p *project.Project, recoveryURL string, noEmbedManifest bool, t
 		}
 	}
 
+	// The owner's own texts go INSIDE the archive, beside their files, so a
+	// reader meets them only after enough guardians combine their pieces.
+	// They are built in memory and handed to the archive: writing them into
+	// manifest/ would overwrite an edit the owner made there by hand, and
+	// would leave their words lying in plaintext on disk after every seal.
+	// See internal/bundle/sealed_texts.go.
+	sealedFiles := bundle.SealedFiles(bundle.SealedTexts{
+		RecoverySteps: p.RecoverySteps,
+		ChainPayload:  p.ChainPayload,
+		ChainTxid:     p.ChainTxid,
+	}, p.Language, time.Now())
+
+	extras := make([]manifest.ExtraFile, 0, len(sealedFiles))
+	for _, f := range sealedFiles {
+		extras = append(extras, manifest.ExtraFile{Name: f.Name, Content: f.Content})
+		fileCount++
+	}
+
 	dirSize, err := manifest.DirSize(manifestDir)
 	if err != nil {
 		return fmt.Errorf("calculating manifest size: %w", err)
+	}
+	for _, e := range extras {
+		dirSize += int64(len(e.Content))
 	}
 
 	fmt.Printf("Archiving manifest/ (%d files, %s)...\n", fileCount, formatSize(dirSize))
 
 	// Archive the manifest directory
 	var archiveBuf bytes.Buffer
-	archiveResult, err := manifest.ArchiveZip(&archiveBuf, manifestDir)
+	archiveResult, err := manifest.ArchiveZip(&archiveBuf, manifestDir, extras...)
 	if err != nil {
 		return fmt.Errorf("archiving manifest: %w", err)
 	}

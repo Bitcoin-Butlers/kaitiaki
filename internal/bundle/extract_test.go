@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 func testShare() *core.Share {

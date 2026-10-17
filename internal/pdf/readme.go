@@ -11,9 +11,8 @@ import (
 	qrcode "github.com/skip2/go-qrcode"
 	"golang.org/x/text/unicode/norm"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/project"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // ReadmeData contains all data needed to generate README.pdf
@@ -21,7 +20,6 @@ type ReadmeData struct {
 	ProjectName      string
 	Holder           string
 	Share            *core.Share
-	OtherFriends     []project.Friend
 	Threshold        int
 	Total            int
 	Version          string
@@ -29,12 +27,12 @@ type ReadmeData struct {
 	ManifestChecksum string
 	RecoverChecksum  string
 	Created          time.Time
-	Anonymous        bool
 	RecoveryURL      string // Base URL for QR code (e.g. "https://example.com/recover.html")
 	Language         string // Bundle language (e.g. "en", "es"); defaults to "en"
 	ManifestEmbedded bool   // true when manifest is embedded in recover.html
 	OwnerKeyPresent  bool   // true when the bundle contains OWNER.age
 	TlockEnabled     bool   // true when manifest uses time-lock encryption
+
 }
 
 // Font sizes
@@ -46,17 +44,25 @@ const (
 	smallMono   = 7.0
 )
 
-// bundleColors are soft, distinguishable colors used to give each friend's
-// printed PDF a unique visual identity. Indexed by (share.Index - 1) % len.
+// bundleColors give each guardian's printed page its own band, so a stack of
+// them can be told apart at a glance. Indexed by (share.Index - 1) % len.
+//
+// The Bitcoin Butlers warm family, deepened for ink. The web palette's gold
+// (#FBDC7B) is too light to read as a band on white paper, so these are the
+// same hues at print weight.
+//
+// This document stays light. It is made to be printed: it carries a QR code
+// to scan off paper and tells the holder they can post it as a letter. A dark
+// page prints as a black page.
 var bundleColors = [][3]int{
-	{122, 143, 166}, // dusty blue
-	{85, 115, 90},   // sage
-	{166, 130, 100}, // warm tan
-	{140, 110, 140}, // muted plum
-	{110, 145, 140}, // teal
-	{180, 140, 100}, // amber
-	{120, 130, 160}, // slate
-	{155, 120, 120}, // dusty rose
+	{201, 154, 51},  // gold
+	{176, 122, 44},  // bronze
+	{209, 128, 47},  // amber
+	{184, 146, 86},  // sand
+	{150, 98, 40},   // copper
+	{198, 170, 110}, // pale gold
+	{155, 110, 70},  // warm tan
+	{132, 96, 58},   // dark bronze
 }
 
 // QR code size in mm on the PDF page.
@@ -153,24 +159,20 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	p.Ln(5)
 
 	// ── Warning stamp — soft, centered, calm ──
-	p.SetFillColor(232, 239, 234)
+	p.SetFillColor(250, 243, 224)
 	p.SetTextColor(46, 42, 38)
 	p.SetFont(fontSans, "B", headingSize)
 	p.CellFormat(0, 11, t("warning_title"), "", 1, "C", true, 0, "")
-	p.SetFillColor(232, 242, 234)
+	p.SetFillColor(252, 247, 233)
 	p.SetFont(fontSans, "", 9)
-	if data.Anonymous {
-		p.MultiCell(0, 5, t("warning_message_shares"), "", "C", true)
-	} else {
-		p.MultiCell(0, 5, t("warning_message_friends"), "", "C", true)
-	}
+	p.MultiCell(0, 5, t("warning_message"), "", "C", true)
 	p.Ln(8)
 
 	// ── Recovery rule — prominent standalone box ──
 	// Skipped in hide-quorum mode: the box only states k of N.
 	if data.Threshold > 0 {
-		p.SetFillColor(242, 242, 248)
-		p.SetDrawColor(140, 140, 160)
+		p.SetFillColor(253, 248, 235)
+		p.SetDrawColor(201, 154, 51)
 		p.SetLineWidth(0.5)
 		ruleBoxY := p.GetY()
 		ruleBoxH := 20.0
@@ -186,26 +188,16 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 		p.SetLineWidth(0.2)
 	}
 
-	// ── Other share holders — contact card layout ──
-	if !data.Anonymous {
-		addSection(p, t("other_holders"))
-		for i, friend := range data.OtherFriends {
-			p.SetFont(fontSans, "B", bodySize)
-			if friend.Contact != "" {
-				nameStr := "   " + friend.Name + "  "
-				nameW := p.GetStringWidth(nameStr)
-				p.CellFormat(nameW, 7, nameStr, "", 0, "L", false, 0, "")
-				p.SetFont(fontSans, "", bodySize)
-				p.CellFormat(0, 7, "\u2014  "+friend.Contact, "", 1, "L", false, 0, "")
-			} else {
-				p.CellFormat(0, 7, "   "+friend.Name, "", 1, "L", false, 0, "")
-			}
-			if i < len(data.OtherFriends)-1 {
-				p.Ln(2)
-			}
-		}
-		p.Ln(8)
-	}
+	// No roster, no method, no chain copy. All three are sealed inside the
+	// encrypted archive now. A printed page is the easiest of the three
+	// surfaces to photograph and pass on, so it carries the least.
+
+	// ── Who else holds a piece ──
+	// The bundle cannot say, so it says where to look.
+	addSection(p, t("who_else_title"))
+	p.SetFont(fontSans, "", bodySize)
+	p.MultiCell(0, 5, t("who_else"), "", "L", false)
+	p.Ln(5)
 
 	// ── Sharing your share — procedure card with grey background ──
 	p.SetFillColor(245, 245, 245)
@@ -214,6 +206,7 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	p.CellFormat(0, 2, "", "", 1, "", true, 0, "")
 	p.SetFont(fontSans, "", bodySize)
 	p.MultiCell(0, 5, " "+t("sharing_verify"), "", "L", true)
+	p.MultiCell(0, 5, " "+t("sharing_verify_estate"), "", "L", true)
 	p.CellFormat(0, 3, "", "", 1, "", true, 0, "")
 	p.MultiCell(0, 5, "   \u2022 "+t("sharing_easiest"), "", "L", true)
 	p.MultiCell(0, 5, "   \u2022 "+t("sharing_readme_only"), "", "L", true)
@@ -343,31 +336,17 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 		addBody(p, t("owner_note"))
 	}
 	p.Ln(2)
-	if data.Anonymous {
-		addBody(p, t("recover_anon_step3"))
-		addBody(p, "   "+t("recover_anon_step3_drag"))
-		addBody(p, "   "+t("recover_anon_step3_paste"))
-		p.Ln(2)
-		if data.Threshold > 0 {
-			addBody(p, t("recover_anon_step4_auto", data.Threshold))
-		}
-		p.Ln(2)
-		addBody(p, t("recover_anon_step5"))
-	} else {
-		addBody(p, t("recover_step3_contact"))
-		addBody(p, "   "+t("recover_step3_ask"))
-		p.Ln(2)
-		addBody(p, t("recover_step4"))
-		addBody(p, "   "+t("recover_step4_drag"))
-		addBody(p, "   "+t("recover_step4_paste"))
-		p.Ln(2)
-		addBody(p, t("recover_step5_checkmarks"))
-		if data.Threshold > 0 {
-			addBody(p, "   "+t("recover_step5_auto", data.Threshold))
-		}
-		p.Ln(2)
-		addBody(p, t("recover_step6"))
+	// One set of steps, for every bundle. The other set told the reader to
+	// open a contact list and ask the people on it. There is no list.
+	addBody(p, t("recover_step3"))
+	addBody(p, "   "+t("recover_step3_drag"))
+	addBody(p, "   "+t("recover_step3_paste"))
+	p.Ln(2)
+	if data.Threshold > 0 {
+		addBody(p, t("recover_step4_auto", data.Threshold))
 	}
+	p.Ln(2)
+	addBody(p, t("recover_step5"))
 	p.Ln(2)
 	p.SetFont(fontSans, "I", bodySize)
 	if data.TlockEnabled {
@@ -411,7 +390,7 @@ func GenerateReadme(data ReadmeData) ([]byte, error) {
 	p.CellFormat(0, 5, "METADATA", "", 1, "L", false, 0, "")
 	p.SetFont(fontMono, "", smallMono)
 	p.SetFillColor(245, 245, 245)
-	addMeta(p, "kaitiaki-version", data.Version)
+	addMeta(p, "inheritance-version", data.Version)
 	addMeta(p, "created", data.Created.Format(time.RFC3339))
 	addMeta(p, "project", data.ProjectName)
 	if data.Threshold > 0 {
@@ -476,7 +455,9 @@ func renderWordGridPDF(p *fpdf.Fpdf, words []string, title string, leftMargin, c
 func addSection(pdf *fpdf.Fpdf, title string) {
 	pdf.SetFont(fontSans, "B", headingSize)
 	pdf.SetFillColor(230, 230, 230)
-	pdf.CellFormat(0, 8, " "+title, "", 1, "L", true, 0, "")
+	// MultiCell, not CellFormat: a heading longer than the line must wrap.
+	// CellFormat clips at the right margin and drops the rest of the words.
+	pdf.MultiCell(0, 8, " "+title, "", "L", true)
 	pdf.Ln(2)
 }
 

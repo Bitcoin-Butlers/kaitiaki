@@ -10,7 +10,6 @@ interface SharedSetup {
   tmpDir: string;
   standardProject: string;
   noEmbedProject: string;
-  anonymousProject: string;
   makerHtml: string;
   recoverHtml: string;
   docsHtml: string;
@@ -22,7 +21,7 @@ let _sharedSetup: SharedSetup | null | undefined;
 
 function getSharedSetup(): SharedSetup | null {
   if (_sharedSetup === undefined) {
-    const setupPath = process.env.REMEMORY_E2E_SETUP;
+    const setupPath = process.env.INHERITANCE_E2E_SETUP;
     if (setupPath && fs.existsSync(setupPath)) {
       _sharedSetup = JSON.parse(fs.readFileSync(setupPath, 'utf8'));
     } else {
@@ -37,7 +36,7 @@ let _fallbackTmpDir: string | null = null;
 
 function getFallbackTmpDir(): string {
   if (!_fallbackTmpDir) {
-    _fallbackTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-fallback-'));
+    _fallbackTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-e2e-fallback-'));
   }
   return _fallbackTmpDir;
 }
@@ -59,7 +58,7 @@ function buildCryptoTestHtml(tmpDir: string): string {
 <head><meta charset="utf-8"><title>Crypto Test</title></head>
 <body>
   <script>${cryptoJs}</script>
-  <script>window.rememoryCrypto = RememoryCrypto; window.testReady = true;</script>
+  <script>window.inheritanceCrypto = RememoryCrypto; window.testReady = true;</script>
 </body>
 </html>`);
 
@@ -85,10 +84,10 @@ function getOrBuild(field: keyof SharedSetup, build: (tmpDir: string) => string)
   return built;
 }
 
-/** Helper to build an HTML resource via the rememory CLI. */
+/** Helper to build an HTML resource via the inheritance CLI. */
 function buildHtmlResource(tmpDir: string, filename: string, args: string[]): string {
   const htmlPath = path.join(tmpDir, filename);
-  execFileSync(getRememoryBin(), ['html', ...args, '-o', htmlPath], { stdio: 'inherit' });
+  execFileSync(getInheritanceBin(), ['html', ...args, '-o', htmlPath], { stdio: 'inherit' });
   return htmlPath;
 }
 
@@ -104,9 +103,15 @@ export function getIndexHtml(): string {
   return getOrBuild('indexHtml', (dir) => buildHtmlResource(dir, 'index.html', ['index']));
 }
 
-// Get absolute path to rememory binary
-export function getRememoryBin(): string {
-  const binEnv = process.env.REMEMORY_BIN || './kaitiaki';
+export function getDescriptorHtml(): string {
+  return getOrBuild('descriptorHtml', (dir) =>
+    buildHtmlResource(dir, 'descriptor.html', ['descriptor'])
+  );
+}
+
+// Get absolute path to inheritance binary
+export function getInheritanceBin(): string {
+  const binEnv = process.env.INHERITANCE_BIN || './inheritance';
   return path.resolve(binEnv);
 }
 
@@ -123,7 +128,7 @@ export function generateStandaloneHTML(tmpDir: string, type: 'recover' | 'create
     }
   }
 
-  const bin = getRememoryBin();
+  const bin = getInheritanceBin();
   const htmlPath = path.join(tmpDir, type === 'create' ? 'maker.html' : 'recover.html');
 
   execFileSync(bin, ['html', type, '-o', htmlPath, ...extraFlags], { stdio: 'inherit' });
@@ -173,9 +178,9 @@ export function createTestProject(options: TestProjectOptions = {}): string {
     }
   }
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-e2e-'));
   const projectDir = path.join(tmpDir, 'test-project');
-  const bin = getRememoryBin();
+  const bin = getInheritanceBin();
 
   const friends = options.friends || [
     { name: 'Alice', email: 'alice@test.com' },
@@ -205,44 +210,6 @@ export function createTestProject(options: TestProjectOptions = {}): string {
   return projectDir;
 }
 
-// Create a sealed anonymous test project with bundles (cached within a worker)
-export function createAnonymousTestProject(): string {
-  const key = 'anonymous';
-  const cached = projectCache.get(key);
-  if (cached && fs.existsSync(cached)) {
-    return cached;
-  }
-
-  // Use pre-created project from global setup when available
-  const shared = getSharedSetup();
-  if (shared?.anonymousProject && fs.existsSync(shared.anonymousProject)) {
-    projectCache.set(key, shared.anonymousProject);
-    globalSetupPaths.add(shared.anonymousProject);
-    return shared.anonymousProject;
-  }
-
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-e2e-anon-'));
-  const projectDir = path.join(tmpDir, 'test-anon-project');
-  const bin = getRememoryBin();
-
-  // Create anonymous project with 3 shares, threshold 2
-  execFileSync(bin, [
-    'init', projectDir, '--name', 'Anonymous E2E Test', '--anonymous', '--shares', '3', '--threshold', '2',
-  ], { stdio: 'inherit' });
-
-  // Add secret content
-  const manifestDir = path.join(projectDir, 'manifest');
-  fs.writeFileSync(path.join(manifestDir, 'secret.txt'), 'Anonymous secret: correct-horse-battery-staple');
-  fs.writeFileSync(path.join(manifestDir, 'notes.txt'), 'Anonymous notes!');
-
-  // Seal and generate bundles
-  execFileSync(bin, ['seal'], { cwd: projectDir, stdio: 'inherit' });
-  execFileSync(bin, ['bundle'], { cwd: projectDir, stdio: 'inherit' });
-
-  projectCache.set(key, projectDir);
-  cachedPaths.add(projectDir);
-  return projectDir;
-}
 
 // Safe cleanup: only removes the directory if it's not a cached project
 // that other describe blocks might still need.
@@ -296,15 +263,7 @@ export function extractBundles(bundlesDir: string, friendNames: string[]): strin
   return friendNames.map(name => extractBundle(bundlesDir, name));
 }
 
-// Extract anonymous bundle by share number
-export function extractAnonymousBundle(bundlesDir: string, shareNum: number): string {
-  return extractBundle(bundlesDir, `share-${shareNum}`);
-}
 
-// Extract multiple anonymous bundles
-export function extractAnonymousBundles(bundlesDir: string, shareNums: number[]): string[] {
-  return shareNums.map(num => extractAnonymousBundle(bundlesDir, num));
-}
 
 // Load README filenames from translations (source of truth)
 function loadReadmeFilenames(): string[] {
@@ -369,7 +328,7 @@ export class RecoveryPage {
   async open(): Promise<void> {
     await this.page.goto(`file://${path.join(this.bundleDir, 'recover.html')}`);
     await this.page.waitForFunction(
-      () => (window as any).rememoryAppReady === true,
+      () => (window as any).inheritanceAppReady === true,
       { timeout: 30000 }
     );
   }
@@ -378,7 +337,7 @@ export class RecoveryPage {
   async openFile(htmlPath: string): Promise<void> {
     await this.page.goto(`file://${htmlPath}`);
     await this.page.waitForFunction(
-      () => (window as any).rememoryAppReady === true,
+      () => (window as any).inheritanceAppReady === true,
       { timeout: 30000 }
     );
   }
@@ -508,24 +467,6 @@ export class RecoveryPage {
     await expect(this.page.locator('.share-item').first()).toContainText('Your piece');
   }
 
-  // Contact list assertions
-  async expectContactListVisible(): Promise<void> {
-    await expect(this.page.locator('#contact-list-section')).toBeVisible();
-  }
-
-  async expectContactItem(name: string): Promise<void> {
-    await expect(this.page.locator('.contact-item').filter({ hasText: name })).toBeVisible();
-  }
-
-  async expectContactCollected(name: string): Promise<void> {
-    const contact = this.page.locator('.contact-item').filter({ hasText: name });
-    await expect(contact).toHaveClass(/collected/);
-  }
-
-  async expectContactNotCollected(name: string): Promise<void> {
-    const contact = this.page.locator('.contact-item').filter({ hasText: name });
-    await expect(contact).not.toHaveClass(/collected/);
-  }
 
   // Steps collapse assertions
   async expectStepsVisible(): Promise<void> {
@@ -546,7 +487,7 @@ export class CreationPage {
   async open(): Promise<void> {
     await this.page.goto(`file://${this.htmlPath}`);
     await this.page.waitForFunction(
-      () => (window as any).rememoryReady === true,
+      () => (window as any).inheritanceReady === true,
       { timeout: 30000 }
     );
   }
@@ -684,7 +625,7 @@ export class CreationPage {
   async downloadBundle(index: number): Promise<Uint8Array | null> {
     // Get bundle data from the page's state
     const data = await this.page.evaluate((idx) => {
-      const state = (window as any).rememoryBundles;
+      const state = (window as any).inheritanceBundles;
       if (!state || !state[idx]) return null;
       return Array.from(state[idx].data as Uint8Array);
     }, index);
@@ -695,7 +636,7 @@ export class CreationPage {
 
   // UI assertions
   async expectUIElements(): Promise<void> {
-    await expect(this.page.locator('.logo')).toContainText('Kaitiaki');
+    await expect(this.page.locator('.logo')).toContainText('Inheritance');
     await expect(this.page.locator('#friends-list')).toBeVisible();
     await expect(this.page.locator('#files-drop-zone')).toBeVisible();
     await expect(this.page.locator('#generate-btn')).toBeVisible();
@@ -710,66 +651,6 @@ export class CreationPage {
     this.page.on('dialog', dialog => dialog[action]());
   }
 
-  // Anonymous mode methods
-  async selectAnonymousMode(): Promise<void> {
-    await this.page.locator('.mode-tab[data-mode="anonymous"]').click();
-  }
-
-  async selectNamedMode(): Promise<void> {
-    await this.page.locator('.mode-tab[data-mode="named"]').click();
-  }
-
-  async toggleAnonymousMode(): Promise<void> {
-    const anonTab = this.page.locator('.mode-tab[data-mode="anonymous"]');
-    const isActive = await anonTab.evaluate(el => el.classList.contains('active'));
-    if (isActive) {
-      await this.page.locator('.mode-tab[data-mode="named"]').click();
-    } else {
-      await anonTab.click();
-    }
-  }
-
-  async expectAnonymousModeActive(): Promise<void> {
-    await expect(this.page.locator('.mode-tab[data-mode="anonymous"]')).toHaveClass(/active/);
-  }
-
-  async expectNamedModeActive(): Promise<void> {
-    await expect(this.page.locator('.mode-tab[data-mode="named"]')).toHaveClass(/active/);
-  }
-
-  async expectAnonymousModeChecked(): Promise<void> {
-    await this.expectAnonymousModeActive();
-  }
-
-  async expectAnonymousModeUnchecked(): Promise<void> {
-    await this.expectNamedModeActive();
-  }
-
-  async expectFriendsListHidden(): Promise<void> {
-    await expect(this.page.locator('#friends-section')).toHaveClass(/hidden/);
-  }
-
-  async expectFriendsListVisible(): Promise<void> {
-    await expect(this.page.locator('#friends-section')).not.toHaveClass(/hidden/);
-  }
-
-  async expectSharesInputVisible(): Promise<void> {
-    await expect(this.page.locator('#shares-input')).toBeVisible();
-  }
-
-  async expectSharesInputHidden(): Promise<void> {
-    await expect(this.page.locator('#shares-input')).toHaveClass(/hidden/);
-  }
-
-  async setNumShares(count: number): Promise<void> {
-    await this.page.locator('#num-shares').fill(String(count));
-    // Trigger input event to update state
-    await this.page.locator('#num-shares').dispatchEvent('input');
-  }
-
-  async expectNumShares(count: number): Promise<void> {
-    await expect(this.page.locator('#num-shares')).toHaveValue(String(count));
-  }
 
   // Export YAML and return content
   async exportYAML(): Promise<string> {

@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as net from 'net';
 import {
-  getRememoryBin,
+  getInheritanceBin,
   createTestProject,
   cleanupProject,
   extractBundles,
@@ -34,14 +34,14 @@ test.describe('Static Pages', () => {
   let baseURL: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
     }
 
     // Create a sealed project with --pages flag
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-pages-e2e-'));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-pages-e2e-'));
     projectDir = path.join(tmpDir, 'test-project');
 
     const { execFileSync } = require('child_process');
@@ -118,7 +118,7 @@ test.describe('Static Pages', () => {
     // Navigate to recover.html
     await page.goto(`${baseURL}/recover.html`);
     await page.waitForFunction(
-      () => (window as any).rememoryAppReady === true,
+      () => (window as any).inheritanceAppReady === true,
       { timeout: 30000 }
     );
 

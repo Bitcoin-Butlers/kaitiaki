@@ -1,5 +1,5 @@
 /**
- * Kaitiaki Data Flow Animation
+ * Bitcoin Inheritance Data Flow Animation
  *
  * Educational visualization showing how Shamir's Secret Sharing works:
  * - A file is encrypted and split into 5 shares

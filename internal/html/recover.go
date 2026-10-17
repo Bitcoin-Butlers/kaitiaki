@@ -7,15 +7,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
-
-// FriendInfo holds friend contact information for the UI.
-type FriendInfo struct {
-	Name       string `json:"name"`
-	Contact    string `json:"contact,omitempty"`
-	ShareIndex int    `json:"shareIndex"` // 1-based share index for this friend
-}
 
 // MaxEmbeddedManifestSize is the maximum size of MANIFEST.age that will be
 // embedded (base64-encoded) in recover.html. Manifests at or below this size
@@ -24,15 +17,14 @@ const MaxEmbeddedManifestSize = 10 << 20 // 10 MiB
 
 // PersonalizationData holds the data to personalize recover.html for a specific friend.
 type PersonalizationData struct {
-	Holder       string       `json:"holder"`                 // This friend's name
-	HolderShare  string       `json:"holderShare"`            // This friend's encoded share
-	OtherFriends []FriendInfo `json:"otherFriends"`           // List of other friends
-	Threshold    int          `json:"threshold"`              // Required shares (K)
-	Total        int          `json:"total"`                  // Total shares (N)
-	Language     string       `json:"language,omitempty"`     // Default UI language for this friend
-	ManifestB64  string       `json:"manifestB64,omitempty"`  // Base64-encoded MANIFEST.age (when <= MaxEmbeddedManifestSize)
-	OwnerB64     string       `json:"ownerB64,omitempty"`     // Base64-encoded OWNER.age (always small)
-	TlockEnabled bool         `json:"tlockEnabled,omitempty"` // Signals tlock-js should be included
+	Holder       string `json:"holder"`                 // This friend's name
+	HolderShare  string `json:"holderShare"`            // This friend's encoded share
+	Threshold    int    `json:"threshold"`              // Required shares (K)
+	Total        int    `json:"total"`                  // Total shares (N)
+	Language     string `json:"language,omitempty"`     // Default UI language for this friend
+	ManifestB64  string `json:"manifestB64,omitempty"`  // Base64-encoded MANIFEST.age (when <= MaxEmbeddedManifestSize)
+	OwnerB64     string `json:"ownerB64,omitempty"`     // Base64-encoded OWNER.age (always small)
+	TlockEnabled bool   `json:"tlockEnabled,omitempty"` // Signals tlock-js should be included
 }
 
 // tlockWaitingHTML is the time-lock waiting UI injected into recover.html.
@@ -116,7 +108,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
 	}
 
 	// CSP meta tag
-	headMeta := `<meta name="generator" content="Kaitiaki {{VERSION}}">
+	headMeta := `<meta name="generator" content="Bitcoin Inheritance {{VERSION}}">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-{{CSP_NONCE}}' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src blob: data:; connect-src ` + cspConnectSrc + `; form-action 'none';">`
 
 	navExtras := ""
@@ -152,7 +144,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
 	var scripts strings.Builder
 
 	// Translations
-	// Translations (docs link rewriting + rememoryUpdateUI are handled by core i18n.js)
+	// Translations (docs link rewriting + inheritanceUpdateUI are handled by core i18n.js)
 	scripts.WriteString(i18nScript(I18nScriptOptions{
 		Component:           "recover",
 		UseNonce:            true,
@@ -183,7 +175,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
       </div>`
 
 	result := applyLayout(LayoutOptions{
-		Title:      "Kaitiaki Recovery Tool",
+		Title:      "Bitcoin Inheritance Recovery Tool",
 		HeadMeta:   headMeta,
 		Selfhosted: selfhosted,
 		NavExtras: bundleNavHTML + `
@@ -206,7 +198,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
     </div>
   </div>`,
 		Content: content,
-		FooterContent: `<p>Kaitiaki {{VERSION}}</p>
+		FooterContent: `<p>Bitcoin Inheritance {{VERSION}}</p>
     <p>
       <span data-i18n="need_help">Need help?</span>
       <a href="{{GITHUB_PAGES}}/docs#recovering" target="_blank">Docs</a> &#xB7;

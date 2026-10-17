@@ -1,4 +1,4 @@
-// Kaitiaki Shared Utilities
+// Bitcoin Inheritance Shared Utilities
 // Common functionality used by both recovery (app.ts) and creation (create-app.ts)
 
 import type { ToastManager, ToastOptions, ToastAction, ToastType } from './types';
@@ -224,7 +224,7 @@ export function clearInlineError(targetElement: HTMLElement): void {
 // Export to global scope for use by app.ts and create-app.ts
 // ============================================
 
-window.rememoryUtils = {
+window.inheritanceUtils = {
   escapeHtml,
   formatSize,
   toast,

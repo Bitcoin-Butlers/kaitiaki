@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/eljojo/rememory/internal/bundle"
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/html"
-	"github.com/eljojo/rememory/internal/manifest"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/bundle"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/manifest"
 	"github.com/spf13/cobra"
 )
 
@@ -28,9 +28,9 @@ recover.html files. The manifest is extracted from the first ZIP or
 HTML that contains one, unless --manifest is set.
 
 Example:
-  kaitiaki recover bundle-alice.zip bundle-bob.zip
-  kaitiaki recover alice/recover.html bob/recover.html carol/recover.html
-  kaitiaki recover SHARE-alice.txt SHARE-bob.txt -m MANIFEST.age`,
+  inheritance recover bundle-alice.zip bundle-bob.zip
+  inheritance recover alice/recover.html bob/recover.html carol/recover.html
+  inheritance recover SHARE-alice.txt SHARE-bob.txt -m MANIFEST.age`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: runRecover,
 }

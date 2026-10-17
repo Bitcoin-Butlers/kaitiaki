@@ -33,8 +33,8 @@ function setLanguage(lang) {
   }
 
   // Re-render dynamic content
-  if (typeof window.rememoryUpdateUI === 'function') {
-    window.rememoryUpdateUI();
+  if (typeof window.inheritanceUpdateUI === 'function') {
+    window.inheritanceUpdateUI();
   }
 
   {{SET_LANGUAGE_EXTRA}}

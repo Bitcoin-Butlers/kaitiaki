@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 // knownPlaintext is the fixed string encrypted with the admin password.

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 async function globalTeardown() {
-  const setupPath = process.env.REMEMORY_E2E_SETUP;
+  const setupPath = process.env.INHERITANCE_E2E_SETUP;
   if (!setupPath || !fs.existsSync(setupPath)) return;
 
   const setup = JSON.parse(fs.readFileSync(setupPath, 'utf8'));

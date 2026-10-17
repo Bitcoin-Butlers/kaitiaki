@@ -7,8 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 func testReadmeData() ReadmeData {
@@ -17,11 +16,10 @@ func testReadmeData() ReadmeData {
 		ProjectName:      "Test Project",
 		Holder:           "Alice",
 		Share:            share,
-		OtherFriends:     []project.Friend{{Name: "Bob", Contact: "bob@example.com"}},
 		Threshold:        2,
 		Total:            3,
 		Version:          "v0.0.1-test",
-		GitHubReleaseURL: "https://github.com/eljojo/rememory/releases",
+		GitHubReleaseURL: "https://github.com/Bitcoin-Butlers/kaitiaki/releases",
 		ManifestChecksum: "sha256:abcdef1234567890",
 		RecoverChecksum:  "sha256:0987654321fedcba",
 		Created:          time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
@@ -40,19 +38,6 @@ func TestGenerateReadme(t *testing.T) {
 	// Verify it's a valid PDF (starts with %PDF-)
 	if !bytes.HasPrefix(pdfBytes, []byte("%PDF-")) {
 		t.Error("output does not start with PDF header")
-	}
-}
-
-func TestGenerateReadmeAnonymous(t *testing.T) {
-	data := testReadmeData()
-	data.Anonymous = true
-	data.OtherFriends = nil
-	pdfBytes, err := GenerateReadme(data)
-	if err != nil {
-		t.Fatalf("GenerateReadme (anonymous): %v", err)
-	}
-	if len(pdfBytes) == 0 {
-		t.Fatal("generated PDF is empty")
 	}
 }
 
@@ -119,19 +104,13 @@ func TestWordGridNotSplitAcrossPages(t *testing.T) {
 	share := core.NewShare(2, 1, 5, 3, "Alice", shareData)
 
 	data := ReadmeData{
-		ProjectName: "Test Project With a Long Name",
-		Holder:      "Alice Wonderland",
-		Share:       share,
-		OtherFriends: []project.Friend{
-			{Name: "Bob Builder", Contact: "bob@example.com"},
-			{Name: "Carol Danvers", Contact: "carol@example.com"},
-			{Name: "David Copperfield", Contact: "david@example.com"},
-			{Name: "Eve Polastri", Contact: "eve@example.com"},
-		},
+		ProjectName:      "Test Project With a Long Name",
+		Holder:           "Alice Wonderland",
+		Share:            share,
 		Threshold:        3,
 		Total:            5,
 		Version:          "v0.0.1-test",
-		GitHubReleaseURL: "https://github.com/eljojo/rememory/releases",
+		GitHubReleaseURL: "https://github.com/Bitcoin-Butlers/kaitiaki/releases",
 		ManifestChecksum: "sha256:abcdef1234567890",
 		RecoverChecksum:  "sha256:0987654321fedcba",
 		Created:          time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
@@ -187,10 +166,6 @@ func TestGenerateReadmeCJK(t *testing.T) {
 	data.Language = "zh-TW"
 	data.Holder = "小明"
 	data.ProjectName = "我的秘密"
-	data.OtherFriends = []project.Friend{
-		{Name: "小華", Contact: "xiaohua@example.com"},
-		{Name: "小美", Contact: "xiaomei@example.com"},
-	}
 	pdfBytes, err := GenerateReadme(data)
 	if err != nil {
 		t.Fatalf("GenerateReadme (zh-TW): %v", err)
@@ -237,7 +212,7 @@ func TestPDFContainsAppendedShare(t *testing.T) {
 	}
 
 	// The share should be appended after the PDF
-	shareMarker := "-----BEGIN REMEMORY SHARE-----"
+	shareMarker := core.ShareBegin
 	if !bytes.Contains(pdfBytes, []byte(shareMarker)) {
 		t.Error("PDF doesn't contain appended share")
 	}

@@ -1,4 +1,4 @@
-/* Kaitiaki palette — Bitcoin Butlers v2.0 design system (gold & neutral darks).
+/* Bitcoin Inheritance palette — Bitcoin Butlers v2.0 design system (gold & neutral darks).
    Source of truth: Website-frontend/src/app/globals.css brand tokens.
    Font note: BB uses Geist Sans/Mono via next/font; these static pages must stay
    self-contained with zero external requests, so we use the same fallback stack
@@ -583,86 +583,6 @@ footer a:hover {
   box-shadow: none;
 }
 
-/* Contact list */
-.contact-list-section {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-light);
-}
-
-.contact-list-section h3 {
-  font-size: 1rem;
-  color: var(--text);
-  margin-bottom: 0.25rem;
-}
-
-.contact-list-section .hint {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
-
-.contact-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.contact-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  background: var(--paper-light);
-  border-radius: 4px;
-  border-left: 3px solid var(--border);
-}
-
-.contact-item.collected {
-  background: var(--sage-light);
-  border-left-color: var(--sage);
-}
-
-.contact-item .checkbox {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--border);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--paper-light);
-  font-size: 14px;
-}
-
-.contact-item.collected .checkbox {
-  background: var(--sage);
-  border-color: var(--sage);
-}
-
-.contact-item .details {
-  flex: 1;
-}
-
-.contact-item .name {
-  font-weight: 500;
-  color: var(--text);
-}
-
-.contact-item .contact-info {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.contact-item .contact-info a {
-  color: var(--dusty-blue);
-  text-decoration: none;
-}
-
-.contact-item .contact-info a:hover {
-  text-decoration: underline;
-}
-
 /* Language select - shared across pages */
 
 /* Form styling - shared across pages */
@@ -1081,13 +1001,17 @@ input, textarea, select {
 }
 
 /* QR Scanner modal */
+/* A camera viewfinder is dark whatever the page theme. Upstream painted it
+ * with var(--text) and wrote on it in var(--paper-light), which on a paper
+ * theme is dark ink under light text and on ours inverts to a light box with
+ * a white hint nobody could read. Fixed colours, not tokens, on purpose. */
 .qr-scanner-modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--text);
+  background: #0b0b0b;
   z-index: 1500;
   display: flex;
   flex-direction: column;
@@ -1098,7 +1022,7 @@ input, textarea, select {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  color: var(--paper-light);
+  color: rgba(255,255,255,0.92);
   font-size: 1.125rem;
   font-weight: 500;
 }
@@ -1106,7 +1030,7 @@ input, textarea, select {
 .qr-scanner-close {
   background: none;
   border: none;
-  color: var(--paper-light);
+  color: rgba(255,255,255,0.92);
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
@@ -1322,4 +1246,192 @@ input, textarea, select {
   display: block;
   margin-top: 0.4rem;
   color: var(--text-muted);
+}
+
+/* A long command scrolls inside its box. Without this, one wide <pre> makes
+   the whole page scroll sideways on a phone; the owner-key commands in the
+   guide and the Bitcoin Core command on the descriptor page both did. */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Step 3, the owner's own words.
+
+   Two groups, and the label on each says where that text goes. The split is
+   not decoration: a README is built to be forwarded, so the method may sit in
+   one and the key locations may not.
+   --------------------------------------------------------------------------- */
+
+.words-group {
+  margin: 1.5rem 0;
+  padding: 1rem 1.125rem 1.125rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--paper);
+}
+
+.words-group h3 {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 1rem;
+}
+
+.words-dest {
+  display: inline-block;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.words-dest-chain {
+  background: var(--info-bg);
+  border-color: var(--info-border);
+  color: var(--info-text);
+}
+
+.words-dest-sealed {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+  color: var(--success-text);
+}
+
+/* The chain fields. These had no rules at all, so the label, the descriptor
+   box and its hint ran together on one line as prose. Found 2026-09-24 by
+   photographing the step for the guide. Matches .words-group deliberately:
+   it is the same kind of form, in the same card. */
+#chain-fields label {
+  display: block;
+  margin: 0.875rem 0 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--sage);
+}
+
+#chain-fields textarea,
+#chain-fields input[type="text"] {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--paper-light);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+#chain-fields textarea {
+  resize: vertical;
+}
+
+#chain-fields small,
+#chain-fields .chain-size {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.words-group label {
+  display: block;
+  margin: 0.875rem 0 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--sage);
+}
+
+.words-group textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--paper-light);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.words-group textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+
+.words-group .words-else + .words-else {
+  margin-top: 0.5rem;
+}
+
+.words-warning,
+.words-note {
+  margin: 0.875rem 0 0;
+  padding: 0.625rem 0.75rem;
+  border-radius: 3px;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.words-warning {
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
+}
+
+.words-note {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+}
+
+.btn-link {
+  margin-top: 0.625rem;
+  padding: 0.375rem 0;
+  border: none;
+  background: none;
+  color: var(--sage);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------------------
+   The landing page explainer: each step of the drill with its own picture,
+   folded away until somebody asks for it.
+   --------------------------------------------------------------------------- */
+
+.try-figures {
+  margin-top: 1.25rem;
+}
+
+.try-figures .details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding-top: 1rem;
+}
+
+.try-figures figure {
+  margin: 0;
+}
+
+.try-figures img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.try-figures figcaption {
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
 }

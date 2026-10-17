@@ -1,0 +1,127 @@
+    <div class="page-intro">
+      <h1>Read a Descriptor Backup</h1>
+      <p class="subtitle">Rebuild a wallet's map from the copy written on Bitcoin.</p>
+      <p>
+        A multisig wallet needs two things to spend: enough keys, and the
+        descriptor that says how those keys fit together. Lose one key and the
+        descriptor together, and the keys you still hold cannot rebuild the
+        wallet, even when they are enough to sign. This page takes the backup
+        and your keys, and gives the descriptor back.
+      </p>
+      <p>
+        Every guardian bundle already carries this text, and
+        <a href="recover.html">the recovery page</a> reads it there with no
+        internet at all. Use this page when you have a transaction id and no
+        bundle.
+      </p>
+      <p>
+        To MAKE a backup, use <a href="maker.html">Create Bundles</a>. It asks
+        what your heirs need to know and can put the method on the chain
+        beside the descriptor.
+      </p>
+
+      <details>
+        <summary>How this works and how to use it safely</summary>
+        <div class="details-content">
+          <p><strong>Everything happens on this device.</strong> The backup is decrypted in your browser. Your keys never leave this page.</p>
+          <p><strong>Any ONE of the wallet's keys opens a one-key backup</strong>, now or in twenty years, including a key the owner later stopped using. A threshold backup needs the same number of keys it takes to spend.</p>
+          <p><strong>What stays readable depends on the format.</strong> In the threshold format the script type, the threshold and the derivation paths stay in plain text. Whoever recovers needs them to know which keys to derive. In the one-key format the whole descriptor is encrypted. Only a marker and a padded list of entries stay readable.</p>
+          <p><strong>Never type seed words here.</strong> This page takes extended public keys and nothing else.</p>
+          <p><strong>Recovery does not need us.</strong> The text this page reads can be decrypted by other tools. See the last step for how.</p>
+        </div>
+      </details>
+    </div>
+
+    <section id="panel-recover">
+      <div class="card">
+        <h2><span class="step-number">1</span> Find the backup</h2>
+
+        <div class="try-it">
+          <p><strong>Try it first.</strong> This opens our own backup,
+            published on Bitcoin on 10 September 2026. It costs nothing, it
+            moves no coins, and the keys are the standard test keys everyone
+            already has.</p>
+          <button type="button" class="btn btn-secondary" id="try-it-btn">Try it with our published backup</button>
+          <div id="try-it-status" class="note"></div>
+        </div>
+
+        <div class="choice-list" id="source-choice">
+          <label class="choice">
+            <input type="radio" name="source" value="text" checked>
+            <span class="choice-body">
+              <strong>I have the text</strong>
+              <span class="choice-note">Paste it from the estate insert, a file, or a block explorer.</span>
+            </span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="source" value="txid">
+            <span class="choice-body">
+              <strong>I have the transaction id</strong>
+              <span class="choice-note">This page fetches the text from a public explorer. It is the only step that touches the network.</span>
+            </span>
+          </label>
+        </div>
+
+        <div id="source-text">
+          <textarea id="recover-input" rows="6" spellcheck="false"
+            placeholder="wsh(sortedmulti(2,[48h/0h/0h/2h]&lt;0;1&gt;/*,...))BASE64... or QklQMTM4..."></textarea>
+        </div>
+
+        <div id="source-txid" class="hidden">
+          <label for="txid-input">Transaction id</label>
+          <input type="text" id="txid-input" spellcheck="false" placeholder="64 hexadecimal characters">
+          <label for="explorer-input">Explorer</label>
+          <input type="text" id="explorer-input" spellcheck="false" value="https://mempool.space/api">
+          <small>Change this to your own mempool or Esplora instance if you run one.</small>
+          <button type="button" class="btn btn-secondary" id="fetch-btn">Fetch it</button>
+          <div id="fetch-status" class="note"></div>
+          <p class="note">Two steps. Fetch it here, then press
+            <strong>Rebuild my descriptor</strong> in step 3.</p>
+        </div>
+
+        <div id="recover-summary" class="descriptor-summary hidden"></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-number">2</span> Your keys</h2>
+        <p id="keys-needed" class="note">Paste the extended public keys of the wallet, one per line.</p>
+        <textarea id="xpubs-input" rows="5" spellcheck="false" placeholder="xpub...&#10;xpub..."></textarea>
+        <small>Derive these from your seeds with your signing device, using the paths shown above. This page never asks for a seed.</small>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-number">3</span> Your descriptor</h2>
+        <button type="button" class="btn btn-primary" id="recover-btn">Rebuild my descriptor</button>
+        <div id="recover-error" class="alert-error hidden"></div>
+        <div id="recover-result" class="hidden">
+          <div class="verification-status">
+            <div class="verification-header"><span>&#10003;</span> <span>Recovered</span></div>
+            <div class="verification-details" id="recover-detail"></div>
+          </div>
+          <textarea id="recover-output" rows="6" readonly spellcheck="false"></textarea>
+          <div class="button-row">
+            <button type="button" class="btn btn-secondary" id="copy-recovered">Copy the descriptor</button>
+            <button type="button" class="btn btn-secondary" id="download-recovered">Save it as a file</button>
+          </div>
+          <p class="note">Import this into Sparrow or any coordinator to watch and spend from the wallet again.</p>
+          <p class="note" id="try-it-done" hidden>That descriptor came off
+            Bitcoin. Nothing was stored by us, and nothing left your browser
+            but one read of a public transaction. The wallet has three keys,
+            and the two above were enough.</p>
+        </div>
+      </div>
+
+      <div class="card card-muted">
+        <h2>If this page is gone</h2>
+        <p>
+          Neither format is ours to own. A threshold backup uses the published
+          multisig-backup format. A one-key backup follows draft BIP-138. Both
+          are open, and other software already reads them, so your descriptor
+          can be rebuilt with no Bitcoin Butlers involved.
+        </p>
+        <p>
+          Your estate insert names the tool and how to reach it, because that
+          is the page someone reads on the day this one is gone.
+        </p>
+      </div>
+    </section>

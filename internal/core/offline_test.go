@@ -27,10 +27,10 @@ func drandHosts() map[string]bool {
 // even from libraries that create their own http.Client (like drand-client).
 // Same principle as the Playwright offline-by-default fixture in e2e/fixtures.ts.
 //
-// When REMEMORY_TEST_TLOCK=1, only drand endpoints are allowed.
+// When INHERITANCE_TEST_TLOCK=1, only drand endpoints are allowed.
 func TestMain(m *testing.M) {
 	allowed := map[string]bool{}
-	if os.Getenv("REMEMORY_TEST_TLOCK") == "1" {
+	if os.Getenv("INHERITANCE_TEST_TLOCK") == "1" {
 		allowed = drandHosts()
 	}
 

@@ -3,7 +3,7 @@ package html
 import (
 	"strings"
 
-	"github.com/eljojo/rememory/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
 )
 
 // LayoutOptions holds the parameters for assembling a page from the shared layout.

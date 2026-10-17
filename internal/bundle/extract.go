@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/html"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // ExtractShareFromZip opens a bundle ZIP and parses the share from the

@@ -8,16 +8,16 @@ import (
 
 func main() {
 	// Register recovery functions on the global object
-	js.Global().Set("rememoryParseShare", js.FuncOf(parseShareJS))
-	js.Global().Set("rememoryCombineShares", js.FuncOf(combineSharesJS))
-	js.Global().Set("rememoryDecryptManifest", js.FuncOf(decryptManifestJS))
-	js.Global().Set("rememoryExtractArchive", js.FuncOf(extractArchiveJS))
-	js.Global().Set("rememoryExtractBundle", js.FuncOf(extractBundleJS))
-	js.Global().Set("rememoryParseCompactShare", js.FuncOf(parseCompactShareJS))
-	js.Global().Set("rememoryDecodeWords", js.FuncOf(decodeWordsJS))
+	js.Global().Set("inheritanceParseShare", js.FuncOf(parseShareJS))
+	js.Global().Set("inheritanceCombineShares", js.FuncOf(combineSharesJS))
+	js.Global().Set("inheritanceDecryptManifest", js.FuncOf(decryptManifestJS))
+	js.Global().Set("inheritanceExtractArchive", js.FuncOf(extractArchiveJS))
+	js.Global().Set("inheritanceExtractBundle", js.FuncOf(extractBundleJS))
+	js.Global().Set("inheritanceParseCompactShare", js.FuncOf(parseCompactShareJS))
+	js.Global().Set("inheritanceDecodeWords", js.FuncOf(decodeWordsJS))
 
 	// Signal that WASM is ready
-	js.Global().Set("rememoryReady", true)
+	js.Global().Set("inheritanceReady", true)
 
 	// Keep the Go program running
 	select {}

@@ -48,7 +48,7 @@ jobs:
         run: make build
 
       - name: Generate HTML files
-        run: ./rememory html site -o _site
+        run: ./inheritance html site -o _site
 
       - name: Add Google site verification file
         run: |

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import AdmZip from 'adm-zip';
-import { getRememoryBin, CreationPage, RecoveryPage, generateStandaloneHTML } from './helpers';
+import { getInheritanceBin, CreationPage, RecoveryPage, generateStandaloneHTML } from './helpers';
 
 // Test vector from docs/owner-key-vector.md (public, never for real use)
 const OWNER_RECIPIENT =
@@ -19,12 +19,12 @@ test.describe('Owner Key', () => {
   let tmpDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
     }
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-owner-e2e-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-owner-e2e-'));
     htmlPath = generateStandaloneHTML(tmpDir, 'create');
   });
 

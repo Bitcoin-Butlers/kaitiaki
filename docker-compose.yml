@@ -1,16 +1,19 @@
-# ReMemory — https://eljojo.github.io/rememory/
-# Self-hosting guide: https://github.com/eljojo/rememory/blob/main/docs/selfhosted.md
+# Bitcoin Inheritance, self-hosted.
+#
+#   docker compose up --build
 
 services:
-  rememory:
-    image: ghcr.io/eljojo/rememory:latest
+  inheritance:
+    build: .
     ports:
-      - "8080:8080"
+      # 127.0.0.1 on purpose. Put a reverse proxy with TLS in front of it
+      # before you expose this to a network.
+      - "127.0.0.1:8080:8080"
     volumes:
-      - rememory-data:/data
+      - inheritance-data:/data
     restart: unless-stopped
     # environment:
-    #   REMEMORY_MAX_MANIFEST_SIZE: 200MB
+    #   INHERITANCE_MAX_MANIFEST_SIZE: 200MB
 
 volumes:
-  rememory-data:
+  inheritance-data:

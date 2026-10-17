@@ -243,8 +243,8 @@ func TestParseTimelockValue(t *testing.T) {
 }
 
 func TestTlockEncryptDecryptIntegration(t *testing.T) {
-	if os.Getenv("REMEMORY_TEST_TLOCK") != "1" {
-		t.Skip("set REMEMORY_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
+	if os.Getenv("INHERITANCE_TEST_TLOCK") != "1" {
+		t.Skip("set INHERITANCE_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
 	}
 
 	plaintext := []byte("the secret message for tlock integration test")
@@ -274,8 +274,8 @@ func TestTlockEncryptDecryptIntegration(t *testing.T) {
 }
 
 func TestTlockFutureRoundCannotDecrypt(t *testing.T) {
-	if os.Getenv("REMEMORY_TEST_TLOCK") != "1" {
-		t.Skip("set REMEMORY_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
+	if os.Getenv("INHERITANCE_TEST_TLOCK") != "1" {
+		t.Skip("set INHERITANCE_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
 	}
 
 	plaintext := []byte("this should not be decryptable yet")
@@ -351,8 +351,8 @@ func TestQuicknetConstantsMatchChainHash(t *testing.T) {
 // the real drand quicknet network. This catches the case where the drand
 // network has been re-keyed or our constants have drifted from reality.
 func TestQuicknetConstantsMatchNetwork(t *testing.T) {
-	if os.Getenv("REMEMORY_TEST_TLOCK") != "1" {
-		t.Skip("set REMEMORY_TEST_TLOCK=1 to validate constants against the live drand network")
+	if os.Getenv("INHERITANCE_TEST_TLOCK") != "1" {
+		t.Skip("set INHERITANCE_TEST_TLOCK=1 to validate constants against the live drand network")
 	}
 
 	network, err := tlockhttp.NewNetwork(DrandEndpoints[0], QuicknetChainHash)
@@ -384,8 +384,8 @@ func TestQuicknetConstantsMatchNetwork(t *testing.T) {
 // (using embedded constants, no HTTP) produces ciphertext that the network-
 // connected decryptor can successfully decrypt.
 func TestOfflineEncryptProducesValidCiphertext(t *testing.T) {
-	if os.Getenv("REMEMORY_TEST_TLOCK") != "1" {
-		t.Skip("set REMEMORY_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
+	if os.Getenv("INHERITANCE_TEST_TLOCK") != "1" {
+		t.Skip("set INHERITANCE_TEST_TLOCK=1 to run tlock integration tests (requires internet)")
 	}
 
 	plaintext := []byte("offline encryption integration test")

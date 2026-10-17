@@ -1,7 +1,6 @@
 package project
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -108,11 +107,10 @@ func TestValidate(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "anonymous valid without email",
+			name: "a guardian needs no email",
 			project: Project{
 				Name:      "test",
 				Threshold: 2,
-				Anonymous: true,
 				Friends: []Friend{
 					{Name: "Share 1"},
 					{Name: "Share 2"},
@@ -121,11 +119,10 @@ func TestValidate(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "anonymous still requires name",
+			name: "a guardian still needs a name",
 			project: Project{
 				Name:      "test",
 				Threshold: 2,
-				Anonymous: true,
 				Friends: []Friend{
 					{Name: ""},
 					{Name: "Share 2"},
@@ -281,63 +278,6 @@ func TestNewInvalidProject(t *testing.T) {
 	_, err := New(projectDir, "test", 2, friends)
 	if err == nil {
 		t.Error("expected error for invalid project")
-	}
-}
-
-func TestNewAnonymous(t *testing.T) {
-	dir := t.TempDir()
-	projectDir := filepath.Join(dir, "anonymous-project")
-
-	p, err := NewAnonymous(projectDir, "test-anon", 3, 5)
-	if err != nil {
-		t.Fatalf("NewAnonymous: %v", err)
-	}
-
-	if !p.Anonymous {
-		t.Error("project should be anonymous")
-	}
-	if p.Name != "test-anon" {
-		t.Errorf("name: got %q, want %q", p.Name, "test-anon")
-	}
-	if p.Threshold != 3 {
-		t.Errorf("threshold: got %d, want 3", p.Threshold)
-	}
-	if len(p.Friends) != 5 {
-		t.Errorf("friends: got %d, want 5", len(p.Friends))
-	}
-
-	// Check synthetic names
-	for i, f := range p.Friends {
-		expected := fmt.Sprintf("Share %d", i+1)
-		if f.Name != expected {
-			t.Errorf("friend %d name: got %q, want %q", i, f.Name, expected)
-		}
-		if f.Contact != "" {
-			t.Errorf("friend %d should have no contact", i)
-		}
-	}
-}
-
-func TestNewWithOptions(t *testing.T) {
-	dir := t.TempDir()
-	projectDir := filepath.Join(dir, "options-project")
-
-	friends := []Friend{
-		{Name: "Share 1"},
-		{Name: "Share 2"},
-		{Name: "Share 3"},
-	}
-
-	p, err := NewWithOptions(projectDir, "test-options", 2, friends, true)
-	if err != nil {
-		t.Fatalf("NewWithOptions: %v", err)
-	}
-
-	if !p.Anonymous {
-		t.Error("project should be anonymous")
-	}
-	if len(p.Friends) != 3 {
-		t.Errorf("friends: got %d, want 3", len(p.Friends))
 	}
 }
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/eljojo/rememory/internal/html"
-	"github.com/eljojo/rememory/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
 )
 
 // generatePages creates output/pages/ with recover.html and MANIFEST.age for static hosting.

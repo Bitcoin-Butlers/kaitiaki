@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // ShareInfo contains parsed share metadata for JS interop.

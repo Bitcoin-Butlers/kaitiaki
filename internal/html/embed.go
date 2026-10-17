@@ -31,6 +31,17 @@ var appTlockJS string
 //go:embed assets/styles.css
 var stylesCSS string
 
+// Embedded assets for the descriptor backup page
+
+//go:embed assets/descriptor.html
+var descriptorHTMLTemplate string
+
+//go:embed assets/descriptor.css
+var descriptorCSS string
+
+//go:embed assets/descriptor-app.js
+var descriptorAppJS string
+
 //go:embed assets/wasm_exec.js
 var wasmExecJS string
 

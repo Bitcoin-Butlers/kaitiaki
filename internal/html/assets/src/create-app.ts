@@ -1,7 +1,3 @@
-// Kaitiaki Bundle Creator - Browser-based bundle creation using Go WASM
-// Tlock encryption is inline and offline — it uses the embedded drand chain
-// config to encrypt for a future round without any HTTP calls.
-
 import type {
   CreationState,
   BundleFile,
@@ -17,6 +13,167 @@ import { encryptAge } from 'tlock-js/age/age-encrypt-decrypt';
 import { Buffer } from 'buffer';
 import { createOfflineClient, QUICKNET_GENESIS, QUICKNET_PERIOD, formatTimelockDate } from './drand';
 
+/**
+ * The owner's own words, read off the six prompts in step 3.
+ *
+ * Two texts come out, and they go to different places. The method travels to
+ * the chain and into every README, because a lone guardian may safely hold it
+ * and an heir with one bundle and one key needs it early. The people and
+ * places go only into the encrypted archive, because a README is built to be
+ * forwarded: a guardian's own copy tells them to send it to whoever asks.
+ *
+ * Empty boxes contribute nothing, so an owner who skips step 3 gets exactly
+ * the bundle they would have got before it existed.
+ */
+/**
+ * "Anything else" repeats, because the prior art this design follows says any
+ * number of such records may be included and an owner rarely has exactly one
+ * extra thing to say.
+ */
+
+/**
+ * Show the owner, once, that they have written nothing for their heirs.
+ *
+ * It never blocks. A gate on a free tool is satisfied by typing a full stop,
+ * and then the heir holds a bundle that passed the check and still says
+ * nothing. The bundle itself carries the other half of this: when the boxes
+ * are empty the README says so plainly, so an heir knows the gap was a
+ * decision rather than a lost file.
+ */
+function updateEmptyWordsWarning(): void {
+  const warning = document.getElementById('empty-words-warning');
+  if (!warning) return;
+  const { recoverySteps, peopleAndPlaces } = collectOwnersWords();
+  warning.classList.toggle('hidden', recoverySteps !== '' || peopleAndPlaces !== '');
+}
+
+function wireEmptyWordsWarning(): void {
+  const ids = ['words-wallet', 'words-opens', 'words-sign', 'words-keys', 'words-call'];
+  for (const id of ids) {
+    document.getElementById(id)?.addEventListener('input', updateEmptyWordsWarning);
+  }
+  document.getElementById('words-else-list')?.addEventListener('input', updateEmptyWordsWarning);
+  updateEmptyWordsWarning();
+}
+
+
+/** The chain copy the owner will publish, once they have asked for one. */
+let chainCopy: { text: string; bytes: number } | null = null;
+
+/** The transaction id, if the owner published before generating. */
+function chainTxid(): string {
+  const el = document.getElementById('chain-txid') as HTMLInputElement | null;
+  return el?.value.trim() ?? '';
+}
+
+/**
+ * Wire the destination choice, the descriptor field and the live size.
+ *
+ * The label on the recovery-steps group changes with the choice. It said "goes
+ * on the chain and in the bundles" before this existed, which was a promise
+ * the page could not keep for an owner who never asked for a chain copy.
+ *
+ * The size is worked out from the real payload rather than estimated, so the
+ * sat figure is the one the client actually pays. It never blocks: past a
+ * point it says the bundles carry the same words for nothing, and leaves the
+ * decision where it belongs.
+ */
+function wireDestination(): void {
+  const fields = document.getElementById('chain-fields');
+  const descriptor = document.getElementById('chain-descriptor') as HTMLTextAreaElement | null;
+  const sizeEl = document.getElementById('chain-size');
+  const longEl = document.getElementById('chain-long');
+  const pill = document.querySelector('.words-dest-chain');
+  if (!fields || !descriptor || !sizeEl || !longEl) return;
+
+  const wantsChain = (): boolean =>
+    (document.querySelector('input[name="destination"]:checked') as HTMLInputElement | null)?.value === 'both';
+
+  const refresh = (): void => {
+    const on = wantsChain();
+    fields.classList.toggle('hidden', !on);
+    if (pill) pill.textContent = t(on ? 'words_method_dest' : 'words_method_dest_bundles');
+
+    chainCopy = null;
+    sizeEl.textContent = '';
+    longEl.classList.add('hidden');
+    if (!on || !descriptor.value.trim() || typeof window.inheritanceEncryptChainCopy !== 'function') return;
+
+    const { recoverySteps } = collectOwnersWords();
+    const result = window.inheritanceEncryptChainCopy!({
+      descriptor: descriptor.value.trim(),
+      recoverySteps,
+    });
+    if (result.error) {
+      sizeEl.textContent = result.error;
+      return;
+    }
+    chainCopy = { text: result.text, bytes: result.bytes };
+    sizeEl.textContent = t('chain_size', result.bytes, result.satAt2, result.satAt10);
+    longEl.classList.toggle('hidden', result.bytes <= 1500);
+  };
+
+  document.querySelectorAll('input[name="destination"]').forEach((el) =>
+    el.addEventListener('change', refresh)
+  );
+  descriptor.addEventListener('input', refresh);
+  for (const id of ['words-wallet', 'words-opens', 'words-sign']) {
+    document.getElementById(id)?.addEventListener('input', refresh);
+  }
+  refresh();
+}
+
+function wireAddAnother(): void {
+  const button = document.getElementById('words-add-another');
+  const list = document.getElementById('words-else-list');
+  if (!button || !list) return;
+  button.addEventListener('click', () => {
+    const first = list.querySelector<HTMLTextAreaElement>('.words-else');
+    const box = document.createElement('textarea');
+    box.className = 'words-else';
+    box.rows = 2;
+    if (first) box.placeholder = first.placeholder;
+    list.appendChild(box);
+    box.focus();
+  });
+}
+
+function collectOwnersWords(): { recoverySteps: string; peopleAndPlaces: string } {
+  const read = (id: string): string =>
+    (document.getElementById(id) as HTMLTextAreaElement | null)?.value.trim() || '';
+
+  const section = (label: string, body: string): string =>
+    body ? `${label}\n${body}\n` : '';
+
+  const recoverySteps = [
+    section('The wallet:', read('words-wallet')),
+    section('What opens it:', read('words-opens')),
+    section('How to sign and send:', read('words-sign')),
+  ]
+    .filter(Boolean)
+    .join('\n')
+    .trim();
+
+  const extras = Array.from(document.querySelectorAll<HTMLTextAreaElement>('.words-else'))
+    .map((el) => el.value.trim())
+    .filter(Boolean);
+
+  const peopleAndPlaces = [
+    section('Where each key is:', read('words-keys')),
+    section('Who to call first:', read('words-call')),
+    extras.length > 0 ? section('Also:', extras.join('\n\n')) : '',
+  ]
+    .filter(Boolean)
+    .join('\n')
+    .trim();
+
+  return { recoverySteps, peopleAndPlaces };
+}
+// Bitcoin Inheritance Bundle Creator - Browser-based bundle creation using Go WASM
+// Tlock encryption is inline and offline — it uses the embedded drand chain
+// config to encrypt for a future round without any HTTP calls.
+
+
 // Translation function and language state (defined in HTML)
 declare const t: TranslationFunction;
 declare let currentLang: string;
@@ -29,7 +186,7 @@ declare const __SELFHOSTED__: boolean;
   'use strict';
 
   // Import shared utilities
-  const { escapeHtml, formatSize, toast } = window.rememoryUtils;
+  const { escapeHtml, formatSize, toast } = window.inheritanceUtils;
 
   // Sample names for placeholders
   const sampleNames = [
@@ -63,7 +220,7 @@ declare const __SELFHOSTED__: boolean;
   }
 
   // State
-  const state: CreationState & { anonymous: boolean; numShares: number } = {
+  const state: CreationState = {
     projectName: generateProjectName(),
     friends: [],
     threshold: 2,
@@ -72,12 +229,115 @@ declare const __SELFHOSTED__: boolean;
     wasmReady: false,
     generating: false,
     generationComplete: false,
-    anonymous: false,
-    numShares: 5,
     tlockEnabled: false,
     tlockValue: 30,
     tlockUnit: 'd' as string,
   };
+
+  // ---------------------------------------------------------------------------
+  // The test run
+  //
+  // An owner who has never seen a recovery has no way to tell a good bundle
+  // from a bad one. A test run makes throwaway bundles from a sample file so
+  // they can practise, and marks every one of them so a drill can never be
+  // mistaken for the real thing.
+  //
+  // It is an offer and not a gate. A required gate was rejected on the
+  // test-recovery ticket, because people fake a gate to get past it.
+  // ---------------------------------------------------------------------------
+
+  /** Set once the owner has taken the offer or generated anything. Said once. */
+  const TEST_NUDGE_SEEN_KEY = 'inheritance_test_nudge_seen';
+
+  /**
+   * Carried into the project name, so it reaches the README, the printed PDF
+   * and METADATA.yaml. Those are what a guardian actually reads.
+   */
+  const TEST_PREFIX = 'TEST';
+
+  let testMode = false;
+
+  /** The throwaway payload. Never the owner's own files. */
+  function sampleTestFile(): { name: string; data: Uint8Array } {
+    const text = [
+      'THIS IS A TEST FILE.',
+      '',
+      'It stands in for the files you will really protect: a wallet',
+      'descriptor, cosigner keys, an estate letter.',
+      '',
+      'Practise a recovery with the bundles built around it. When you can',
+      'get this text back, you know the method works, and you can throw',
+      'every test bundle away.',
+      '',
+      'Nothing here is secret and nothing here is yours.',
+      '',
+    ].join('\n');
+    return {
+      name: 'TEST-sample.txt',
+      data: new TextEncoder().encode(text),
+    };
+  }
+
+  function nudgeSeen(): boolean {
+    try {
+      return localStorage.getItem(TEST_NUDGE_SEEN_KEY) === '1';
+    } catch {
+      // A browser that refuses storage simply sees the offer again. That is
+      // better than hiding it from everyone because one browser said no.
+      return false;
+    }
+  }
+
+  function markNudgeSeen(): void {
+    try {
+      localStorage.setItem(TEST_NUDGE_SEEN_KEY, '1');
+    } catch {
+      // Nothing to do. The offer is not important enough to warn about.
+    }
+  }
+
+  /**
+   * The offer, and the way out of it.
+   *
+   * The offer appears once, for an owner who has never generated anything on
+   * this browser. It never blocks the real Generate button beside it.
+   */
+  function wireTestRun(): void {
+    if (!nudgeSeen()) elements.testNudge?.classList.remove('hidden');
+
+    elements.testNudgeBtn?.addEventListener('click', () => {
+      markNudgeSeen();
+      setTestMode(true);
+      elements.testBanner?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    elements.testOffBtn?.addEventListener('click', () => {
+      setTestMode(false);
+    });
+  }
+
+  /**
+   * The names the CURRENT set of bundles is saved under, decided once when
+   * they are generated.
+   *
+   * It used to read `testMode` at click time. Generate a test run, turn the
+   * test run off, then download: the list still said TEST- and the file saved
+   * without it. A test bundle whose filename looks real is exactly the
+   * mistake the stamp exists to prevent, so the name is fixed at the moment
+   * the bytes are made and never recomputed.
+   */
+  let bundlesWereStamped = false;
+
+  function downloadNameFor(fileName: string): string {
+    return bundlesWereStamped ? `${TEST_PREFIX}-${fileName}` : fileName;
+  }
+
+  function setTestMode(on: boolean): void {
+    testMode = on;
+    elements.testBanner?.classList.toggle('hidden', !on);
+    elements.testNudge?.classList.add('hidden');
+    document.body.classList.toggle('test-run', on);
+  }
 
   // Selfhosted callback for uploading the manifest after bundle generation.
   // Assigned in the __SELFHOSTED__ block; null in standalone builds.
@@ -87,11 +347,12 @@ declare const __SELFHOSTED__: boolean;
 
   // DOM elements interface
   interface Elements {
+    testNudge: HTMLElement | null;
+    testNudgeBtn: HTMLButtonElement | null;
+    testBanner: HTMLElement | null;
+    testOffBtn: HTMLButtonElement | null;
     wasmLoadingIndicator: HTMLElement | null;
-    modeTabs: HTMLElement | null;
     friendsHint: HTMLElement | null;
-    sharesInput: HTMLElement | null;
-    numShares: HTMLInputElement | null;
     friendsSection: HTMLElement | null;
     importSection: HTMLElement | null;
     yamlImport: HTMLTextAreaElement | null;
@@ -121,10 +382,7 @@ declare const __SELFHOSTED__: boolean;
   // DOM elements
   const elements: Elements = {
     wasmLoadingIndicator: document.getElementById('wasm-loading-indicator'),
-    modeTabs: document.getElementById('mode-tabs'),
     friendsHint: document.getElementById('friends-hint'),
-    sharesInput: document.getElementById('shares-input'),
-    numShares: document.getElementById('num-shares') as HTMLInputElement | null,
     friendsSection: document.getElementById('friends-section'),
     importSection: document.getElementById('import-section'),
     yamlImport: document.getElementById('yaml-import') as HTMLTextAreaElement | null,
@@ -141,6 +399,10 @@ declare const __SELFHOSTED__: boolean;
     filesPreview: document.getElementById('files-preview'),
     filesSummary: document.getElementById('files-summary'),
     generateBtn: document.getElementById('generate-btn') as HTMLButtonElement | null,
+    testNudge: document.getElementById('test-nudge'),
+    testNudgeBtn: document.getElementById('test-nudge-btn') as HTMLButtonElement | null,
+    testBanner: document.getElementById('test-banner'),
+    testOffBtn: document.getElementById('test-off-btn') as HTMLButtonElement | null,
     progressBar: document.getElementById('progress-bar'),
     statusMessage: document.getElementById('status-message'),
     bundlesList: document.getElementById('bundles-list'),
@@ -168,8 +430,8 @@ declare const __SELFHOSTED__: boolean;
     const buildDate = window.BUILD_DATE;
     if (!buildDate || buildDate === 'dev' || buildDate === '') return;
 
-    // Don't show on GitHub Pages (always up to date)
-    if (window.location.hostname === 'eljojo.github.io') return;
+    // Don't show on our own site: the hosted copy is rebuilt with the tool.
+    if (window.location.hostname.endsWith('bitcoinbutlers.com')) return;
 
     // Don't show on selfhosted (server operator manages updates)
     if (__SELFHOSTED__) return;
@@ -190,19 +452,24 @@ declare const __SELFHOSTED__: boolean;
         id: 'check-updates',
         label: t('update_nudge_action'),
         primary: true,
-        onClick: () => window.open('https://github.com/eljojo/rememory/releases/latest', '_blank'),
+        // Our own tool. Never upstream's releases: that build is a
+        // different tool, and its bundles still name every guardian.
+        onClick: () => window.open('https://www.bitcoinbutlers.com/tools/inheritance/maker.html', '_blank'),
       }],
     });
   }
 
   async function init(): Promise<void> {
     checkBuildAge();
-    setupAnonymousMode();
     setupImport();
     setupFriends();
     setupFiles();
     setupGenerate();
     setupTimelock();
+    wireAddAnother();
+    wireEmptyWordsWarning();
+    wireDestination();
+    wireTestRun();
 
     // Add initial 2 friends
     addFriend();
@@ -210,56 +477,6 @@ declare const __SELFHOSTED__: boolean;
     updateThresholdOptions();
 
     await waitForWasm();
-  }
-
-  // ============================================
-  // Anonymous Mode
-  // ============================================
-
-  function setupAnonymousMode(): void {
-    // Tab switching between Named and Anonymous
-    elements.modeTabs?.addEventListener('click', (e) => {
-      const tab = (e.target as HTMLElement).closest('.mode-tab') as HTMLElement | null;
-      if (!tab) return;
-      const mode = tab.dataset.mode;
-      if (!mode) return;
-
-      // Update active tab
-      elements.modeTabs?.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      state.anonymous = mode === 'anonymous';
-      updateAnonymousModeUI();
-      updateThresholdOptions();
-      checkGenerateReady();
-    });
-
-    elements.numShares?.addEventListener('input', () => {
-      const value = parseInt(elements.numShares?.value || '5', 10);
-      state.numShares = Math.max(2, Math.min(20, value));
-      updateThresholdOptions();
-      checkGenerateReady();
-    });
-  }
-
-  function updateAnonymousModeUI(): void {
-    if (state.anonymous) {
-      // Hide friends list and show shares input
-      elements.friendsSection?.classList.add('hidden');
-      elements.sharesInput?.classList.remove('hidden');
-      elements.importSection?.classList.add('hidden');
-      if (elements.friendsHint) {
-        elements.friendsHint.textContent = t('anonymous_hint');
-      }
-    } else {
-      // Show friends list and hide shares input
-      elements.friendsSection?.classList.remove('hidden');
-      elements.sharesInput?.classList.add('hidden');
-      elements.importSection?.classList.remove('hidden');
-      if (elements.friendsHint) {
-        elements.friendsHint.textContent = t('friends_hint');
-      }
-    }
   }
 
   async function waitForWasm(): Promise<void> {
@@ -270,14 +487,14 @@ declare const __SELFHOSTED__: boolean;
         reject(new Error('WASM load timed out'));
       }, 15000);
       const check = (): void => {
-        if (window.rememoryReady) {
+        if (window.inheritanceReady) {
           clearTimeout(timeout);
           state.wasmReady = true;
           // Freeze WASM functions so they can't be intercepted by injected scripts
           if (typeof Object.freeze === 'function') {
-            Object.freeze(window.rememoryCreateBundlesFromArchive);
-            Object.freeze(window.rememoryCreateArchive);
-            Object.freeze(window.rememoryParseProjectYAML);
+            Object.freeze(window.inheritanceCreateBundlesFromArchive);
+            Object.freeze(window.inheritanceCreateArchive);
+            Object.freeze(window.inheritanceParseProjectYAML);
           }
           elements.wasmLoadingIndicator?.classList.add('hidden');
           checkGenerateReady();
@@ -304,7 +521,7 @@ declare const __SELFHOSTED__: boolean;
         return;
       }
 
-      const result = window.rememoryParseProjectYAML(yaml);
+      const result = window.inheritanceParseProjectYAML(yaml);
       if (result.error || !result.project) {
         showError(
           t('import_error', result.error || 'Unknown error'),
@@ -435,9 +652,8 @@ declare const __SELFHOSTED__: boolean;
     state.friends = [];
     friends.forEach(f => addFriend(f.name, f.contact || '', f.language || ''));
   }
-
   function updateThresholdOptions(): void {
-    const n = state.anonymous ? state.numShares : state.friends.length;
+    const n = state.friends.length;
     const current = state.threshold;
 
     if (elements.thresholdSelect) {
@@ -462,9 +678,7 @@ declare const __SELFHOSTED__: boolean;
   }
 
   function updateThresholdVisibility(): void {
-    const show = state.anonymous
-      ? state.numShares >= 2
-      : state.friends.filter(f => f.name.trim().length > 0).length >= 2;
+    const show = state.friends.filter(f => f.name.trim().length > 0).length >= 2;
     elements.thresholdSection?.classList.toggle('hidden', !show);
     elements.thresholdGuidance?.classList.toggle('hidden', !show);
   }
@@ -802,9 +1016,7 @@ declare const __SELFHOSTED__: boolean;
 
   function checkGenerateReady(): void {
     const hasFiles = state.files.length > 0;
-    const hasFriends = state.anonymous
-      ? state.numShares >= 2
-      : state.friends.filter(f => f.name.trim().length > 0).length >= 2;
+    const hasFriends = state.friends.filter(f => f.name.trim().length > 0).length >= 2;
 
     if (elements.generateBtn) {
       elements.generateBtn.disabled = !state.wasmReady || state.generating || isOverSizeLimit();
@@ -847,36 +1059,29 @@ declare const __SELFHOSTED__: boolean;
     const existingFilesError = elements.filesDropZone?.parentNode?.querySelector('.inline-error');
     existingFilesError?.remove();
 
-    // Friends validation (skip for anonymous mode)
-    if (state.anonymous) {
-      if (state.numShares < 2) {
-        result.valid = false;
-        if (!silent) result.errors.push(t('validation_min_friends'));
-      }
+    if (state.friends.length < 2) {
+      result.valid = false;
+      if (!silent) result.errors.push(t('validation_min_friends'));
     } else {
-      if (state.friends.length < 2) {
-        result.valid = false;
-        if (!silent) result.errors.push(t('validation_min_friends'));
-      } else {
-        state.friends.forEach((f, i) => {
-          const entry = elements.friendsList?.children[i] as HTMLElement | undefined;
-          if (!entry) return;
+      state.friends.forEach((f, i) => {
+        const entry = elements.friendsList?.children[i] as HTMLElement | undefined;
+        if (!entry) return;
 
-          if (!f.name) {
-            result.valid = false;
-            if (!silent) {
-              result.errors.push(t('validation_friend_name', i + 1));
-              const nameInput = entry.querySelector('.friend-name') as HTMLInputElement;
-              nameInput?.classList.add('input-error');
-              if (!result.firstInvalidElement) result.firstInvalidElement = nameInput;
-            }
+        if (!f.name) {
+          result.valid = false;
+          if (!silent) {
+            result.errors.push(t('validation_friend_name', i + 1));
+            const nameInput = entry.querySelector('.friend-name') as HTMLInputElement;
+            nameInput?.classList.add('input-error');
+            if (!result.firstInvalidElement) result.firstInvalidElement = nameInput;
           }
-        });
-      }
+        }
+      });
     }
 
-    // Files validation
-    if (state.files.length === 0) {
+    // Files validation. A test run brings its own sample file, so asking the
+    // owner for theirs would make the practice run harder than the real one.
+    if (!testMode && state.files.length === 0) {
       result.valid = false;
       if (!silent) {
         result.errors.push(t('validation_no_files'));
@@ -933,37 +1138,56 @@ declare const __SELFHOSTED__: boolean;
     try {
       setProgress(0);
       setStatus(t('generating'));
+      // Whether this run is a test or the real thing, the offer has served
+      // its purpose and must not be repeated.
+      markNudgeSeen();
+      elements.testNudge?.classList.add('hidden');
+      // Fix the stamp to what this run is, before any of it is generated.
+      bundlesWereStamped = testMode;
 
-      const filesForWasm: BundleFile[] = state.files.map(f => ({
+      // A test run never carries the owner's own files. If it did, a
+      // throwaway bundle would hold real secrets and could not be thrown away.
+      const filesForWasm: BundleFile[] = testMode
+        ? [sampleTestFile()]
+        : state.files.map(f => ({
+            name: f.name,
+            data: f.data
+          }));
+
+      // The stamp. It rides on the project name, which is what the README,
+      // the printed PDF and METADATA.yaml all print, so a guardian holding a
+      // test bundle sees it before anything else.
+      const projectName = testMode
+        ? `${TEST_PREFIX} ${state.projectName}`
+        : state.projectName;
+
+      const friends = state.friends.map(f => ({
         name: f.name,
-        data: f.data
+        contact: f.contact || '',
+        language: f.language || ''
       }));
-
-      // Create friends array - synthetic names for anonymous mode
-      let friends;
-      if (state.anonymous) {
-        friends = [];
-        for (let i = 0; i < state.numShares; i++) {
-          friends.push({
-            name: `Share ${i + 1}`,
-            contact: '',
-            language: ''
-          });
-        }
-      } else {
-        friends = state.friends.map(f => ({
-          name: f.name,
-          contact: f.contact || '',
-          language: f.language || ''
-        }));
-      }
 
       // Step 1: Create archive
       setProgress(10);
       setStatus(t('archiving'));
       await sleep(100);
 
-      const archiveResult = window.rememoryCreateArchive(filesForWasm);
+      const ownersWords = collectOwnersWords();
+
+      // Every text the owner writes goes INSIDE the archive, so it opens only
+      // when enough guardians combine. Go names each file and writes its
+      // header, so a bundle made here matches one made by the command line.
+      const archiveResult = window.inheritanceCreateArchive(filesForWasm, {
+        // Where the keys are is the most sensitive thing an owner writes. It
+        // does not go into a bundle they are about to throw away.
+        peopleAndPlaces: testMode ? undefined : ownersWords.peopleAndPlaces || undefined,
+        recoverySteps: ownersWords.recoverySteps || undefined,
+        chainPayload: chainCopy?.text || undefined,
+        // Published before generating, so the id can go inside. An owner who
+        // publishes later cannot add it: the archive is encrypted and its key
+        // is already split. Their estate page carries it instead.
+        chainTxid: chainTxid() || undefined,
+      });
       if (archiveResult.error || !archiveResult.data) {
         throw new Error(archiveResult.error || 'Failed to create archive');
       }
@@ -1000,17 +1224,21 @@ declare const __SELFHOSTED__: boolean;
       const ownerInput = document.getElementById('owner-recipient') as HTMLInputElement | null;
       const ownerRecipient = ownerInput?.value.trim() || undefined;
 
-      const result = window.rememoryCreateBundlesFromArchive({
-        projectName: state.projectName,
+      const result = window.inheritanceCreateBundlesFromArchive({
+        projectName: projectName,
         threshold: state.threshold,
         friends: friends,
         archiveData: archiveData,
         version: window.VERSION || 'dev',
-        anonymous: state.anonymous,
         defaultLanguage: currentLang || 'en',
         tlockRound: tlockRound,
         tlockUnlock: tlockUnlock,
         ownerRecipient: ownerRecipient,
+        // The words themselves are already sealed in the archive above. A
+        // bundle is told only whether there were any, so its README can say
+        // so and can never print them.
+        ownerWroteNothing:
+          ownersWords.recoverySteps === '' && !chainCopy?.text,
       });
 
       if (result.error || !result.bundles) {
@@ -1022,7 +1250,7 @@ declare const __SELFHOSTED__: boolean;
       state.bundles = result.bundles;
 
       // Expose bundles for testing
-      (window as unknown as { rememoryBundles?: GeneratedBundle[] }).rememoryBundles = result.bundles;
+      (window as unknown as { inheritanceBundles?: GeneratedBundle[] }).inheritanceBundles = result.bundles;
 
       renderBundlesList();
 
@@ -1044,7 +1272,7 @@ declare const __SELFHOSTED__: boolean;
         ownerSep.classList.remove('hidden');
         ownerBtn.onclick = (e) => {
           e.preventDefault();
-          const blob = new Blob([ownerData], { type: 'text/plain' });
+          const blob = new Blob([ownerData as BlobPart], { type: 'text/plain' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
@@ -1111,7 +1339,7 @@ declare const __SELFHOSTED__: boolean;
         <span class="icon">&#128230;</span>
         <div class="details">
           <div class="name">${t('bundle_for', escapeHtml(bundle.friendName))}</div>
-          <div class="meta">${escapeHtml(bundle.fileName)} (${formatSize(bundle.data.length)})</div>
+          <div class="meta">${escapeHtml(downloadNameFor(bundle.fileName))} (${formatSize(bundle.data.length)})</div>
         </div>
         <button type="button" class="download-btn" data-index="${index}">${t('download')}</button>
       `;
@@ -1130,7 +1358,7 @@ declare const __SELFHOSTED__: boolean;
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = bundle.fileName;
+    a.download = downloadNameFor(bundle.fileName);
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -1142,34 +1370,25 @@ declare const __SELFHOSTED__: boolean;
   }
 
   function downloadProjectYaml(): void {
-    let yaml = `# Kaitiaki Project Configuration\n`;
+    let yaml = `# Bitcoin Inheritance Project Configuration\n`;
     yaml += `# Generated: ${new Date().toISOString()}\n`;
     yaml += `# Import this file to quickly restore your friend list\n\n`;
     yaml += `name: ${state.projectName}\n`;
     yaml += `threshold: ${state.threshold}\n`;
-    if (state.anonymous) {
-      yaml += `anonymous: true\n`;
-    }
     if (currentLang && currentLang !== 'en') {
       yaml += `language: ${currentLang}\n`;
     }
     yaml += `friends:\n`;
 
-    if (state.anonymous) {
-      for (let i = 0; i < state.numShares; i++) {
-        yaml += `  - name: Share ${i + 1}\n`;
+    state.friends.forEach(f => {
+      yaml += `  - name: "${escapeYamlString(f.name)}"\n`;
+      if (f.contact) {
+        yaml += `    contact: "${escapeYamlString(f.contact)}"\n`;
       }
-    } else {
-      state.friends.forEach(f => {
-        yaml += `  - name: "${escapeYamlString(f.name)}"\n`;
-        if (f.contact) {
-          yaml += `    contact: "${escapeYamlString(f.contact)}"\n`;
-        }
-        if (f.language) {
-          yaml += `    language: ${f.language}\n`;
-        }
-      });
-    }
+      if (f.language) {
+        yaml += `    language: ${f.language}\n`;
+      }
+    });
 
     const blob = new Blob([yaml], { type: 'text/yaml' });
     const url = URL.createObjectURL(blob);
@@ -1278,7 +1497,7 @@ declare const __SELFHOSTED__: boolean;
   // Global Exports
   // ============================================
 
-  window.rememoryUpdateUI = function(): void {
+  window.inheritanceUpdateUI = function(): void {
     renderFriendsList();
     renderFilesPreview();
     if (state.generationComplete) {

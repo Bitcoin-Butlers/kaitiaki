@@ -7,9 +7,8 @@ import (
 
 	"golang.org/x/text/unicode/norm"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/project"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 )
 
 // ReadmeData contains all data needed to generate README.txt
@@ -17,7 +16,6 @@ type ReadmeData struct {
 	ProjectName      string
 	Holder           string
 	Share            *core.Share
-	OtherFriends     []project.Friend
 	Threshold        int
 	Total            int
 	Version          string
@@ -25,11 +23,16 @@ type ReadmeData struct {
 	ManifestChecksum string
 	RecoverChecksum  string
 	Created          time.Time
-	Anonymous        bool
 	Language         string // Bundle language (e.g. "en", "es"); defaults to "en"
 	ManifestEmbedded bool   // true when manifest is embedded in recover.html
 	OwnerKeyPresent  bool   // true when the bundle contains OWNER.age
 	TlockEnabled     bool   // true when manifest uses time-lock encryption
+
+	// OwnerWroteNothing is true when the owner left no text at all. It is a
+	// flag and never the text itself: every word an owner writes is sealed in
+	// the encrypted archive, so this struct is not given the content and the
+	// README cannot print it by mistake. See sealed_texts.go.
+	OwnerWroteNothing bool
 }
 
 // writeWordGrid writes a two-column word grid to the string builder.
@@ -82,31 +85,36 @@ func GenerateReadme(data ReadmeData) string {
 
 	// Warning
 	sb.WriteString(fmt.Sprintf("!!  %s\n", t("warning_title")))
-	if data.Anonymous {
-		sb.WriteString(fmt.Sprintf("    %s\n\n", t("warning_message_shares")))
-	} else {
-		sb.WriteString(fmt.Sprintf("    %s\n\n", t("warning_message_friends")))
+	sb.WriteString(fmt.Sprintf("    %s\n\n", t("warning_message")))
+
+	// No roster, no method, no chain copy. Every one of them is sealed in the
+	// encrypted archive now, so they reach a reader only when enough guardians
+	// combine their pieces. See sealed_texts.go for why.
+
+	// Say so when the owner wrote nothing. An heir holding a bundle with no
+	// instructions cannot otherwise tell whether that was a decision or a lost
+	// file, and at the moment they are reading this, that difference matters.
+	if data.OwnerWroteNothing {
+		sb.WriteString("--------------------------------------------------------------------------------\n")
+		sb.WriteString(fmt.Sprintf("%s\n", t("no_instructions_title")))
+		sb.WriteString("--------------------------------------------------------------------------------\n")
+		sb.WriteString(fmt.Sprintf("%s\n\n", t("no_instructions")))
 	}
 
-	// Other share holders (skip for anonymous mode)
-	if !data.Anonymous {
-		sb.WriteString("--------------------------------------------------------------------------------\n")
-		sb.WriteString(fmt.Sprintf("%s\n", t("other_holders")))
-		sb.WriteString("--------------------------------------------------------------------------------\n")
-		for _, friend := range data.OtherFriends {
-			sb.WriteString(fmt.Sprintf("%s\n", friend.Name))
-			if friend.Contact != "" {
-				sb.WriteString(fmt.Sprintf("  %s\n", t("contact_label", friend.Contact)))
-			}
-			sb.WriteString("\n")
-		}
-	}
+	// Who else holds a piece. The bundle cannot say, so it says where to look.
+	sb.WriteString("--------------------------------------------------------------------------------\n")
+	sb.WriteString(fmt.Sprintf("%s\n", t("who_else_title")))
+	sb.WriteString("--------------------------------------------------------------------------------\n")
+	sb.WriteString(fmt.Sprintf("%s\n\n", t("who_else")))
 
 	// Sharing your share (what to do when someone asks)
 	sb.WriteString("--------------------------------------------------------------------------------\n")
 	sb.WriteString(fmt.Sprintf("%s\n", t("sharing_title")))
 	sb.WriteString("--------------------------------------------------------------------------------\n")
 	sb.WriteString(fmt.Sprintf("%s\n\n", t("sharing_verify")))
+	// A guardian used to be able to ring another guardian to check. They know
+	// nobody now, so the estate papers are the credential instead.
+	sb.WriteString(fmt.Sprintf("%s\n\n", t("sharing_verify_estate")))
 	sb.WriteString(fmt.Sprintf("  - %s\n", t("sharing_easiest")))
 	sb.WriteString(fmt.Sprintf("  - %s\n", t("sharing_readme_only")))
 	sb.WriteString(fmt.Sprintf("  - %s\n", t("sharing_words_phone")))
@@ -130,26 +138,15 @@ func GenerateReadme(data ReadmeData) string {
 	if data.OwnerKeyPresent {
 		sb.WriteString(fmt.Sprintf("%s\n\n", t("owner_note")))
 	}
-	if data.Anonymous {
-		sb.WriteString(fmt.Sprintf("%s\n", t("recover_anon_step3")))
-		sb.WriteString(fmt.Sprintf("   %s\n", t("recover_anon_step3_drag")))
-		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_anon_step3_paste")))
-		if data.Threshold > 0 {
-			sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_anon_step4_auto", data.Threshold)))
-		}
-		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_anon_step5")))
-	} else {
-		sb.WriteString(fmt.Sprintf("%s\n", t("recover_step3_contact")))
-		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step3_ask")))
-		sb.WriteString(fmt.Sprintf("%s\n", t("recover_step4")))
-		sb.WriteString(fmt.Sprintf("   %s\n", t("recover_step4_drag")))
-		sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step4_paste")))
-		sb.WriteString(fmt.Sprintf("%s\n", t("recover_step5_checkmarks")))
-		if data.Threshold > 0 {
-			sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step5_auto", data.Threshold)))
-		}
-		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_step6")))
+	// One set of steps, for every bundle. The other set told the reader to
+	// open a contact list and ask the people on it. There is no list.
+	sb.WriteString(fmt.Sprintf("%s\n", t("recover_step3")))
+	sb.WriteString(fmt.Sprintf("   %s\n", t("recover_step3_drag")))
+	sb.WriteString(fmt.Sprintf("   %s\n\n", t("recover_step3_paste")))
+	if data.Threshold > 0 {
+		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_step4_auto", data.Threshold)))
 	}
+	sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_step5")))
 	if data.TlockEnabled {
 		sb.WriteString(fmt.Sprintf("%s\n\n", t("recover_offline_tlock")))
 	} else {
@@ -201,7 +198,7 @@ func GenerateReadme(data ReadmeData) string {
 	sb.WriteString("================================================================================\n")
 	sb.WriteString("METADATA FOOTER (machine-parseable)\n")
 	sb.WriteString("================================================================================\n")
-	sb.WriteString(fmt.Sprintf("kaitiaki-version: %s\n", data.Version))
+	sb.WriteString(fmt.Sprintf("inheritance-version: %s\n", data.Version))
 	sb.WriteString(fmt.Sprintf("created: %s\n", data.Created.Format(time.RFC3339)))
 	sb.WriteString(fmt.Sprintf("project: %s\n", data.ProjectName))
 	if data.Threshold > 0 {

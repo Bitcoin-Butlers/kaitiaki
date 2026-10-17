@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import {
-  getRememoryBin,
+  getInheritanceBin,
   generateStandaloneHTML,
   createTestProject,
   extractBundle,
@@ -16,12 +16,12 @@ test.describe('Time-lock: maker.html advanced options', () => {
   let tmpDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
     }
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-tlock-e2e-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-tlock-e2e-'));
     htmlPath = generateStandaloneHTML(tmpDir, 'create');
   });
 
@@ -129,10 +129,10 @@ test.describe('Time-lock: maker.html bundle creation and recovery with tlock', (
   // Recovery needs drand beacon access — creation is still offline (enforced by group 1).
   test.use({ allowedHosts: ['api.drand.sh'] });
 
-  // This test hits the real drand network — only run under REMEMORY_TEST_TLOCK=1 (make test-tlock)
+  // This test hits the real drand network — only run under INHERITANCE_TEST_TLOCK=1 (make test-tlock)
   test.beforeAll(() => {
-    if (process.env.REMEMORY_TEST_TLOCK !== '1') {
-      throw new Error('REMEMORY_TEST_TLOCK=1 is required — run these tests via make test-tlock');
+    if (process.env.INHERITANCE_TEST_TLOCK !== '1') {
+      throw new Error('INHERITANCE_TEST_TLOCK=1 is required — run these tests via make test-tlock');
     }
   });
 
@@ -141,12 +141,12 @@ test.describe('Time-lock: maker.html bundle creation and recovery with tlock', (
   let tmpDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
     }
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-tlock-create-e2e-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-tlock-create-e2e-'));
     makerPath = generateStandaloneHTML(tmpDir, 'create');
     recoverPath = generateStandaloneHTML(tmpDir, 'recover');
   });
@@ -252,12 +252,12 @@ test.describe('Time-lock: recover.html tlock detection', () => {
   let tmpDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
     }
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-tlock-recover-e2e-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-tlock-recover-e2e-'));
     genericRecoverPath = generateStandaloneHTML(tmpDir, 'recover');
   });
 
@@ -304,7 +304,7 @@ test.describe('Time-lock: non-tlock bundles', () => {
   let projectDir: string;
 
   test.beforeAll(async () => {
-    const bin = getRememoryBin();
+    const bin = getInheritanceBin();
     if (!fs.existsSync(bin)) {
       test.skip();
       return;
@@ -344,7 +344,7 @@ test.describe('Time-lock: non-tlock bundles', () => {
     const personalizedSize = fs.statSync(path.join(aliceDir, 'recover.html')).size;
 
     // Generate generic recover.html (which includes tlock-js)
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-tlock-size-e2e-'));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'inheritance-tlock-size-e2e-'));
     try {
       const genericPath = generateStandaloneHTML(tmpDir, 'recover');
       const genericSize = fs.statSync(genericPath).size;

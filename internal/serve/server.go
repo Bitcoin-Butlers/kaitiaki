@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/eljojo/rememory/docs"
-	"github.com/eljojo/rememory/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/docs"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
 )
 
 // Config holds the configuration for the server.
@@ -20,7 +20,7 @@ type Config struct {
 	BuildDate       string
 }
 
-// Server implements http.Handler for the self-hosted Kaitiaki web app.
+// Server implements http.Handler for the self-hosted Bitcoin Inheritance web app.
 type Server struct {
 	store           *Store
 	maxManifestSize int

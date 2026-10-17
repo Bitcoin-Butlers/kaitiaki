@@ -1,6 +1,80 @@
 # Changelog
 
-All notable changes to ReMemory are documented here.
+## Unreleased
+
+- Sealing no longer writes the owner's own words into their project folder.
+  They are built in memory and handed straight to the archive. Before this, an
+  owner who edited `manifest/HOW-THE-WALLET-WORKS.txt` by hand lost the edit on
+  the next `seal`, and their words sat in plaintext on disk afterwards.
+
+- The guide, the README, the CLI guide, the security review and the three
+  service runbooks now describe the tool as it is. Twenty places said a bundle
+  lists the other guardians, that the owner's words sit in the open, or that
+  the chain copy rides in every README. A new section, **Who Can Read What**,
+  states the three tiers of access in one table, so there is one place to check
+  a claim against.
+- **Publish the chain copy before you generate, and paste its transaction id
+  into the page.** A new field sits under the descriptor. This is the only way
+  the id reaches your guardians: the archive is encrypted and its key split
+  among them the moment you generate, so an id found afterwards can never be
+  added. Write it on your estate page as well. The guide and the placement
+  runbook used to say a missing id cost an heir nothing, because the bundles
+  carried the chain copy in the open. They no longer do.
+- The guide's screenshots are regenerated. They showed the Named and Anonymous
+  tabs, and a contact list that no longer exists.
+
+- Anonymous mode is gone. It existed so an owner could keep guardians from
+  seeing each other's names, and every bundle now does that by default. What
+  was left of it was a second way to do the same thing, with its own tab, its
+  own share-count field, its own CLI flags and its own recovery instructions.
+  Guardians are named in the maker, and their names go nowhere but their own
+  bundle. `inheritance init` loses `--anonymous` and `--shares`.
+
+- A guardian's bundle no longer tells them who the other guardians are. The
+  `README.txt`, the `README.pdf` and the personalised `recover.html` listed
+  every other guardian by name and email, so one bundle in the wrong hands
+  named the rest of the people to approach. All three surfaces now name their
+  own holder and nobody else. Who holds a piece belongs in the owner's will or
+  their estate insert, where estate practice already keeps it.
+- Everything the owner writes is now sealed inside the encrypted archive, so it
+  opens only when enough guardians combine their pieces. Their method for
+  spending and the encrypted chain copy used to sit in the open beside the
+  roster, where a single guardian read both. They now arrive as
+  `HOW-THE-WALLET-WORKS.txt` and `CHAIN-COPY.txt`, next to
+  `WHERE-THE-KEYS-ARE.txt`. The published transaction id travels with the
+  chain copy, because the id alone fetches the same payload off the chain.
+  A bundle README says only whether the owner wrote anything at all.
+- The `--chain-txid` flag on `bundle` is gone. Bundles no longer carry a
+  transaction id, so there was nothing for it to set.
+
+- The descriptor page can open our own published backup. One button fills the
+  transaction id and two of the three keys from the mainnet backup recorded in
+  `docs/descriptor-backup-vector.md`, fetches it, and leaves the reader one
+  press from the descriptor. It stops there on purpose, because the
+  transaction-id path takes two steps and nothing used to say so. The page now
+  says so, and pressing Rebuild too early names the Fetch button instead of
+  restating the problem. The note explaining what happened appears only for our
+  own backup, so an heir recovering their own wallet is never told it was a
+  demonstration.
+- The maker offers a test run. It makes throwaway bundles from a sample file so
+  an owner can practise a recovery before making the real ones. A test bundle
+  carries none of the owner's own material, neither their files nor the people
+  and places, and every one is stamped TEST in the project name and in the
+  saved filename. The offer appears once, never repeats, and never blocks
+  Generate. Covered by `e2e/test-run.spec.ts`.
+
+- Kaitiaki is now Bitcoin Inheritance. Pages, guide, README, the PDF bundle
+  title, and every translation say the new name; short labels such as the page
+  logo say Inheritance. The CLI binary is now `inheritance` (`inheritance init`,
+  `inheritance seal`, `inheritance recover`), the bundle metadata key is
+  `inheritance-version`, and the printed recovery URL moved to
+  bitcoinbutlers.com/tools/inheritance/recover.html, which the site redirects
+  to permanently from the old path. Only the repository name keeps the old word.
+
+All notable changes to Bitcoin Inheritance are documented here. Entries below
+the 2026 fork describe releases of ReMemory, the project this one is built
+from, and name its binary and commands as they were at the time. They are a
+record, not instructions.
 
 ## Unreleased
 
@@ -19,6 +93,14 @@ All notable changes to ReMemory are documented here.
   active label used to be white on white.
 - The "See how it works" walkthrough now builds a test set in the maker
   instead of pointing at a demo download this fork does not publish.
+- New page: **Descriptor Backup**. A multisig wallet needs its descriptor as
+  well as its keys. Losing the descriptor together with one key can cost you
+  the wallet, even when the keys you still hold are enough to sign. The page encrypts the descriptor so that your own
+  keys unlock it, and gives you one line of text to put on Bitcoin. Choose
+  who can open it: the same threshold your wallet spends with, or any single
+  key. Recovery reads it back from a transaction id or from pasted text.
+  Nothing is uploaded, and the encrypted text can also be recovered with
+  other people's tools if this project disappears.
 - The guardian README.txt and README.pdf speak for Bitcoin Butlers. The
   title is now KAITIAKI GUARDIAN BUNDLE, the instructions are shorter and
   plainer, and the fallback links point at bitcoinbutlers.com and at this

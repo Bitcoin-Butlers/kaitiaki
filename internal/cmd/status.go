@@ -6,15 +6,15 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
 	"github.com/spf13/cobra"
 )
 
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show project status and summary",
-	Long:  `Displays the current state of the kaitiaki project including seal status, friends, and bundle information.`,
+	Long:  `Displays the current state of the inheritance project including seal status, friends, and bundle information.`,
 	RunE:  runStatus,
 }
 
@@ -31,7 +31,7 @@ func runStatus(cmd *cobra.Command, args []string) error {
 
 	projectDir, err := project.FindProjectDir(cwd)
 	if err != nil {
-		return fmt.Errorf("no kaitiaki project found (run 'kaitiaki init' first)")
+		return fmt.Errorf("no inheritance project found (run 'inheritance init' first)")
 	}
 
 	// Load project
@@ -50,7 +50,7 @@ func runStatus(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Manifest Checksum: %s\n", truncateHash(p.Sealed.ManifestChecksum))
 	} else {
 		fmt.Printf("Sealed: %s\n", yellow("No"))
-		fmt.Println("  Run 'kaitiaki seal' to encrypt and split the passphrase")
+		fmt.Println("  Run 'inheritance seal' to encrypt and split the passphrase")
 	}
 
 	// Threshold
@@ -79,7 +79,7 @@ func runStatus(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Bundles: %s (%d bundles in %s)\n", green("Generated"), bundleCount, bundlesDir)
 	} else if p.Sealed != nil {
 		fmt.Printf("Bundles: %s\n", yellow("Not yet generated"))
-		fmt.Println("  Run 'kaitiaki bundle' to create distribution bundles")
+		fmt.Println("  Run 'inheritance bundle' to create distribution bundles")
 	} else {
 		fmt.Printf("Bundles: %s (seal first)\n", yellow("Not available"))
 	}

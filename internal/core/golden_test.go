@@ -328,14 +328,25 @@ func TestGoldenShareParsing(t *testing.T) {
 						t.Errorf("Verify: %v", err)
 					}
 
+					// The fixtures carry the old markers on purpose: they are
+					// the proof that a share written before 2026-09-24 still
+					// parses. Encode writes the current markers, so compare
+					// against the fixture with only that line renamed. Every
+					// other byte must still match exactly.
+					wantPEM := strings.ReplaceAll(gs.PEM, "-----BEGIN REMEMORY SHARE-----", ShareBegin)
+					wantPEM = strings.ReplaceAll(wantPEM, "-----END REMEMORY SHARE-----", ShareEnd)
 					reEncoded := share.Encode()
-					if reEncoded != gs.PEM {
-						t.Errorf("PEM re-encode mismatch:\ngot:\n%s\nwant:\n%s", reEncoded, gs.PEM)
+					if reEncoded != wantPEM {
+						t.Errorf("PEM re-encode mismatch:\ngot:\n%s\nwant:\n%s", reEncoded, wantPEM)
 					}
 
+					// Same rule as the PEM markers: the fixture keeps the old
+					// prefix as the legacy-parse proof, Encode writes the
+					// current one, every other byte must match.
+					wantCompact := strings.Replace(gs.Compact, "RM", CompactPrefix, 1)
 					compact := share.CompactEncode()
-					if compact != gs.Compact {
-						t.Errorf("compact: got %q, want %q", compact, gs.Compact)
+					if compact != wantCompact {
+						t.Errorf("compact: got %q, want %q", compact, wantCompact)
 					}
 
 					decoded, err := ParseCompact(compact)

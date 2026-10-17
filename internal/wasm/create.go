@@ -11,13 +11,13 @@ import (
 	"syscall/js"
 	"time"
 
-	"github.com/eljojo/rememory/internal/bundle"
-	"github.com/eljojo/rememory/internal/core"
-	"github.com/eljojo/rememory/internal/crypto"
-	"github.com/eljojo/rememory/internal/html"
-	"github.com/eljojo/rememory/internal/pdf"
-	"github.com/eljojo/rememory/internal/project"
-	"github.com/eljojo/rememory/internal/translations"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/bundle"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/core"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/crypto"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/html"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/pdf"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/project"
+	"github.com/Bitcoin-Butlers/kaitiaki/internal/translations"
 
 	"gopkg.in/yaml.v3"
 )
@@ -50,11 +50,16 @@ type CreateBundlesFromArchiveConfig struct {
 	Friends         []FriendInput
 	ArchiveData     []byte
 	Version         string
-	Anonymous       bool
 	DefaultLanguage string
 	TlockRound      uint64
 	TlockUnlock     string // RFC 3339 timestamp
 	OwnerRecipient  string // optional age X25519 recipient; adds OWNER.age
+
+	// OwnerWroteNothing is true when the owner left no text at all. The
+	// texts themselves were sealed into the archive before it reached here,
+	// so a bundle carries the flag and never the words.
+	// See internal/bundle/sealed_texts.go.
+	OwnerWroteNothing bool
 }
 
 // bundleGenConfig holds shared parameters for bundle generation from an
@@ -64,10 +69,12 @@ type bundleGenConfig struct {
 	Threshold       int
 	Friends         []FriendInput
 	Version         string
-	Anonymous       bool
 	DefaultLanguage string
 	TlockEnabled    bool
 	OwnerFile       []byte // optional OWNER.age content for every bundle
+
+	// OwnerWroteNothing is true when the owner left no text at all.
+	OwnerWroteNothing bool
 }
 
 // createBundlesFromArchive creates bundles from pre-built archive data.
@@ -138,14 +145,14 @@ func createBundlesFromArchive(config CreateBundlesFromArchiveConfig) ([]BundleOu
 	manifestData := encryptedBuf.Bytes()
 
 	bundles, err := bundleFromManifest(manifestData, raw, bundleGenConfig{
-		ProjectName:     config.ProjectName,
-		Threshold:       config.Threshold,
-		Friends:         config.Friends,
-		Version:         config.Version,
-		Anonymous:       config.Anonymous,
-		DefaultLanguage: config.DefaultLanguage,
-		TlockEnabled:    tlockEnabled,
-		OwnerFile:       ownerFile,
+		ProjectName:       config.ProjectName,
+		Threshold:         config.Threshold,
+		Friends:           config.Friends,
+		Version:           config.Version,
+		DefaultLanguage:   config.DefaultLanguage,
+		TlockEnabled:      tlockEnabled,
+		OwnerFile:         ownerFile,
+		OwnerWroteNothing: config.OwnerWroteNothing,
 	})
 	if err != nil {
 		return nil, nil, nil, err
@@ -209,27 +216,11 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 			lang = "en"
 		}
 
-		var otherFriends []project.Friend
-		var otherFriendsInfo []html.FriendInfo
-		if !config.Anonymous {
-			otherFriends = make([]project.Friend, 0, n-1)
-			otherFriendsInfo = make([]html.FriendInfo, 0, n-1)
-			for j, f := range projectFriends {
-				if j != i {
-					otherFriends = append(otherFriends, f)
-					otherFriendsInfo = append(otherFriendsInfo, html.FriendInfo{
-						Name:       f.Name,
-						Contact:    f.Contact,
-						ShareIndex: j + 1,
-					})
-				}
-			}
-		}
+		// A bundle names its own holder and nobody else.
 
 		personalization := &html.PersonalizationData{
 			Holder:       friend.Name,
 			HolderShare:  share.Encode(),
-			OtherFriends: otherFriendsInfo,
 			Threshold:    k,
 			Total:        n,
 			Language:     lang,
@@ -248,21 +239,20 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 		recoverChecksum := core.HashString(recoverHTML)
 
 		readmeData := bundle.ReadmeData{
-			OwnerKeyPresent:  len(config.OwnerFile) > 0,
-			ProjectName:      config.ProjectName,
-			Holder:           friend.Name,
-			Share:            share,
-			OtherFriends:     otherFriends,
-			Threshold:        k,
-			Total:            n,
-			Version:          config.Version,
-			GitHubReleaseURL: githubReleaseURL,
-			ManifestChecksum: manifestChecksum,
-			RecoverChecksum:  recoverChecksum,
-			Created:          now,
-			Anonymous:        config.Anonymous,
-			Language:         lang,
-			ManifestEmbedded: manifestEmbedded,
+			OwnerKeyPresent:   len(config.OwnerFile) > 0,
+			ProjectName:       config.ProjectName,
+			Holder:            friend.Name,
+			Share:             share,
+			Threshold:         k,
+			Total:             n,
+			Version:           config.Version,
+			GitHubReleaseURL:  githubReleaseURL,
+			ManifestChecksum:  manifestChecksum,
+			RecoverChecksum:   recoverChecksum,
+			Created:           now,
+			Language:          lang,
+			ManifestEmbedded:  manifestEmbedded,
+			OwnerWroteNothing: config.OwnerWroteNothing,
 		}
 		readmeContent := bundle.GenerateReadme(readmeData)
 
@@ -271,7 +261,6 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 			ProjectName:      config.ProjectName,
 			Holder:           friend.Name,
 			Share:            share,
-			OtherFriends:     otherFriends,
 			Threshold:        k,
 			Total:            n,
 			Version:          config.Version,
@@ -279,7 +268,6 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 			ManifestChecksum: manifestChecksum,
 			RecoverChecksum:  recoverChecksum,
 			Created:          now,
-			Anonymous:        config.Anonymous,
 			Language:         lang,
 			ManifestEmbedded: manifestEmbedded,
 		}
@@ -480,6 +468,34 @@ func createArchiveJS(this js.Value, args []js.Value) any {
 		files[i] = FileEntry{Name: name, Data: data}
 	}
 
+	// Every text the owner writes is sealed INSIDE the archive, so it appears
+	// only when enough guardians combine their pieces. None of them goes in a
+	// README, because a README is built to be forwarded: the guardian's own
+	// copy tells them to send it to whoever asks.
+	//
+	// bundle.SealedFiles decides which ones and under what names, and the CLI
+	// calls the same function, so a bundle made here matches one made there.
+	var texts bundle.SealedTexts
+	if len(args) > 1 && !args[1].IsUndefined() && !args[1].IsNull() {
+		cfg := args[1]
+		str := func(key string) string {
+			v := cfg.Get(key)
+			if v.IsUndefined() || v.IsNull() {
+				return ""
+			}
+			return v.String()
+		}
+		texts = bundle.SealedTexts{
+			PeopleAndPlaces: str("peopleAndPlaces"),
+			RecoverySteps:   str("recoverySteps"),
+			ChainPayload:    str("chainPayload"),
+			ChainTxid:       str("chainTxid"),
+		}
+	}
+	for _, f := range bundle.SealedFiles(texts, "", time.Time{}) {
+		files = append(files, FileEntry{Name: f.Name, Data: f.Content})
+	}
+
 	archiveData, err := createZip(files)
 	if err != nil {
 		return errorResult(err.Error())
@@ -512,7 +528,6 @@ func createBundlesFromArchiveJS(this js.Value, args []js.Value) any {
 		ProjectName: configJS.Get("projectName").String(),
 		Threshold:   configJS.Get("threshold").Int(),
 		Version:     configJS.Get("version").String(),
-		Anonymous:   configJS.Get("anonymous").Bool(),
 	}
 	if defLang := configJS.Get("defaultLanguage"); !defLang.IsUndefined() && !defLang.IsNull() {
 		config.DefaultLanguage = defLang.String()
@@ -530,6 +545,11 @@ func createBundlesFromArchiveJS(this js.Value, args []js.Value) any {
 	}
 	if tlockUnlock := configJS.Get("tlockUnlock"); !tlockUnlock.IsUndefined() && !tlockUnlock.IsNull() {
 		config.TlockUnlock = tlockUnlock.String()
+	}
+	// The owner's texts are sealed into the archive before bundles are made,
+	// so this config is given only whether there were any.
+	if v := configJS.Get("ownerWroteNothing"); !v.IsUndefined() && !v.IsNull() {
+		config.OwnerWroteNothing = v.Bool()
 	}
 	if ownerRecipient := configJS.Get("ownerRecipient"); !ownerRecipient.IsUndefined() && !ownerRecipient.IsNull() {
 		config.OwnerRecipient = ownerRecipient.String()
