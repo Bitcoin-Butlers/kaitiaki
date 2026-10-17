@@ -25,7 +25,6 @@ func GenerateIndexHTML(selfhosted bool) string {
 		FooterContent: `<p style="font-size: 0.8125rem; color: var(--text-muted);" data-i18n-html="footer_timelock">* <a href="docs.html#timelock" style="color: var(--text-muted);">Time-locked</a> archives need a brief internet connection at recovery time.</p>
     <p>
       <a href="{{GITHUB_REPO}}" target="_blank" data-i18n="footer_source">Source Code</a> &#xB7;
-      <a href="{{GITHUB_URL}}" target="_blank" data-i18n="footer_download">Download</a> &#xB7;
       <a href="docs.html" data-i18n="footer_docs">Documentation</a>
     </p>
     <p class="version"><a href="{{GITHUB_REPO}}/blob/main/CHANGELOG.md" target="_blank" style="color: var(--text-muted); text-decoration: none;">{{VERSION}}</a></p>

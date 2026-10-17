@@ -33,6 +33,26 @@ test.describe('Browser Bundle Creation Tool', () => {
     }
   });
 
+  test('security notes links and mode tabs are legible on the dark theme', async ({ page }) => {
+    const creation = new CreationPage(page, htmlPath);
+    await creation.open();
+
+    // Links in the security notes used to fall back to the browser default blue.
+    const link = page.locator('.how-secure-intro a').first();
+    await expect(link).toHaveCSS('color', 'rgb(251, 220, 123)');
+
+    // Active tabs (Named/Anonymous in step 1, Simple/Advanced in step 3) used
+    // to be white text on a white pill.
+    const activeTabs = page.locator('.mode-tab.active');
+    const count = await activeTabs.count();
+    expect(count).toBeGreaterThan(0);
+    for (let i = 0; i < count; i++) {
+      await expect(activeTabs.nth(i)).toHaveCSS('background-color', 'rgb(251, 220, 123)');
+      await expect(activeTabs.nth(i)).toHaveCSS('color', 'rgb(10, 10, 10)');
+    }
+    await expect(page.locator('.site-nav a', { hasText: 'Bitcoin Butlers' })).toHaveAttribute('href', /bitcoinbutlers\.com/);
+  });
+
   test('maker.html loads and shows UI', async ({ page }) => {
     const creation = new CreationPage(page, htmlPath);
 

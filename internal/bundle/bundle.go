@@ -54,7 +54,7 @@ func GenerateAll(p *project.Project, cfg Config) error {
 	manifestChecksum := core.HashBytes(manifestData)
 
 	// Derive GitHub release URL from version for README/PDF
-	githubReleaseURL := fmt.Sprintf("%s/releases/tag/%s", core.GitHubRepo, cfg.Version)
+	githubReleaseURL := core.GitHubRepo
 
 	// Disclosed quorum values: zero means "do not disclose".
 	disclosedThreshold, disclosedTotal := p.Threshold, len(p.Friends)

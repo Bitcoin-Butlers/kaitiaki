@@ -538,7 +538,7 @@ func verifyBundle(t *testing.T, bundlePath string, friend project.Friend, allFri
 	if !strings.Contains(readmeContent, "METADATA FOOTER") {
 		t.Error("README missing metadata footer")
 	}
-	if !strings.Contains(readmeContent, "rememory-version:") {
+	if !strings.Contains(readmeContent, "kaitiaki-version:") {
 		t.Error("README missing version in footer")
 	}
 	if !strings.Contains(readmeContent, "checksum-manifest:") {
@@ -923,7 +923,7 @@ func verifyAnonymousBundle(t *testing.T, bundlePath string, shareNum, total, thr
 	}
 
 	// Should contain anonymous-specific warning text
-	if !strings.Contains(readmeContent, "combine it with other pieces") {
+	if !strings.Contains(readmeContent, "combine it with the other pieces") {
 		t.Error("anonymous README should mention combining with other pieces")
 	}
 
@@ -938,7 +938,7 @@ func verifyAnonymousBundle(t *testing.T, bundlePath string, shareNum, total, thr
 		t.Errorf("README should contain threshold info: %s", thresholdText)
 	}
 
-	totalText := fmt.Sprintf("one of %d people", total)
+	totalText := fmt.Sprintf("one of %d guardians", total)
 	if !strings.Contains(readmeContent, totalText) {
 		t.Errorf("README should contain total info: %s", totalText)
 	}

@@ -210,7 +210,7 @@ func GenerateRecoverHTML(personalization *PersonalizationData, opts ...RecoverHT
     <p>
       <span data-i18n="need_help">Need help?</span>
       <a href="{{GITHUB_PAGES}}/docs#recovering" target="_blank">Docs</a> &#xB7;
-      <a href="{{GITHUB_URL}}" target="_blank" data-i18n="download_cli">Download CLI tool from GitHub</a>
+      <a href="{{GITHUB_REPO}}" target="_blank" data-i18n="download_cli">CLI and source on GitHub</a>
     </p>`,
 		Scripts: scripts.String(),
 	})

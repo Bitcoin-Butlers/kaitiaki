@@ -68,9 +68,11 @@ test.describe('Documentation Page', () => {
     await page.goto('file://' + docsPath);
 
     const nav = page.locator('.docs-nav');
-    await expect(nav.locator('a', { hasText: 'Home' })).toBeAttached();
+    await expect(nav.locator('a', { hasText: 'About' })).toBeAttached();
+    await expect(nav.locator('a', { hasText: 'Guide' })).toBeAttached();
     await expect(nav.locator('a', { hasText: 'Create Bundles' })).toBeAttached();
     await expect(nav.locator('a', { hasText: 'Recover' })).toBeAttached();
     await expect(nav.locator('a', { hasText: 'GitHub' })).toBeAttached();
+    await expect(nav.locator('a', { hasText: 'Bitcoin Butlers' })).toHaveAttribute('href', /bitcoinbutlers\.com/);
   });
 });

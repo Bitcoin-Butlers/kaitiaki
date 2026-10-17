@@ -4,6 +4,27 @@ All notable changes to ReMemory are documented here.
 
 ## Unreleased
 
+## v0.0.22 — 2026-09-10
+
+- The landing page now speaks for Bitcoin Butlers: what Kaitiaki is, what the
+  placement session and the annual drill add, and the rule that seed words
+  never go in a bundle. The personal story, the Docker aside and the Rememory
+  PDF screenshot from upstream are gone.
+- Every page links back to bitcoinbutlers.com/tools/kaitiaki, and the landing
+  page shows the same navigation bar as the other pages. The guide's bar now
+  carries the same links in the same order.
+- Links inside the maker's security notes and inside the guide are gold. They
+  used to fall back to the browser's default blue on the dark theme.
+- The Simple/Advanced switch in the maker shows its active tab in gold. The
+  active label used to be white on white.
+- The "See how it works" walkthrough now builds a test set in the maker
+  instead of pointing at a demo download this fork does not publish.
+- The guardian README.txt and README.pdf speak for Bitcoin Butlers. The
+  title is now KAITIAKI GUARDIAN BUNDLE, the instructions are shorter and
+  plainer, and the fallback links point at bitcoinbutlers.com and at this
+  fork's repository. The QR code in the PDF opens our recover page.
+- The GitHub links in the navigation, the footers and the guide point at
+  this fork. The one attribution link to Rememory stays.
 - Owner key (optional): give the bundle maker an age public key and every
   bundle also carries `OWNER.age` — the recovery passphrase locked to that
   key. The owner can recover alone in `recover.html` (or with the age CLI);

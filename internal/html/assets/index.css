@@ -1,5 +1,4 @@
     /* Hide the shared nav on the landing page — it has its own header */
-    .landing .site-nav { display: none; }
 
     a {
       color: var(--dusty-blue);
@@ -308,6 +307,27 @@
     }
 
 /* Background note */
+
+    .bundles .bundle-files {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0;
+    }
+    .bundles .bundle-files li {
+      position: relative;
+      padding-left: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+    }
+    .bundles .bundle-files li::before {
+      content: "\2022";
+      position: absolute;
+      left: 0;
+      color: var(--sage);
+    }
+    .bundles .bundle-files code {
+      color: var(--text);
+    }
 
     .background h2 {
       font-size: 1.1rem;

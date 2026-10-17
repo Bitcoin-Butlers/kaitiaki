@@ -160,7 +160,7 @@ func bundleFromManifest(manifestData, raw []byte, config bundleGenConfig) ([]Bun
 	html.SetVersion(config.Version)
 
 	// Derive GitHub release URL from version for README/PDF
-	githubReleaseURL := fmt.Sprintf("%s/releases/tag/%s", core.GitHubRepo, config.Version)
+	githubReleaseURL := core.GitHubRepo
 
 	manifestChecksum := core.HashBytes(manifestData)
 
