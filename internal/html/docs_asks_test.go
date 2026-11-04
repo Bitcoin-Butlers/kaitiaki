@@ -22,7 +22,7 @@ var (
 )
 
 func TestGenerateDocsHTMLAsksForNoSecret(t *testing.T) {
-	for _, sentence := range docsAsks(GenerateDocsHTML("en", false)) {
+	for _, sentence := range docsAsks(docsGuide(t)) {
 		t.Errorf("asks for a secret: %q", sentence)
 	}
 }
@@ -53,6 +53,17 @@ func TestDocsAsksNamesEachSecret(t *testing.T) {
 	}
 }
 
+// docsGuide returns the English guide. When the guide does not render,
+// GenerateDocsHTML returns only an HTML comment, and a scan of that passes.
+func docsGuide(t *testing.T) string {
+	t.Helper()
+	page := GenerateDocsHTML("en", false)
+	if !strings.Contains(page, "</html>") {
+		t.Fatalf("the guide did not render: %s", page)
+	}
+	return page
+}
+
 // docsAsks returns each sentence of the page that asks for a secret.
 func docsAsks(html string) []string {
 	var asks []string
@@ -74,7 +85,7 @@ func docsAsks(html string) []string {
 }
 
 func TestGenerateDocsHTMLScreenshotsExist(t *testing.T) {
-	for _, m := range docsScreenSrc.FindAllStringSubmatch(GenerateDocsHTML("en", false), -1) {
+	for _, m := range docsScreenSrc.FindAllStringSubmatch(docsGuide(t), -1) {
 		if _, err := os.Stat(filepath.Join("..", "..", "docs", "screenshots", m[1])); err != nil {
 			t.Errorf("missing screenshot: %s", m[1])
 		}
