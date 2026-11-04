@@ -1,12 +1,8 @@
 /**
  * Automated guide screenshots.
  *
- * Captures 10 screenshots per guide language (en, es, de, fr) from the
+ * Captures 8 screenshots per guide language (en, es, de, fr) from the
  * creation and recovery flows, saving them to docs/screenshots/{lang}/.
- *
- * Three screenshots are not automatable (OS dialogs / camera) and stay
- * shared at docs/screenshots/:
- *   qr-camera-permission.png, qr-scanning.png, manifest-file-picker.png
  *
  * Usage:
  *   make screenshots          # or:
@@ -22,8 +18,6 @@ import {
   getRememoryBin,
   generateStandaloneHTML,
   extractBundle,
-  extractWordsFromReadme,
-  findReadmeFile,
   RecoveryPage,
   CreationPage,
 } from './helpers';
@@ -144,9 +138,6 @@ let bundlesDir: string;
 let makerHtmlPath: string;
 let standaloneRecoverHtml: string;
 
-// Per-language bundle dirs for translated word screenshots
-const langBundlesDirs: Partial<Record<Lang, string>> = {};
-
 test.beforeAll(async () => {
   const bin = getRememoryBin();
   if (!fs.existsSync(bin)) {
@@ -177,23 +168,6 @@ test.beforeAll(async () => {
   execFileSync(bin, ['seal'], { cwd: projectDir, stdio: 'inherit' });
   execFileSync(bin, ['bundle'], { cwd: projectDir, stdio: 'inherit' });
   bundlesDir = path.join(projectDir, 'output', 'bundles');
-
-  // Create per-language projects so word screenshots show translated BIP39 words
-  for (const lang of LANGUAGES) {
-    const langTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), `rememory-ss-${lang}-`));
-    const langProjectDir = path.join(langTmpDir, `words-${lang}`);
-    execFileSync(bin, [
-      'init', langProjectDir, '--name', 'Words',
-      '--threshold', '2',
-      '--friend', `Alice,alice@example.com,${lang}`,
-      '--friend', `Bob,bob@example.com,${lang}`,
-    ], { stdio: 'inherit' });
-    const langManifestDir = path.join(langProjectDir, 'manifest');
-    fs.writeFileSync(path.join(langManifestDir, 'secret.txt'), 'test secret');
-    execFileSync(bin, ['seal'], { cwd: langProjectDir, stdio: 'inherit' });
-    execFileSync(bin, ['bundle'], { cwd: langProjectDir, stdio: 'inherit' });
-    langBundlesDirs[lang] = path.join(langProjectDir, 'output', 'bundles');
-  }
 
   // Generate standalone HTML files
   const htmlTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-ss-html-'));
@@ -393,49 +367,6 @@ for (const lang of LANGUAGES) {
       await frameRecoveryStep(page, [2]);
 
       await snap(page, lang, 'tlock-waiting');
-    });
-
-    test(`[${lang}] recovery-words-typing`, async ({ page }) => {
-      const recovery = new RecoveryPage(page, path.dirname(standaloneRecoverHtml));
-      await recovery.openFile(standaloneRecoverHtml);
-
-      // Open paste area
-      await recovery.clickPasteButton();
-      await recovery.expectPasteAreaVisible();
-
-      // Type a partial set of translated BIP39 words, stripped of accents
-      // to show that tildes and umlauts aren't required.
-      const aliceDir = extractBundle(langBundlesDirs[lang]!, 'Alice');
-      const words = extractWordsFromReadme(findReadmeFile(aliceDir));
-      const partialWords = words.split(' ').slice(0, 8).join(' ')
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      await recovery.pasteShare(partialWords);
-
-      // Frame: only Step 1 (gather pieces with paste area)
-      await frameRecoveryStep(page, [0]);
-
-      await snap(page, lang, 'recovery-words-typing');
-    });
-
-    test(`[${lang}] recovery-words-recognized`, async ({ page }) => {
-      const aliceDir = extractBundle(langBundlesDirs[lang]!, 'Alice');
-      const recovery = new RecoveryPage(page, path.dirname(standaloneRecoverHtml));
-      await recovery.openFile(standaloneRecoverHtml);
-
-      // Submit full translated words
-      const words = extractWordsFromReadme(findReadmeFile(aliceDir));
-      await recovery.clickPasteButton();
-      await recovery.expectPasteAreaVisible();
-      await recovery.pasteShare(words);
-      await recovery.submitPaste();
-
-      // Wait for share to be recognized
-      await recovery.expectShareCount(1);
-
-      // Frame: only Step 1 (gather pieces with recognized share)
-      await frameRecoveryStep(page, [0]);
-
-      await snap(page, lang, 'recovery-words-recognized');
     });
   });
 }
