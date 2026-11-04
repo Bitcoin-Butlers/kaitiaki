@@ -125,7 +125,7 @@ Once your bundles are ready, there are a few things worth doing before you put t
 - Tell each person what this is, why they have it, and that they should keep it safe. They cannot use it alone. They will need to coordinate with others.
 - Keep a copy of `MANIFEST.age` somewhere safe. It is just encrypted data, useless without enough pieces
 - Save your `project.yml` so you can regenerate bundles later
-- Print `README.pdf` as a paper backup before sending the digital bundle. Paper doesn't need adapters or power.
+- Print `README.pdf` as a paper backup before sending the digital bundle. Paper doesn't need adapters or power. Keep the bundle files too. Recovery needs them.
 - Set a yearly reminder to check in. See [Keeping Bundles Current](#keeping-current)
 - Consider running a [recovery drill](#recovery-drills). It is the only way to know your plan actually works
 
@@ -435,10 +435,12 @@ The owner key is an optional second path. You give the bundle maker an [age](htt
 
 ### How to Recover With It
 
-Any age CLI works:
+Any age CLI works. Run these commands in the bundle's folder, in a macOS or Linux terminal:
 
 ```
 age -d -i owner-key.txt OWNER.age   # prints the recovery passphrase
+# takes MANIFEST.age out of recover.html, if the bundle does not hold it
+[ -f MANIFEST.age ] || grep -o '"manifestB64":"[^"]*' recover.html | cut -d'"' -f4 | base64 -d > MANIFEST.age
 age -d MANIFEST.age > archive       # enter that passphrase when asked
 ```
 
