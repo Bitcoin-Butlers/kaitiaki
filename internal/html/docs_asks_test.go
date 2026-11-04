@@ -13,7 +13,7 @@ import (
 // words or a secret key. A crawler reads such a sentence as a phishing ask.
 // A warning ("Never paste seed words here") is not an ask, and it stays.
 var (
-	docsAsk       = regexp.MustCompile(`(?i)\b(type|paste|enter|send|read|ask)\b(?:[^.!?]|\.[^\s.!?]){0,60}\b(recovery words|seed words|seed phrase|seed share|secret key|private key|your words|their words|the words|share text)\b|\b(type|paste|enter) them\b|\bpaste the text\b`)
+	docsAsk       = regexp.MustCompile(`(?i)\b(type|paste|enter|send|read|ask)\b(?:[^.!?]|\.[^\s.!?]){0,60}\b(recovery words|recovery phrase|seed words|seed phrase|seed share|secret key|private key|your words|their words|the words|share text)\b|\b(type|paste|enter) them\b|\bpaste the text\b`)
 	docsWarning   = regexp.MustCompile(`(?i)\b(never|not|no)\b`)
 	docsTag       = regexp.MustCompile(`<[^>]+>`)
 	docsReadAttr  = regexp.MustCompile(`(?i)\b(?:alt|aria-label|title)\s*=\s*(?:"([^"]*)"|'([^']*)')`)
@@ -36,6 +36,19 @@ func TestDocsAsksReadsAttributes(t *testing.T) {
 	} {
 		if len(docsAsks(tag)) == 0 {
 			t.Errorf("not caught: %s", tag)
+		}
+	}
+}
+
+// Each name for the words counts, the plain ones too.
+func TestDocsAsksNamesEachSecret(t *testing.T) {
+	for _, sentence := range []string{
+		"Type your recovery phrase into the tool.",
+		"Enter your seed phrase to continue.",
+		"Paste your recovery words here.",
+	} {
+		if len(docsAsks(sentence)) == 0 {
+			t.Errorf("not caught: %s", sentence)
 		}
 	}
 }
