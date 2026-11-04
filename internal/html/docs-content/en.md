@@ -435,9 +435,7 @@ The owner key is an optional second path. You give the bundle maker an [age](htt
 
 ### How to Recover With It
 
-In the recovery tool: drop any one bundle. Recovery runs immediately, no other pieces needed.
-
-Without the tool, any age CLI works:
+Any age CLI works:
 
 ```
 age -d -i owner-key.txt OWNER.age   # prints the recovery passphrase
