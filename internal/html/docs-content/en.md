@@ -166,9 +166,9 @@ Each bundle contains:
 Each bundle is personalized. The guardian's share is pre-loaded, and a contact list shows who else holds pieces. When the encrypted data is small enough, it's embedded too.
 </p>
 
-### Path A: I Have the Bundle ZIP {#recovery-bundle}
+### I Have the Bundle ZIP {#recovery-bundle}
 
-The simplest path. If you have the bundle ZIP (or the files from it):
+If you have the bundle ZIP (or the files from it):
 
 <div class="step-guide">
 <div class="step-number">1</div>
@@ -198,7 +198,7 @@ The simplest path. If you have the bundle ZIP (or the files from it):
 <div class="step-number">4</div>
 <div class="step-content">
 <h4>Add shares from other guardians</h4>
-<p>For each guardian's piece: drag their <code>README.txt</code> onto the page, paste the text, or scan a QR code from their PDF. A checkmark appears as each piece is added.</p>
+<p>For each guardian's piece: drag their <code>README.txt</code> onto the page, or scan a QR code from their PDF. A checkmark appears as each piece is added.</p>
 </div>
 </div>
 
@@ -223,115 +223,6 @@ The simplest path. If you have the bundle ZIP (or the files from it):
 <img src="screenshots/en/recovery-2.png" alt="Recovery interface - decryption complete">
 <figcaption>Once threshold is met, files are decrypted and ready to download</figcaption>
 </figure>
-
-### Path B: I Have a Printed PDF with Words {#recovery-words}
-
-Each printed PDF includes your share as a list of numbered words. Type them into the recovery tool. No camera or scanner is needed.
-
-<div class="step-guide">
-<div class="step-number">1</div>
-<div class="step-content">
-<h4>Open the recovery tool</h4>
-<p>Visit the URL printed on the PDF, or open <code>recover.html</code> from any guardian's bundle.</p>
-</div>
-</div>
-
-<div class="step-guide">
-<div class="step-number">2</div>
-<div class="step-content">
-<h4>Type in your recovery words</h4>
-<p>Find the word list on your PDF and type the words into the text area. You do not need the numbers, just the words, separated by spaces.</p>
-</div>
-</div>
-
-<figure class="screenshot">
-<img src="screenshots/en/recovery-words-typing.png" alt="Typing recovery words from a printed PDF into the recovery tool">
-<figcaption>Type the numbered words from your printed PDF into the text area</figcaption>
-</figure>
-
-<figure class="screenshot">
-<img src="screenshots/en/recovery-words-recognized.png" alt="Recovery tool after words have been entered, showing the share was recognized">
-<figcaption>The recovery tool recognizes the words and loads your share</figcaption>
-</figure>
-
-<div class="step-guide">
-<div class="step-number">3</div>
-<div class="step-content">
-<h4>Load the encrypted manifest</h4>
-<p>You may need the <code>MANIFEST.age</code> file. Drag it onto the page or click to browse. If you do not have it, any guardian can send theirs. Every bundle has the same copy.</p>
-</div>
-</div>
-
-<div class="step-guide">
-<div class="step-number">4</div>
-<div class="step-content">
-<h4>Collect shares from other guardians</h4>
-<p>Contact other guardians and ask for their pieces. They can send their <code>README.txt</code>, read their words over the phone, or you can scan their QR code.</p>
-</div>
-</div>
-
-<div class="step-guide">
-<div class="step-number">5</div>
-<div class="step-content">
-<h4>Recovery happens automatically</h4>
-<p>Once the threshold is met, decryption starts immediately.</p>
-</div>
-</div>
-
-<div class="tip">
-<strong>Tip:</strong> Words are the easiest to share over the phone. If a guardian cannot send their share digitally, they can read the words aloud and you type them in.
-</div>
-
-### Path C: I Have a Printed PDF with QR Code {#recovery-pdf}
-
-If your device has a camera, scan the QR code on the PDF to import your share directly.
-
-<div class="step-guide">
-<div class="step-number">1</div>
-<div class="step-content">
-<h4>Open the recovery tool</h4>
-<p>Scan the QR code with your phone camera. It opens the recovery tool with your share pre-filled. Or visit the URL on the PDF and type the short code shown below the QR code.</p>
-</div>
-</div>
-
-<figure class="screenshot">
-<img src="screenshots/qr-camera-permission.png" alt="Browser asking for camera permission">
-<figcaption>Your browser will ask for permission to use the camera</figcaption>
-</figure>
-
-<figure class="screenshot">
-<img src="screenshots/qr-scanning.png" alt="Scanning a QR code from a printed PDF">
-<figcaption>Point your camera at the QR code on the printed PDF to import the share</figcaption>
-</figure>
-
-<div class="step-guide">
-<div class="step-number">2</div>
-<div class="step-content">
-<h4>Load the encrypted manifest</h4>
-<p>You may need the <code>MANIFEST.age</code> file. Drag it onto the page or click to browse. If you do not have it, any guardian can send theirs. Every bundle has the same copy.</p>
-</div>
-</div>
-
-<figure class="screenshot">
-<img src="screenshots/manifest-file-picker.png" alt="Selecting MANIFEST.age from a folder">
-<figcaption>Select the MANIFEST.age file from where you stored it</figcaption>
-</figure>
-
-<div class="step-guide">
-<div class="step-number">3</div>
-<div class="step-content">
-<h4>Collect shares from other guardians</h4>
-<p>Contact other guardians and ask for their pieces. They can send their <code>README.txt</code>, or you can scan their QR code.</p>
-</div>
-</div>
-
-<div class="step-guide">
-<div class="step-number">4</div>
-<div class="step-content">
-<h4>Recovery happens automatically</h4>
-<p>Once the threshold is met, decryption starts immediately.</p>
-</div>
-</div>
 
 <div class="tip">
 <strong>About recovery:</strong>
@@ -544,7 +435,7 @@ The owner key is an optional second path. You give the bundle maker an [age](htt
 
 ### How to Recover With It
 
-In the recovery tool: drop any one bundle, open **I am the owner and have my owner key**, and paste your secret key (`AGE-SECRET-KEY-1...`). Recovery runs immediately, no other pieces needed.
+In the recovery tool: drop any one bundle. Recovery runs immediately, no other pieces needed.
 
 Without the tool, any age CLI works:
 
