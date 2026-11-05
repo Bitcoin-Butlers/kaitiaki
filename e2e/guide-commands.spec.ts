@@ -17,6 +17,13 @@ const SHELLS = [
   { name: 'zsh', argv: ['zsh', '-f', '-i'] },
 ];
 
+// The maker embeds MANIFEST.age in recover.html only up to 10 MiB. Above
+// that the bundle holds MANIFEST.age, and the guide's commands must keep it.
+const BUNDLES = [
+  { label: '', suffix: '', embedManifest: true },
+  { label: ' when the bundle holds MANIFEST.age', suffix: '-file', embedManifest: false },
+];
+
 function filesUnder(dir: string): Map<string, Buffer> {
   const files = new Map<string, Buffer>();
   for (const entry of fs.readdirSync(dir, { recursive: true, withFileTypes: true })) {
@@ -84,11 +91,16 @@ test.describe('Guide commands', () => {
     }
   });
 
-  for (const shell of SHELLS) {
-    test(`the guide's commands recover the original files in ${shell.name}`, async ({ page }, testInfo) => {
+  for (const shell of SHELLS) for (const bundle of BUNDLES) {
+    test(`the guide's commands recover the original files in ${shell.name}${bundle.label}`, async ({ page }, testInfo) => {
       testInfo.setTimeout(180000);
-      const prefix = `guide-${shell.name}`;
-      const bundleDir = path.join(await createBundlesWithOwner(page, htmlPath, tmpDir, prefix), 'alice');
+      const prefix = `guide-${shell.name}${bundle.suffix}`;
+      const bundleDir = path.join(await createBundlesWithOwner(page, htmlPath, tmpDir, prefix, {
+        embedManifest: bundle.embedManifest,
+      }), 'alice');
+      const manifestFile = path.join(bundleDir, 'MANIFEST.age');
+      expect(fs.existsSync(manifestFile)).toBe(!bundle.embedManifest);
+      const manifest = bundle.embedManifest ? null : fs.readFileSync(manifestFile);
 
       // The file `age-keygen -o owner-key.txt` writes, as the guide's How to Enable says
       const keyFile = path.join(bundleDir, 'owner-key.txt');
@@ -124,6 +136,9 @@ test.describe('Guide commands', () => {
 
       const archive = path.join(bundleDir, 'archive');
       expect(fs.existsSync(archive), transcript).toBe(true);
+      if (manifest) {
+        expect(fs.readFileSync(manifestFile).equals(manifest), `MANIFEST.age changed\n${transcript}`).toBe(true);
+      }
       const outDir = path.join(tmpDir, `${prefix}-out`);
       fs.mkdirSync(outDir);
       // The maker writes a ZIP. bsdtar on macOS opens it as tar, and GNU tar does not.

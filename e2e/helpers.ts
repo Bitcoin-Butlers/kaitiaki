@@ -3,6 +3,7 @@ import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import * as crypto from 'crypto';
 import AdmZip from 'adm-zip';
 
 // Shared setup from global-setup.ts (pre-created resources)
@@ -832,14 +833,23 @@ export const OWNER_IDENTITY =
 
 // Make bundles for Alice and Bob in maker.html with the owner key set, and
 // extract each one into <tmpDir>/<prefix>-bundles/<name>/.
+// embedManifest: false adds a file too large to embed, so each bundle holds
+// MANIFEST.age beside recover.html.
 export async function createBundlesWithOwner(
   page: Page, htmlPath: string, tmpDir: string, prefix: string,
+  options: { embedManifest?: boolean } = {},
 ): Promise<string> {
   const creation = new CreationPage(page, htmlPath);
   await creation.open();
   await creation.setFriend(0, 'Alice', 'alice@test.com');
   await creation.setFriend(1, 'Bob', 'bob@test.com');
   const testFiles = creation.createTestFiles(tmpDir, prefix);
+  if (options.embedManifest === false) {
+    // Random bytes do not compress, so the manifest stays over the 10 MiB limit
+    const large = path.join(tmpDir, `test-files-${prefix}`, `${prefix}-large.bin`);
+    fs.writeFileSync(large, crypto.randomBytes(11 << 20));
+    testFiles.push(large);
+  }
   await creation.addFiles(testFiles);
 
   await page.locator('.owner-key-section summary').click();
