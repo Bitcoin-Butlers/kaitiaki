@@ -67,12 +67,13 @@ function runTerminal(line: string, shellArgv: string[]) {
 }
 
 test.describe('Guide terminal', () => {
-  for (const [i, shell] of SHELLS.entries()) {
+  for (const shell of SHELLS) {
     test(`a guide line that does not finish fails in time in ${shell.name}`, async () => {
-      // One duration per test, so pgrep finds only this test's command.
+      // A worker runs one test at a time, so its pid makes the command unique
+      // among the tests that run at once, and pgrep finds only this one.
       // nohup keeps it alive through the hangup when terminal.py exits, so
       // only terminal.py's own kill can stop it.
-      const hang = `sleep ${597 + i}`;
+      const hang = `sleep ${1000000 + process.pid}`;
       try {
         const transcript = runTerminal(`nohup ${hang}`, shell.argv);
         expect(spawnSync('pgrep', ['-f', hang]).status, transcript).toBe(1);
