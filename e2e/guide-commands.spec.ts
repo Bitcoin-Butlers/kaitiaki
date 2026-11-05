@@ -3,6 +3,7 @@ import { execFileSync, spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import AdmZip from 'adm-zip';
 import {
   getRememoryBin, getDocsHtml, generateStandaloneHTML,
   OWNER_RECIPIENT, OWNER_IDENTITY, createBundlesWithOwner,
@@ -91,7 +92,8 @@ test.describe('Guide commands', () => {
       expect(fs.existsSync(archive), transcript).toBe(true);
       const outDir = path.join(tmpDir, `${prefix}-out`);
       fs.mkdirSync(outDir);
-      execFileSync('tar', ['-xzf', archive, '-C', outDir]);
+      // The maker writes a ZIP. bsdtar on macOS opens it as tar, and GNU tar does not.
+      new AdmZip(archive).extractAllTo(outDir, true);
 
       const original = filesUnder(path.join(tmpDir, `test-files-${prefix}`));
       const recovered = filesUnder(outDir);
