@@ -27,6 +27,40 @@ function filesUnder(dir: string): Map<string, Buffer> {
   return files;
 }
 
+test.describe('Guide terminal', () => {
+  for (const [i, shell] of SHELLS.entries()) {
+    // One duration per test, so pgrep finds only this test's command
+    const hang = `sleep ${597 + i}`;
+    test(`a guide line that does not finish fails in time in ${shell.name}`, async () => {
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-guide-terminal-'));
+      try {
+        const commandsFile = path.join(dir, 'commands');
+        fs.writeFileSync(commandsFile, `${hang}\n`);
+        const passphraseFile = path.join(dir, 'passphrase');
+        fs.writeFileSync(passphraseFile, '');
+
+        const run = spawnSync('python3', [
+          path.resolve('e2e/terminal.py'), commandsFile, passphraseFile, ...shell.argv,
+        ], {
+          cwd: dir,
+          encoding: 'utf8',
+          timeout: 30000,
+          env: { ...process.env, TERMINAL_TIMEOUT: '5', BASH_SILENCE_DEPRECATION_WARNING: '1' },
+        });
+        const transcript = `${run.stdout}\n${run.stderr}\n${run.error ?? ''}`;
+        // The caller's timeout must not be what stops the run, or the transcript is lost
+        expect(run.error, transcript).toBeUndefined();
+        expect(run.status, transcript).toBe(1);
+        expect(run.stdout, transcript).toContain(hang);
+        // The hung command must not outlive the run
+        expect(spawnSync('pgrep', ['-f', hang]).status, transcript).toBe(1);
+      } finally {
+        fs.rmSync(dir, { recursive: true, force: true });
+      }
+    });
+  }
+});
+
 test.describe('Guide commands', () => {
   let htmlPath: string;
   let tmpDir: string;
