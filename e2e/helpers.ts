@@ -3,6 +3,7 @@ import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import * as crypto from 'crypto';
 import AdmZip from 'adm-zip';
 
 // Shared setup from global-setup.ts (pre-created resources)
@@ -683,14 +684,20 @@ export class CreationPage {
   // Download bundle and return data
   async downloadBundle(index: number): Promise<Uint8Array | null> {
     // Get bundle data from the page's state
+    // base64, because a JSON array of numbers takes about 30 s for a 12 MB bundle
     const data = await this.page.evaluate((idx) => {
       const state = (window as any).rememoryBundles;
       if (!state || !state[idx]) return null;
-      return Array.from(state[idx].data as Uint8Array);
+      const bytes = state[idx].data as Uint8Array;
+      let binary = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      }
+      return btoa(binary);
     }, index);
 
-    if (!data) return null;
-    return new Uint8Array(data);
+    if (data === null) return null;
+    return new Uint8Array(Buffer.from(data, 'base64'));
   }
 
   // UI assertions
@@ -822,4 +829,50 @@ export class CreationPage {
     
     return yamlContent;
   }
+}
+
+// Owner Key test vector from docs/owner-key-vector.md (public, never for real use)
+export const OWNER_RECIPIENT =
+  'age17pv0xledcth6mtfpgmtaxc3gahxdkt5ad79cxwxtgj966kqxq9fs3m8ced';
+export const OWNER_IDENTITY =
+  'AGE-SECRET-KEY-1E3PUXA5R3R9Y3R9DPTF57F8HD4YXL7DNWWGUJMRMTFWNARP3KQFSJ2M754';
+
+// Make bundles for Alice and Bob in maker.html with the owner key set, and
+// extract each one into <tmpDir>/<prefix>-bundles/<name>/.
+// embedManifest: false adds a file too large to embed, so each bundle holds
+// MANIFEST.age beside recover.html.
+export async function createBundlesWithOwner(
+  page: Page, htmlPath: string, tmpDir: string, prefix: string,
+  options: { embedManifest?: boolean } = {},
+): Promise<string> {
+  const creation = new CreationPage(page, htmlPath);
+  await creation.open();
+  await creation.setFriend(0, 'Alice', 'alice@test.com');
+  await creation.setFriend(1, 'Bob', 'bob@test.com');
+  const testFiles = creation.createTestFiles(tmpDir, prefix);
+  if (options.embedManifest === false) {
+    // Random bytes do not compress, so the manifest stays over the 10 MiB limit
+    const large = path.join(tmpDir, `test-files-${prefix}`, `${prefix}-large.bin`);
+    fs.writeFileSync(large, crypto.randomBytes(11 << 20));
+    testFiles.push(large);
+  }
+  await creation.addFiles(testFiles);
+
+  await page.locator('.owner-key-section summary').click();
+  await page.locator('#owner-recipient').fill(OWNER_RECIPIENT);
+
+  await creation.generate();
+  await creation.expectGenerationComplete();
+  await creation.expectBundleCount(2);
+
+  const bundlesDir = path.join(tmpDir, `${prefix}-bundles`);
+  fs.mkdirSync(bundlesDir, { recursive: true });
+  for (const [i, name] of ['alice', 'bob'].entries()) {
+    const data = await creation.downloadBundle(i);
+    expect(data).toBeTruthy();
+    const zipPath = path.join(bundlesDir, `bundle-${name}.zip`);
+    fs.writeFileSync(zipPath, data!);
+    new AdmZip(zipPath).extractAllTo(path.join(bundlesDir, name), true);
+  }
+  return bundlesDir;
 }
