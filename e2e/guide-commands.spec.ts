@@ -34,36 +34,55 @@ function filesUnder(dir: string): Map<string, Buffer> {
   return files;
 }
 
+// Run terminal.py on one command line, in a session of its own. A signal
+// that terminal.py sends to the wrong group then stops only terminal.py,
+// and the test can still report it.
+function runTerminal(line: string, shellArgv: string[]) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-guide-terminal-'));
+  try {
+    const commandsFile = path.join(dir, 'commands');
+    fs.writeFileSync(commandsFile, `${line}\n`);
+    const passphraseFile = path.join(dir, 'passphrase');
+    fs.writeFileSync(passphraseFile, '');
+    const run = spawnSync('python3', [
+      '-c', 'import os, sys; os.setsid(); os.execvp(sys.argv[1], sys.argv[1:])',
+      'python3', path.resolve('e2e/terminal.py'), commandsFile, passphraseFile, ...shellArgv,
+    ], {
+      cwd: dir,
+      encoding: 'utf8',
+      timeout: 30000,
+      env: { ...process.env, TERMINAL_TIMEOUT: '5', BASH_SILENCE_DEPRECATION_WARNING: '1' },
+    });
+    const transcript = `${run.stdout}\n${run.stderr}\n${run.error ?? ''}\nsignal ${run.signal}`;
+    // The caller's timeout or a stray signal must not be what stops the run,
+    // or the transcript is lost
+    expect(run.error, transcript).toBeUndefined();
+    expect(run.signal, transcript).toBeNull();
+    expect(run.status, transcript).toBe(1);
+    expect(run.stdout, transcript).toContain(line);
+    return transcript;
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 test.describe('Guide terminal', () => {
   for (const [i, shell] of SHELLS.entries()) {
-    // One duration per test, so pgrep finds only this test's command
-    const hang = `sleep ${597 + i}`;
     test(`a guide line that does not finish fails in time in ${shell.name}`, async () => {
-      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rememory-guide-terminal-'));
+      // One duration per test, so pgrep finds only this test's command.
+      // nohup keeps it alive through the hangup when terminal.py exits, so
+      // only terminal.py's own kill can stop it.
+      const hang = `sleep ${597 + i}`;
       try {
-        const commandsFile = path.join(dir, 'commands');
-        fs.writeFileSync(commandsFile, `${hang}\n`);
-        const passphraseFile = path.join(dir, 'passphrase');
-        fs.writeFileSync(passphraseFile, '');
-
-        const run = spawnSync('python3', [
-          path.resolve('e2e/terminal.py'), commandsFile, passphraseFile, ...shell.argv,
-        ], {
-          cwd: dir,
-          encoding: 'utf8',
-          timeout: 30000,
-          env: { ...process.env, TERMINAL_TIMEOUT: '5', BASH_SILENCE_DEPRECATION_WARNING: '1' },
-        });
-        const transcript = `${run.stdout}\n${run.stderr}\n${run.error ?? ''}`;
-        // The caller's timeout must not be what stops the run, or the transcript is lost
-        expect(run.error, transcript).toBeUndefined();
-        expect(run.status, transcript).toBe(1);
-        expect(run.stdout, transcript).toContain(hang);
-        // The hung command must not outlive the run
+        const transcript = runTerminal(`nohup ${hang}`, shell.argv);
         expect(spawnSync('pgrep', ['-f', hang]).status, transcript).toBe(1);
       } finally {
-        fs.rmSync(dir, { recursive: true, force: true });
+        spawnSync('pkill', ['-f', hang]);
       }
+    });
+
+    test(`a guide line that ends the shell fails in ${shell.name}`, async () => {
+      runTerminal('exit', shell.argv);
     });
   }
 });

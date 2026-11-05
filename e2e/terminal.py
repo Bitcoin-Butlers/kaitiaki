@@ -107,17 +107,23 @@ def main():
         read_until(len(out), lambda text: False)
     if not ok or not reaped():
         # A command that hangs runs in its own process group under job
-        # control, and "exit" stays unread behind it, so kill both groups.
-        groups = {pid}
+        # control, and "exit" stays unread behind it, so kill that group and
+        # the shell. Once the shell has ended, tcgetpgrp gives 0, and
+        # killpg(0) would stop this script and the test run that started it.
         try:
-            groups.add(os.tcgetpgrp(fd))
+            job = os.tcgetpgrp(fd)
         except OSError:
-            pass
-        for group in groups:
+            job = 0
+        if job > 0 and job != os.getpgrp():
             try:
-                os.killpg(group, signal.SIGKILL)
+                os.killpg(job, signal.SIGKILL)
             except OSError:
                 pass
+        # Not reaped yet, so the pid still names the shell
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except OSError:
+            pass
         read_until(len(out), lambda text: False, time.time() + REAP_TIMEOUT)
         reaped()
 
