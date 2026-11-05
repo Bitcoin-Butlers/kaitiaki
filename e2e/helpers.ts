@@ -684,14 +684,20 @@ export class CreationPage {
   // Download bundle and return data
   async downloadBundle(index: number): Promise<Uint8Array | null> {
     // Get bundle data from the page's state
+    // base64, because a JSON array of numbers takes about 30 s for a 12 MB bundle
     const data = await this.page.evaluate((idx) => {
       const state = (window as any).rememoryBundles;
       if (!state || !state[idx]) return null;
-      return Array.from(state[idx].data as Uint8Array);
+      const bytes = state[idx].data as Uint8Array;
+      let binary = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      }
+      return btoa(binary);
     }, index);
 
-    if (!data) return null;
-    return new Uint8Array(data);
+    if (data === null) return null;
+    return new Uint8Array(Buffer.from(data, 'base64'));
   }
 
   // UI assertions
