@@ -84,6 +84,8 @@ test.describe('Guide commands', () => {
       });
       const transcript = `${run.stdout}\n${run.stderr}\n${run.error ?? ''}`;
       expect(run.status, transcript).toBe(0);
+      // A person sees this error even when the files still come back
+      expect(transcript).not.toContain('command not found');
 
       const archive = path.join(bundleDir, 'archive');
       expect(fs.existsSync(archive), transcript).toBe(true);

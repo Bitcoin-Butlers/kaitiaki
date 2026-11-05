@@ -435,13 +435,12 @@ The owner key is an optional second path. You give the bundle maker an [age](htt
 
 ### How to Recover With It
 
-Any age CLI works. Run these commands in the bundle's folder, in a macOS or Linux terminal:
+Any age CLI works. Run these commands in the bundle's folder, in a macOS or Linux terminal. The first command prints the recovery passphrase. The second takes `MANIFEST.age` out of `recover.html`, if the bundle does not hold it. When the third asks for a passphrase, enter that recovery passphrase.
 
 ```
-age -d -i owner-key.txt OWNER.age   # prints the recovery passphrase
-# takes MANIFEST.age out of recover.html, if the bundle does not hold it
+age -d -i owner-key.txt OWNER.age
 [ -f MANIFEST.age ] || grep -o '"manifestB64":"[^"]*' recover.html | cut -d'"' -f4 | base64 -d > MANIFEST.age
-age -d MANIFEST.age > archive       # enter that passphrase when asked
+age -d MANIFEST.age > archive
 ```
 
 ### The Tradeoff, Plainly
