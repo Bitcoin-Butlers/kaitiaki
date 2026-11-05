@@ -2,14 +2,11 @@ import { test, expect } from './fixtures';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import AdmZip from 'adm-zip';
-import { getRememoryBin, CreationPage, RecoveryPage, generateStandaloneHTML } from './helpers';
+import {
+  getRememoryBin, CreationPage, RecoveryPage, generateStandaloneHTML,
+  OWNER_IDENTITY, createBundlesWithOwner,
+} from './helpers';
 
-// Test vector from docs/owner-key-vector.md (public, never for real use)
-const OWNER_RECIPIENT =
-  'age17pv0xledcth6mtfpgmtaxc3gahxdkt5ad79cxwxtgj966kqxq9fs3m8ced';
-const OWNER_IDENTITY =
-  'AGE-SECRET-KEY-1E3PUXA5R3R9Y3R9DPTF57F8HD4YXL7DNWWGUJMRMTFWNARP3KQFSJ2M754';
 // Valid bech32 shape, wrong key
 const WRONG_IDENTITY =
   'AGE-SECRET-KEY-1GFPYYSJZGFPYYSJZGFPYYSJZGFPYYSJZGFPYYSJZGFPYYSJZGFPQ4EGAEX';
@@ -34,36 +31,9 @@ test.describe('Owner Key', () => {
     }
   });
 
-  async function createBundlesWithOwner(page: any, prefix: string): Promise<string> {
-    const creation = new CreationPage(page, htmlPath);
-    await creation.open();
-    await creation.setFriend(0, 'Alice', 'alice@test.com');
-    await creation.setFriend(1, 'Bob', 'bob@test.com');
-    const testFiles = creation.createTestFiles(tmpDir, prefix);
-    await creation.addFiles(testFiles);
-
-    await page.locator('.owner-key-section summary').click();
-    await page.locator('#owner-recipient').fill(OWNER_RECIPIENT);
-
-    await creation.generate();
-    await creation.expectGenerationComplete();
-    await creation.expectBundleCount(2);
-
-    const bundlesDir = path.join(tmpDir, `${prefix}-bundles`);
-    fs.mkdirSync(bundlesDir, { recursive: true });
-    for (const [i, name] of ['alice', 'bob'].entries()) {
-      const data = await creation.downloadBundle(i);
-      expect(data).toBeTruthy();
-      const zipPath = path.join(bundlesDir, `bundle-${name}.zip`);
-      fs.writeFileSync(zipPath, data!);
-      new AdmZip(zipPath).extractAllTo(path.join(bundlesDir, name), true);
-    }
-    return bundlesDir;
-  }
-
   test('bundles carry OWNER.age and the save link appears', async ({ page }, testInfo) => {
     testInfo.setTimeout(120000);
-    const bundlesDir = await createBundlesWithOwner(page, 'carry');
+    const bundlesDir = await createBundlesWithOwner(page, htmlPath, tmpDir, 'carry');
 
     await expect(page.locator('#download-owner-btn')).toBeVisible();
 
@@ -82,7 +52,7 @@ test.describe('Owner Key', () => {
 
   test('owner recovers alone with one bundle and the owner key', async ({ page }, testInfo) => {
     testInfo.setTimeout(120000);
-    const bundlesDir = await createBundlesWithOwner(page, 'solo');
+    const bundlesDir = await createBundlesWithOwner(page, htmlPath, tmpDir, 'solo');
 
     // Alice's recover.html has 1 share of a 2-of-2 scheme: below threshold
     const recovery = new RecoveryPage(page, path.join(bundlesDir, 'alice'));
@@ -98,7 +68,7 @@ test.describe('Owner Key', () => {
 
   test('a wrong owner key of valid shape fails with a clear message', async ({ page }, testInfo) => {
     testInfo.setTimeout(120000);
-    const bundlesDir = await createBundlesWithOwner(page, 'wrongkey');
+    const bundlesDir = await createBundlesWithOwner(page, htmlPath, tmpDir, 'wrongkey');
 
     const recovery = new RecoveryPage(page, path.join(bundlesDir, 'alice'));
     await recovery.open();
@@ -112,7 +82,7 @@ test.describe('Owner Key', () => {
 
   test('guardians recover exactly as before, owner field untouched', async ({ page }, testInfo) => {
     testInfo.setTimeout(120000);
-    const bundlesDir = await createBundlesWithOwner(page, 'guardian');
+    const bundlesDir = await createBundlesWithOwner(page, htmlPath, tmpDir, 'guardian');
 
     const recovery = new RecoveryPage(page, path.join(bundlesDir, 'alice'));
     await recovery.open();

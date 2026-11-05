@@ -823,3 +823,40 @@ export class CreationPage {
     return yamlContent;
   }
 }
+
+// Owner Key test vector from docs/owner-key-vector.md (public, never for real use)
+export const OWNER_RECIPIENT =
+  'age17pv0xledcth6mtfpgmtaxc3gahxdkt5ad79cxwxtgj966kqxq9fs3m8ced';
+export const OWNER_IDENTITY =
+  'AGE-SECRET-KEY-1E3PUXA5R3R9Y3R9DPTF57F8HD4YXL7DNWWGUJMRMTFWNARP3KQFSJ2M754';
+
+// Make bundles for Alice and Bob in maker.html with the owner key set, and
+// extract each one into <tmpDir>/<prefix>-bundles/<name>/.
+export async function createBundlesWithOwner(
+  page: Page, htmlPath: string, tmpDir: string, prefix: string,
+): Promise<string> {
+  const creation = new CreationPage(page, htmlPath);
+  await creation.open();
+  await creation.setFriend(0, 'Alice', 'alice@test.com');
+  await creation.setFriend(1, 'Bob', 'bob@test.com');
+  const testFiles = creation.createTestFiles(tmpDir, prefix);
+  await creation.addFiles(testFiles);
+
+  await page.locator('.owner-key-section summary').click();
+  await page.locator('#owner-recipient').fill(OWNER_RECIPIENT);
+
+  await creation.generate();
+  await creation.expectGenerationComplete();
+  await creation.expectBundleCount(2);
+
+  const bundlesDir = path.join(tmpDir, `${prefix}-bundles`);
+  fs.mkdirSync(bundlesDir, { recursive: true });
+  for (const [i, name] of ['alice', 'bob'].entries()) {
+    const data = await creation.downloadBundle(i);
+    expect(data).toBeTruthy();
+    const zipPath = path.join(bundlesDir, `bundle-${name}.zip`);
+    fs.writeFileSync(zipPath, data!);
+    new AdmZip(zipPath).extractAllTo(path.join(bundlesDir, name), true);
+  }
+  return bundlesDir;
+}
